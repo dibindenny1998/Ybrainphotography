@@ -78,7 +78,7 @@ const links = [
   .loader__logo { width: min(64vw, 380px); overflow: visible; }
   .loader__meta { display: flex; align-items: baseline; justify-content: space-between; gap: 40px; width: min(64vw, 380px); color: var(--ink-2); }
   .loader__count { font-size: 15px; font-style: italic; color: var(--red); font-variant-numeric: tabular-nums; }
-  .loader__curtain { position: absolute; inset: 0; background: var(--red); transform: scaleY(0); transform-origin: bottom; }
+  .loader__curtain { position: absolute; inset: 0; background: var(--velvet); transform: scaleY(0); transform-origin: bottom; }
 
   /* ── logo */
   .logo { overflow: visible; }
@@ -134,7 +134,7 @@ const links = [
   /* ── menu */
   .menu { position: fixed; inset: 0; z-index: 95; pointer-events: none; visibility: hidden; }
   .menu.is-open { pointer-events: auto; visibility: visible; }
-  .menu__bg { position: absolute; inset: 0; background: var(--red); clip-path: circle(0% at calc(100% - 40px) 36px); }
+  .menu__bg { position: absolute; inset: 0; background: var(--velvet); clip-path: circle(0% at calc(100% - 40px) 36px); }
   .menu__body { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 120px var(--gutter) max(32px, env(safe-area-inset-bottom)); color: var(--ivory); }
   .menu__list { list-style: none; margin: 0; padding: 0; }
   .menu__list li { overflow: hidden; border-bottom: 1px solid rgba(246, 240, 230, 0.2); }
@@ -172,7 +172,7 @@ const links = [
   .fab {
     position: fixed; z-index: 80; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
     width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
-    background: var(--red); color: var(--ivory); box-shadow: 0 10px 30px -8px rgba(125, 20, 39, 0.55);
+    background: var(--velvet); color: #fff8f0; box-shadow: 0 12px 30px -8px rgba(158, 27, 50, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.18);
     transform: scale(0);
   }
   .no-js .fab, html:not(.js) .fab { transform: none; }

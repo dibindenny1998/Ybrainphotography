@@ -19,11 +19,11 @@ mkdirSync(OUT, { recursive: true });
 
 const RED = '#9E1B32';
 const BG = {
-  ivory: ['#F7F1E7', '#F1E6D7'],
-  blush: ['#F5E6DE', '#EBD2C7'],
-  sand: ['#F4EBDD', '#E9DAC4'],
-  rose: ['#F6ECE6', '#EFD9D2'],
-  dusk: ['#F3E3DA', '#E4C3B8'],
+  ivory: ['#FFFBF4', '#F8EFE2'],
+  blush: ['#FFF6F3', '#F8DCD7'],
+  sand: ['#FFF9F0', '#F6EAD8'],
+  rose: ['#FFF8F6', '#FAE4E1'],
+  dusk: ['#FFF3F1', '#F4D0CC'],
 };
 
 /* ------------------------------------------------------------------ utils */
@@ -615,21 +615,21 @@ function svgDoc({ name, w, h, bg = 'ivory', title, scene, disc, frame = true }) 
   let i = 0;
   body = body.replace(/class="l( t)?"/g, (m) => `${m} style="animation-delay:${Math.min(1.6, 0.15 + i++ * 0.035).toFixed(2)}s"`);
   const fr = frame
-    ? `<rect x="${r(pad)}" y="${r(pad)}" width="${r(W - pad * 2)}" height="${r(H - pad * 2)}" fill="none" stroke="${RED}" stroke-opacity=".28" stroke-width="1" vector-effect="non-scaling-stroke"/>` +
+    ? `<rect x="${r(pad)}" y="${r(pad)}" width="${r(W - pad * 2)}" height="${r(H - pad * 2)}" fill="none" stroke="${RED}" stroke-opacity=".45" stroke-width="1" vector-effect="non-scaling-stroke"/>` +
       `<g fill="${RED}" font-family="Georgia, 'Times New Roman', serif">` +
-      `<text x="${r(pad + W * 0.02)}" y="${r(H - pad - W * 0.022)}" font-size="${r(W * 0.026)}" font-style="italic" opacity=".85">${title}</text>` +
-      `<text x="${r(W - pad - W * 0.02)}" y="${r(H - pad - W * 0.022)}" font-size="${r(W * 0.014)}" letter-spacing="${r(W * 0.004)}" text-anchor="end" opacity=".6" font-family="Helvetica, Arial, sans-serif">${label}</text>` +
+      `<text x="${r(pad + W * 0.02)}" y="${r(H - pad - W * 0.022)}" font-size="${r(W * 0.026)}" font-style="italic">${title}</text>` +
+      `<text x="${r(W - pad - W * 0.02)}" y="${r(H - pad - W * 0.022)}" font-size="${r(W * 0.014)}" letter-spacing="${r(W * 0.004)}" text-anchor="end" opacity=".8" font-family="Helvetica, Arial, sans-serif">${label}</text>` +
       `</g>`
     : '';
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
 <title>${title} — placeholder (${name})</title>
 <defs>
 <linearGradient id="bg" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="${b1}"/><stop offset="1" stop-color="${b2}"/></linearGradient>
-<radialGradient id="disc"><stop offset="0" stop-color="#E7C3B6" stop-opacity=".75"/><stop offset=".7" stop-color="#EDD3C8" stop-opacity=".45"/><stop offset="1" stop-color="#EDD3C8" stop-opacity="0"/></radialGradient>
-<radialGradient id="glow"><stop offset="0" stop-color="#F2B9A3" stop-opacity=".75"/><stop offset=".5" stop-color="#F3CDBE" stop-opacity=".35"/><stop offset="1" stop-color="#F6E3D8" stop-opacity="0"/></radialGradient>
+<radialGradient id="disc"><stop offset="0" stop-color="#F6C4C2" stop-opacity=".7"/><stop offset=".7" stop-color="#F8D8D5" stop-opacity=".4"/><stop offset="1" stop-color="#F8D8D5" stop-opacity="0"/></radialGradient>
+<radialGradient id="glow"><stop offset="0" stop-color="#FFB38F" stop-opacity=".8"/><stop offset=".45" stop-color="#FFD2B8" stop-opacity=".4"/><stop offset="1" stop-color="#FFE9DC" stop-opacity="0"/></radialGradient>
 <style>
-.l{fill:none;stroke:${RED};stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:draw 2.8s cubic-bezier(.65,0,.25,1) both}
-.t{stroke-width:.9;stroke-opacity:.75}
+.l{fill:none;stroke:${RED};stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:draw 2.8s cubic-bezier(.65,0,.25,1) both}
+.t{stroke-width:1.15;stroke-opacity:.9}
 .f{fill:${RED}}
 .tx{fill:${RED};font-family:Helvetica,Arial,sans-serif}
 .fl{transform-box:fill-box;transform-origin:50% 100%;animation:flick 2.4s ease-in-out infinite alternate}

@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1800" width="1200" height="1800">
 <title>Chenda melam — placeholder (events-01-chenda)</title>
 <defs>
-<linearGradient id="bg" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#F5E6DE"/><stop offset="1" stop-color="#EBD2C7"/></linearGradient>
-<radialGradient id="disc"><stop offset="0" stop-color="#E7C3B6" stop-opacity=".75"/><stop offset=".7" stop-color="#EDD3C8" stop-opacity=".45"/><stop offset="1" stop-color="#EDD3C8" stop-opacity="0"/></radialGradient>
-<radialGradient id="glow"><stop offset="0" stop-color="#F2B9A3" stop-opacity=".75"/><stop offset=".5" stop-color="#F3CDBE" stop-opacity=".35"/><stop offset="1" stop-color="#F6E3D8" stop-opacity="0"/></radialGradient>
+<linearGradient id="bg" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#FFF6F3"/><stop offset="1" stop-color="#F8DCD7"/></linearGradient>
+<radialGradient id="disc"><stop offset="0" stop-color="#F6C4C2" stop-opacity=".7"/><stop offset=".7" stop-color="#F8D8D5" stop-opacity=".4"/><stop offset="1" stop-color="#F8D8D5" stop-opacity="0"/></radialGradient>
+<radialGradient id="glow"><stop offset="0" stop-color="#FFB38F" stop-opacity=".8"/><stop offset=".45" stop-color="#FFD2B8" stop-opacity=".4"/><stop offset="1" stop-color="#FFE9DC" stop-opacity="0"/></radialGradient>
 <style>
-.l{fill:none;stroke:#9E1B32;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:draw 2.8s cubic-bezier(.65,0,.25,1) both}
-.t{stroke-width:.9;stroke-opacity:.75}
+.l{fill:none;stroke:#9E1B32;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:draw 2.8s cubic-bezier(.65,0,.25,1) both}
+.t{stroke-width:1.15;stroke-opacity:.9}
 .f{fill:#9E1B32}
 .tx{fill:#9E1B32;font-family:Helvetica,Arial,sans-serif}
 .fl{transform-box:fill-box;transform-origin:50% 100%;animation:flick 2.4s ease-in-out infinite alternate}
@@ -17,5 +17,5 @@
 </defs>
 <rect width="1200" height="1800" fill="url(#bg)"/>
 <circle cx="600" cy="756" r="504" fill="url(#disc)"/><g transform="translate(600 1008) scale(1.75)"><ellipse class="l" style="animation-delay:0.15s" pathLength="1" cx="0" cy="-170" rx="90" ry="22"/><ellipse class="l t" style="animation-delay:0.18s" pathLength="1" cx="0" cy="-170" rx="76" ry="16"/><path class="l" style="animation-delay:0.22s" pathLength="1" d="M-90,-170 L-90,170 M90,-170 L90,170"/><path class="l" style="animation-delay:0.26s" pathLength="1" d="M-90,170 C-60,194 60,194 90,170"/><path class="l t" style="animation-delay:0.29s" pathLength="1" d="M-90,-140 C-50,-120 50,-120 90,-140 M-90,140 C-50,160 50,160 90,140"/><path class="l t" style="animation-delay:0.33s" pathLength="1" d="M-80,-124.3 L-54,148.1 M-80,148.1 L-54,-124.3 M-54,-120.9 L-24,152.4 M-54,152.4 L-24,-120.9 M-24,-118.6 L8,155.3 M-24,155.3 L8,-118.6 M8,-118.1 L40,155.9 M8,155.9 L40,-118.1 M40,-119.6 L70,154 M40,154 L70,-119.6 M70,-122.8 L86,150 M70,150 L86,-122.8 "/><path class="l" style="animation-delay:0.36s" pathLength="1" d="M60,-220 L200,-330 M196,-334 a7,7 0 1,1 8,8"/><path class="l" style="animation-delay:0.40s" pathLength="1" d="M-40,-230 C-120,-260 -170,-320 -150,-370"/><path class="l t" style="animation-delay:0.43s" pathLength="1" d="M130,-210 C150,-190 152,-160 140,-140 M150,-230 C180,-200 184,-150 164,-120 M-130,-200 C-160,-180 -164,-150 -150,-120"/></g>
-<rect x="54" y="54" width="1092" height="1692" fill="none" stroke="#9E1B32" stroke-opacity=".28" stroke-width="1" vector-effect="non-scaling-stroke"/><g fill="#9E1B32" font-family="Georgia, 'Times New Roman', serif"><text x="78" y="1719.6" font-size="31.2" font-style="italic" opacity=".85">Chenda melam</text><text x="1122" y="1719.6" font-size="16.8" letter-spacing="4.8" text-anchor="end" opacity=".6" font-family="Helvetica, Arial, sans-serif">EVENTS 01 CHENDA</text></g>
+<rect x="54" y="54" width="1092" height="1692" fill="none" stroke="#9E1B32" stroke-opacity=".45" stroke-width="1" vector-effect="non-scaling-stroke"/><g fill="#9E1B32" font-family="Georgia, 'Times New Roman', serif"><text x="78" y="1719.6" font-size="31.2" font-style="italic">Chenda melam</text><text x="1122" y="1719.6" font-size="16.8" letter-spacing="4.8" text-anchor="end" opacity=".8" font-family="Helvetica, Arial, sans-serif">EVENTS 01 CHENDA</text></g>
 </svg>

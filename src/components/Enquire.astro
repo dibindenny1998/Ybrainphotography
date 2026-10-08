@@ -73,7 +73,9 @@ const year = new Date().getFullYear();
 </footer>
 
 <style is:global>
-  .enquire { background: var(--red); color: var(--ivory); position: relative; overflow: hidden; }
+  .enquire { background: var(--velvet); color: #fff8f0; position: relative; overflow: hidden; }
+  .enquire::before { content: ''; position: absolute; width: 70vw; aspect-ratio: 1; right: -20vw; top: -25vw; border-radius: 50%; background: radial-gradient(circle, rgba(214, 52, 82, 0.45), transparent 65%); pointer-events: none; }
+  .enquire__inner { position: relative; }
   .enquire__inner { display: grid; gap: 56px; padding-block: clamp(96px, 14vw, 180px); }
   .enquire__eyebrow { color: rgba(246, 240, 230, 0.8); }
   .enquire__eyebrow .eyebrow__n { color: var(--ivory); }
@@ -95,7 +97,7 @@ const year = new Date().getFullYear();
     box-shadow: inset 0 0 0 1px rgba(246, 240, 230, 0.45); font-size: 13px; letter-spacing: 0.06em; transition: background-color 0.35s, color 0.35s, box-shadow 0.35s;
   }
   .tchip span:hover { box-shadow: inset 0 0 0 1px var(--ivory); }
-  .tchip input:checked + span { background: var(--ivory); color: var(--red); }
+  .tchip input:checked + span { background: #fff8f0; color: var(--red); box-shadow: 0 6px 18px -8px rgba(40, 0, 10, 0.6); }
   .tchip input:focus-visible + span { outline: 1.5px solid var(--ivory); outline-offset: 3px; }
   .form__grid { display: grid; gap: 22px; }
   .field { display: grid; gap: 6px; }
