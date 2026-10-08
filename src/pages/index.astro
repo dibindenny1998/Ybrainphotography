@@ -348,12 +348,14 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
   .strip__img { aspect-ratio: 4 / 5; }
   .strip__bar { height: 1.5px; background: var(--line); margin-top: 36px; overflow: hidden; }
   .strip__bar i { display: block; height: 100%; background: var(--rose); transform: scaleX(0); transform-origin: left; }
-  @media (min-width: 1024px) {
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
     :global(.js) .strip { padding-block: 0; }
     :global(.js) .strip__pin { height: 100svh; display: flex; flex-direction: column; justify-content: center; }
     :global(.js) .strip__vp { overflow: visible; }
     :global(.js) .strip__head { grid-template-columns: 1fr auto; align-items: end; }
     :global(.js) .strip__head .kicker { grid-column: 1 / -1; }
+  }
+  @media (min-width: 1024px) {
     .strip__card { width: 27vw; }
     .strip__card:nth-child(even) { margin-top: 8vh; }
     .strip__track { gap: 3vw; }

@@ -156,10 +156,7 @@ a:hover > .frame .img, a:hover .frame .img { transform: scale(1.04); }
 .js [data-r] { opacity: 0; }
 .js [data-ri] { clip-path: inset(100% 0 0 0); }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
-  .js [data-r] { opacity: 1; }
-  .js [data-ri] { clip-path: none; }
-}
+/* reduced motion: the JS keeps gentle motion and drops scroll-jacking / parallax */
+
 .lit, .lit-2, .night { overflow: hidden; }
 .night .blobs i { opacity: 0.16; }

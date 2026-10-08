@@ -77,7 +77,6 @@ const deck = await Promise.all(['maternity-02', 'couples-02', 'weddings-05', 'ne
   .pf__item .frame { background: var(--linen); box-shadow: 0 0 0 0 rgba(110, 40, 50, 0); transition: box-shadow 0.8s var(--ease); }
   .pf__item:hover .frame { box-shadow: 0 34px 60px -34px rgba(110, 40, 50, 0.55); }
   :global(.js) .pf__item { opacity: 0; }
-  @media (prefers-reduced-motion: reduce) { :global(.js) .pf__item { opacity: 1; } }
   @media (min-width: 700px) { .pf__grid { columns: 2; } }
   @media (min-width: 1100px) { .pf__grid { columns: 3; } }
 </style>

@@ -11,7 +11,10 @@ import Lenis from 'lenis';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, Flip);
 const root = document.documentElement;
-const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* Phones with "Remove animations" / reduced motion turned on still get the gentle motion
+   (fades, reveals, the moving strips); only scroll-jacking and parallax are switched off. */
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduce = false;
 const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
 const $ = <T extends Element = HTMLElement>(s: string, c: ParentNode = document) => c.querySelector(s) as T | null;
 const $$ = <T extends Element = HTMLElement>(s: string, c: ParentNode = document) => [...c.querySelectorAll(s)] as T[];
@@ -142,7 +145,7 @@ function heroPanels(): () => void {
   document.addEventListener('visibilitychange', () => (document.hidden ? prog.pause() : started && visible && prog.play()));
   // scroll: panels drift at different speeds, headline lifts away
   const st = { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true };
-  panels.forEach((p) => gsap.to(p, { yPercent: parseFloat(p.dataset.speedP || '0'), ease: 'none', scrollTrigger: st }));
+  if (!still) panels.forEach((p) => gsap.to(p, { yPercent: parseFloat(p.dataset.speedP || '0'), ease: 'none', scrollTrigger: st }));
   gsap.to('.hero__ui', { yPercent: -30, autoAlpha: 0, ease: 'none', scrollTrigger: { ...st, end: '70% top' } });
   return () => { started = true; if (visible) prog.play(); };
 }
@@ -173,7 +176,7 @@ function reveals() {
     if (img) tl.fromTo(img, { scale: 1.25 }, { scale: 1, duration: 2, ease: E, clearProps: 'transform' }, 0.1);
   });
   // parallax
-  $$('[data-speed]').forEach((el) => {
+  if (!still) $$('[data-speed]').forEach((el) => {
     const k = (parseFloat(el.dataset.speed || '1') - 1) * 400;
     gsap.fromTo(el, { y: k }, { y: -k, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } });
   });
@@ -190,7 +193,7 @@ function homeExtras() {
   // category rows: a photo follows the cursor
   const float = $('[data-shoot-float]');
   const list = $('[data-shoots]');
-  if (float && list && fine && !reduce) {
+  if (float && list && fine) {
     const imgs = $$('[data-shoot-img]', float);
     const xTo = gsap.quickTo(float, 'x', { duration: 0.55, ease: 'power3' });
     const yTo = gsap.quickTo(float, 'y', { duration: 0.55, ease: 'power3' });
@@ -215,14 +218,14 @@ function homeExtras() {
   const bar = $('[data-strip-bar]');
   if (track && bar) {
     const mm = gsap.matchMedia();
-    mm.add('(min-width: 1024px)', () => {
+    mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
       const dist = () => Math.max(0, track.scrollWidth - innerWidth);
       gsap.to(track, {
         x: () => -dist(), ease: 'none',
         scrollTrigger: { trigger: '[data-strip-pin]', start: 'top top', end: () => '+=' + dist(), pin: true, scrub: 0.8, invalidateOnRefresh: true, onUpdate: (st) => gsap.set(bar, { scaleX: st.progress }) },
       });
     });
-    mm.add('(max-width: 1023px)', () => {
+    mm.add('(max-width: 1023px), (prefers-reduced-motion: reduce)', () => {
       const vp = $('[data-strip-vp]')!;
       const on = () => gsap.set(bar, { scaleX: vp.scrollLeft / Math.max(1, vp.scrollWidth - vp.clientWidth) });
       vp.addEventListener('scroll', on, { passive: true });
@@ -253,6 +256,34 @@ function homeExtras() {
   });
 }
 
+/* ── story pages: the title rises, then the cover opens like a camera shutter and settles into a frame on scroll */
+function storyOpening() {
+  const sx = $('[data-sx]');
+  if (!sx) return;
+  const media = $('[data-sx-media]', sx)!, frame = $('[data-sx-frame]', sx)!, ui = $('[data-sx-ui]', sx)!;
+  const title = $('[data-sx-title]', sx)!, fades = $$('[data-sx-fade]', sx), cue = $('[data-sx-cue]', sx);
+  const img = $('img', media)!;
+  const split = SplitText.create(title, { type: 'chars,words', mask: 'chars' });
+  gsap.set(cue, { autoAlpha: 0 });
+  gsap.set(ui, { opacity: 1 });
+  gsap.timeline({ defaults: { ease: E } })
+    .from(split.chars, { yPercent: 110, duration: 1.1, stagger: 0.035 }, 0.1)
+    .from(fades, { autoAlpha: 0, y: 16, duration: 0.9, stagger: 0.1 }, 0.35)
+    // the shutter: a slit through the middle opens to the full photograph
+    .fromTo(media, { clipPath: 'inset(50% 0% 50% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut' }, 1.15)
+    .fromTo(img, { scale: 1.4 }, { scale: 1, duration: 2.4 }, 1.15)
+    .to([title, ...fades], { color: '#fff', duration: 0.6, ease: 'power1.out' }, 1.55)
+    .to(title, { textShadow: '0 10px 50px rgba(20,10,10,0.25)', duration: 0.6 }, 1.55)
+    .fromTo('.hdr', { yPercent: -100, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 1, clearProps: 'all' }, 2.1)
+    .to(cue, { autoAlpha: 1, duration: 0.8 }, 2.3);
+  // on scroll the photograph pulls back into a rounded frame, the title drifts away
+  const st = { trigger: sx, start: 'top top', end: 'bottom top', scrub: true };
+  if (!still) {
+    gsap.to(frame, { scale: 0.86, borderRadius: 18, ease: 'none', scrollTrigger: st });
+    gsap.to(ui, { yPercent: -35, autoAlpha: 0, ease: 'none', scrollTrigger: { ...st, end: '60% top' } });
+  }
+}
+
 /* ── home: scattered prints gather into a stack, then the founder's print steps forward */
 function founderGather() {
   const sec = $('[data-gather]');
@@ -262,7 +293,7 @@ function founderGather() {
   const main = $('[data-gp-main]', sec)!;
   const lead = $('[data-gather-lead]', sec)!;
   const txt = $$('[data-gt]', sec);
-  if (reduce) { $('[data-gather-stage]', sec)?.remove(); lead.remove(); return; }
+  if (still) { $('[data-gather-stage]', sec)?.remove(); lead.remove(); return; }
   // where each print lies on the "table" (fractions of the screen) + its tilt
   const narrow = innerWidth < 700;
   const spots = narrow
@@ -480,6 +511,7 @@ async function boot() {
   const intro = heroOpening();
   await Promise.race([document.fonts?.ready, new Promise((r) => setTimeout(r, 1200))]);
   chrome();
+  storyOpening();
   const startPanels = heroPanels();
   homeExtras();
   founderGather();

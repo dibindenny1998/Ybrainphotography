@@ -13,16 +13,23 @@ export function getStaticPaths() {
 const { story, next, n } = Astro.props;
 const pics = await Promise.all(story.photos.map((s) => photo(s)));
 ---
-<Base title={story.title} description={`${story.title} — ${story.kind} story by Ybrain Photography. ${story.intro}`}>
-  <section class="sh lit">
-    <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="wrap sh__in">
-      <span class="kicker" data-r>Story No. 0{n} · {story.kind}</span>
-      <h1 class="h1" data-r style="--d:.1s">{story.title}</h1>
-      <p class="sh__place" data-r style="--d:.2s">{story.place}</p>
+<Base title={story.title} description={`${story.title} — ${story.kind} story by Ybrain Photography. ${story.intro}`} heroDark>
+  <!-- opening: the title rises, then the cover opens like a camera shutter -->
+  <section class="sx" data-sx>
+    <div class="sx__veil" aria-hidden="true"><div class="blobs"><i></i><i></i><i></i></div></div>
+    <div class="sx__frame" data-sx-frame>
+      <div class="sx__media" data-sx-media>
+        <Img slot={story.cover} fit="cover" eager sizes="100vw" />
+        <div class="sx__shade"></div>
+      </div>
     </div>
+    <div class="sx__ui" data-sx-ui>
+      <span class="sx__k" data-sx-fade>Story No. 0{n} · {story.kind}</span>
+      <h1 class="sx__title" data-sx-title>{story.title}</h1>
+      <p class="sx__place" data-sx-fade>{story.place}</p>
+    </div>
+    <span class="sx__cue" data-sx-cue>Scroll</span>
   </section>
-  <div class="wrap"><div class="sh__cover frame" data-ri><Img slot={story.cover} fit="cover" eager sizes="100vw" /></div></div>
 
   <section class="space-s">
     <div class="wrap st__text">
@@ -41,24 +48,47 @@ const pics = await Promise.all(story.photos.map((s) => photo(s)));
     </div>
   </section>
 
-  <section class="nx space-s">
-    <div class="wrap nx__in">
-      <a href="/stories/" class="link">All stories <Arrow /></a>
-      <a href={`/stories/${next.slug}/`} class="nx__next">
-        <span class="kicker">Next story</span>
-        <span class="h2">{next.title}</span>
-      </a>
-    </div>
+  <section class="nx">
+    <div class="wrap nx__top"><a href="/stories/" class="link">All stories <Arrow /></a></div>
+    <a href={`/stories/${next.slug}/`} class="nx__band" data-cursor="Open">
+      <div class="nx__img frame" data-ri><Img slot={next.cover} fit="cover" sizes="100vw" /></div>
+      <div class="nx__txt"><span class="kicker">Next story</span><span class="nx__t">{next.title}</span></div>
+    </a>
   </section>
   <Cta />
   <Lightbox />
 </Base>
 
 <style>
-  .sh { padding-top: clamp(150px, 20vw, 240px); padding-bottom: clamp(50px, 6vw, 80px); }
-  .sh__in { display: grid; justify-items: center; text-align: center; gap: 24px; }
-  .sh__place { margin: 0; font-family: var(--serif); font-style: italic; font-size: 1.2rem; color: var(--text-2); }
-  .sh__cover { aspect-ratio: 16 / 10; max-height: 86svh; width: 100%; }
+  .sx { position: relative; height: 100svh; min-height: 560px; overflow: hidden; background: var(--light); background-color: var(--paper); }
+  .sx__veil { display: none; }
+  :global(.js) .sx__veil { display: block; position: absolute; inset: 0; }
+  .sx__frame { position: absolute; inset: 0; overflow: hidden; will-change: transform; }
+  .sx__media { position: absolute; inset: 0; }
+  :global(.js) .sx__media { clip-path: inset(50% 0% 50% 0%); }
+  .sx__media .img { width: 100%; height: 100%; object-fit: cover; }
+  .sx__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(36, 24, 24, 0.35) 0%, rgba(36, 24, 24, 0.05) 35%, rgba(36, 24, 24, 0.25) 60%, rgba(36, 24, 24, 0.75) 100%); }
+  .sx__ui { position: absolute; inset: 0; z-index: 2; display: grid; align-content: center; justify-items: center; gap: 18px; padding: 0 var(--gutter); text-align: center; color: #fff; }
+  .sx__k { font-size: 11px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; }
+  .sx__title { margin: 0; font-family: var(--serif); font-weight: 300; font-size: clamp(3.4rem, 13vw, 12rem); line-height: 0.95; letter-spacing: -0.04em; text-shadow: 0 10px 50px rgba(20, 10, 10, 0.25); }
+  .sx__place { margin: 0; font-family: var(--serif); font-style: italic; font-size: clamp(1.1rem, 1.6vw, 1.4rem); }
+  :global(.js) .sx__ui { opacity: 0; }
+  :global(.js) .sx__title, :global(.js) .sx__k, :global(.js) .sx__place { color: var(--umber); text-shadow: none; }
+  .sx__cue { position: absolute; z-index: 2; left: 50%; bottom: max(26px, env(safe-area-inset-bottom)); transform: translateX(-50%); font-size: 10.5px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); }
+  .sx__cue::after { content: ''; display: block; width: 1px; height: 34px; margin: 10px auto 0; background: currentColor; transform-origin: top; animation: cue 1.8s var(--ease) infinite; }
+  @keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+  .nx { padding-top: clamp(60px, 8vw, 110px); border-top: 1px solid var(--line); }
+  .nx__top { margin-bottom: 40px; }
+  .nx__band { position: relative; display: block; color: #fff; }
+  .nx__img { aspect-ratio: 21 / 9; border-radius: 0; min-height: 320px; }
+  .nx__img::after { content: ''; position: absolute; inset: 0; background: rgba(36, 24, 24, 0.35); transition: background-color 0.6s; }
+  .nx__band:hover .nx__img::after { background: rgba(36, 24, 24, 0.15); }
+  .nx__txt { position: absolute; inset: 0; z-index: 1; display: grid; place-content: center; justify-items: center; gap: 16px; text-align: center; }
+  .nx__txt .kicker { color: rgba(255, 255, 255, 0.85); }
+  .nx__t { font-family: var(--serif); font-weight: 300; font-size: clamp(2.8rem, 8vw, 8rem); line-height: 1; letter-spacing: -0.03em; transition: transform 0.8s var(--ease); }
+  .nx__band:hover .nx__t { transform: scale(1.04); font-style: italic; }
+
   .st__text { display: grid; gap: 26px; justify-items: center; text-align: center; }
   .st__text .lede { max-width: 54ch; }
   .st__intro { margin: 0; max-width: 22ch; font-family: var(--serif); font-weight: 300; font-size: clamp(1.8rem, 3.4vw, 3rem); line-height: 1.2; }
@@ -69,8 +99,4 @@ const pics = await Promise.all(story.photos.map((s) => photo(s)));
     .st__ph:nth-child(even) { margin-top: 12vw; }
     .st__ph--landscape { grid-column: 1 / -1; margin-top: 0 !important; }
   }
-  .nx { border-top: 1px solid var(--line); }
-  .nx__in { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 30px; }
-  .nx__next { display: grid; gap: 14px; text-align: right; transition: color 0.4s; }
-  .nx__next:hover { color: var(--bronze); }
 </style>
