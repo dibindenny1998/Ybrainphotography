@@ -1,42 +1,23 @@
-# Photos — everything the site shows lives in this folder
+# Photos: everything the site shows lives in this folder
 
-Every `.svg` here is an illustrated **placeholder**. To use a real photo you don't
-touch any code: add your photo with the **same starting name**, then rebuild.
+**Name rule:** `<category>-<number>-<words>.jpg`
+e.g. `weddings-06-temple-morning.jpg`. The words become the caption ("Temple morning").
 
-```
-weddings-03-nirapara.svg      ← placeholder
-weddings-03.jpg               ← your photo (wins automatically)
-```
+| Starts with | Appears in |
+|---|---|
+| `weddings-` `couples-` `maternity-` `newborn-` `portraits-` `celebrations-` | Gallery, under that category (sorted by name) |
 
-You can delete the `.svg` once your photo is in, but you don't have to: a real
-photo (`.jpg` `.jpeg` `.png` `.webp` `.avif`) always beats a placeholder with the
-same name.
+**Add a photo:** drop it in with the next number. **Remove:** delete the file.
+**Replace:** save a new photo with the same `category-number` start.
 
-## Name rules
+Some photos are also used in fixed spots. Change those in `src/data/site.ts`:
+- `heroSlides`: the big slideshow at the top
+- `stories`: the photos in each featured story
+- a few section images use slots directly, e.g. `portraits-02` in About
 
-| Name starts with | Used for | Best shape |
-|---|---|---|
-| `hero-01` | The big arch that opens to full screen | Landscape 3:2, subject in the centre |
-| `hero-02`, `hero-04` | Small pills inside the headline | Anything (cropped to a pill) |
-| `hero-03` | Small lamp portrait beside "The approach" | Portrait |
-| `weddings-…` `couples-…` `newborn-…` `portraits-…` `events-…` | Portfolio gallery, by category | Any shape. Never cropped, never stretched |
-| `story-01-cover` … `story-04-cover` | Featured story main image | Landscape |
-| `story-01-detail` … `story-04-detail` | Small arch image on each story | Portrait |
-| `studio-01`, `studio-02`, `studio-03` | Studio section collage | 01 portrait · 02 landscape · 03 portrait |
+Tips: export JPGs about 2000–2500px on the long edge, without Instagram overlays.
+The build makes fast WebP versions for every screen size automatically.
 
-**Adding more gallery photos:** just add a file, e.g. `weddings-08-sadya.jpg`. It
-appears in the Weddings gallery automatically, sorted by name. The words after the
-number become its caption ("Sadya"), so `couples-06-vagamon-mist.jpg` is captioned
-"Vagamon mist".
-
-**Removing a gallery photo:** delete the file.
-
-## Tips
-
-- Export JPGs at about 2400px on the long edge. The build automatically makes
-  small, fast WebP versions for phones.
-- Photos are never distorted. Gallery images keep their own shape. Fixed frames
-  (hero arch, story covers) crop from the centre, like Instagram does.
-- Change names, phone number and text in `src/data/site.ts`.
-
-The placeholders were drawn by `scripts/generate-placeholders.mjs` (`npm run placeholders`).
+The current photos were cropped from Instagram screenshots as temporary stand-ins. Swap in
+the original full-resolution files for the sharpest result (especially `newborn-03…08`
+and `maternity-02…07`, which came from small grid tiles).

@@ -8,110 +8,92 @@ const items: { cat: string; catName: string; p: (typeof groups)[number]['photos'
 const max = Math.max(...groups.map((g) => g.photos.length));
 for (let i = 0; i < max; i++) for (const g of groups) if (g.photos[i]) items.push({ cat: g.id, catName: g.name, p: g.photos[i] });
 ---
-<section class="gallery" id="gallery" aria-labelledby="gallery-title">
-  <h2 id="gallery-title" class="sr-only">Portfolio</h2>
+<section class="gallery section" id="gallery" aria-labelledby="gallery-title">
+  <div class="gallery__head wrap">
+    <p class="tag">Portfolio</p>
+    <h2 id="gallery-title" class="display gallery__title" data-split>Selected <em>work</em></h2>
+  </div>
   <div class="gallery__bar" data-filter-bar>
     <div class="gallery__filters wrap" role="tablist" aria-label="Filter portfolio by category">
       <button class="chip is-active" role="tab" aria-selected="true" data-filter="all">All <sup>{items.length}</sup></button>
-      {groups.map((g) => (
-        <button class="chip" role="tab" aria-selected="false" data-filter={g.id}>{g.name} <sup>{g.photos.length}</sup></button>
-      ))}
+      {groups.map((g) => <button class="chip" role="tab" aria-selected="false" data-filter={g.id}>{g.name} <sup>{g.photos.length}</sup></button>)}
     </div>
   </div>
 
   <div class="gallery__grid wrap" data-gallery>
     {items.map(({ cat, catName, p }, i) => (
-      <figure class:list={['gitem', `gitem--${p.orientation}`]} data-cat={cat} data-gitem data-slot={p.slot}>
+      <figure class="gitem" data-cat={cat} data-gitem data-slot={p.slot}>
         <button class="gitem__btn" data-lightbox={i} data-cursor="View" aria-label={`Open ${p.caption}`}>
-          <span class="gitem__media" data-reveal-img data-gl>
-            <Img photo={p} sizes="(min-width: 1200px) 24vw, (min-width: 768px) 45vw, 50vw" />
+          <span class="gitem__media" data-reveal>
+            <Img photo={p} sizes="(min-width: 1200px) 24vw, (min-width: 768px) 32vw, 48vw" />
           </span>
         </button>
-        <figcaption class="gitem__cap">
-          <span class="serif">{p.caption}</span>
-          <span class="label">{catName}</span>
-        </figcaption>
+        <figcaption class="gitem__cap"><span>{p.caption}</span><span class="muted">{catName}</span></figcaption>
       </figure>
     ))}
   </div>
 </section>
 
-<!-- LIGHTBOX -->
 <div class="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" aria-hidden="true" data-lb>
   <div class="lightbox__bg" data-lb-close></div>
   <div class="lightbox__top wrap">
-    <span class="label lightbox__count"><span data-lb-index>01</span> / <span data-lb-total>{String(items.length).padStart(2, '0')}</span></span>
-    <button class="lightbox__close label" data-lb-close>Close <span aria-hidden="true">✕</span></button>
+    <span class="lightbox__count"><span data-lb-index>01</span> / <span data-lb-total>{String(items.length).padStart(2, '0')}</span></span>
+    <button class="lightbox__close" data-lb-close aria-label="Close">Close ✕</button>
   </div>
   <figure class="lightbox__figure">
     <div class="lightbox__frame" data-lb-frame><img alt="" data-lb-img /></div>
-    <figcaption class="lightbox__cap"><span class="serif" data-lb-cap></span><span class="label" data-lb-cat></span></figcaption>
+    <figcaption class="lightbox__cap"><span class="serif" data-lb-cap></span><span class="muted" data-lb-cat></span></figcaption>
   </figure>
-  <button class="lightbox__nav lightbox__nav--prev" aria-label="Previous photo" data-lb-prev><svg viewBox="0 0 32 12" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M32 6H2M7 1 2 6l5 5"/></svg></button>
-  <button class="lightbox__nav lightbox__nav--next" aria-label="Next photo" data-lb-next><svg viewBox="0 0 32 12" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M0 6h30M25 1l5 5-5 5"/></svg></button>
+  <button class="lightbox__nav lightbox__nav--prev" aria-label="Previous photo" data-lb-prev>←</button>
+  <button class="lightbox__nav lightbox__nav--next" aria-label="Next photo" data-lb-next>→</button>
 </div>
 
 <style is:global>
-  .gallery { position: relative; padding-bottom: clamp(80px, 12vw, 180px); }
-  .gallery__bar { position: sticky; top: var(--navh, 72px); z-index: 65; padding-block: 12px; margin-bottom: clamp(20px, 4vw, 48px); transition: top 0.7s var(--ease); }
-  .nav-hidden .gallery__bar { top: 0; }
-  .gallery__bar { background: color-mix(in srgb, var(--ivory) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-  .gallery__filters { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+  .gallery__head { display: grid; gap: 22px; margin-bottom: clamp(24px, 4vw, 48px); }
+  .gallery__title { font-size: clamp(3.4rem, 10vw, 9rem); }
+  .gallery__title em { color: var(--ink); background: linear-gradient(transparent 60%, var(--accent) 60%, var(--accent) 90%, transparent 90%); }
+  .gallery__bar { position: sticky; top: 0; z-index: 40; padding-block: 12px; margin-bottom: clamp(18px, 3vw, 36px); background: var(--paper); transition: top 0.6s var(--ease); }
+  .nav-shown .gallery__bar { top: var(--navh, 70px); }
+  .gallery__filters { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
   .gallery__filters::-webkit-scrollbar { display: none; }
-  .chip {
-    flex: none; height: 40px; padding: 0 18px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line);
-    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; scroll-snap-align: start;
-    transition: background-color 0.4s var(--ease), color 0.4s, box-shadow 0.4s;
-  }
-  .chip sup { font-family: var(--serif); font-style: italic; letter-spacing: 0; font-size: 11px; color: var(--red); margin-left: 2px; transition: color 0.4s; }
-  .chip:hover { box-shadow: inset 0 0 0 1px var(--red); }
-  .chip.is-active { background: var(--velvet); color: #fff8f0; box-shadow: 0 6px 18px -8px rgba(176, 18, 47, 0.7); }
-  .chip.is-active sup { color: var(--ivory); }
+  .chip { flex: none; height: 40px; padding: 0 16px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line); font-size: 13px; font-weight: 500; transition: background-color 0.3s, color 0.3s, box-shadow 0.3s; }
+  .chip sup { font-size: 10px; color: var(--stone); margin-left: 2px; }
+  .chip:hover { box-shadow: inset 0 0 0 1px var(--ink); }
+  .chip.is-active { background: var(--ink); color: var(--paper); box-shadow: none; }
+  .chip.is-active sup { color: var(--accent); }
 
-  .gallery__grid { columns: 2; column-gap: 12px; }
-  .gitem { break-inside: avoid; margin: 0 0 22px; }
+  .gallery__grid { columns: 2; column-gap: 10px; }
+  .gitem { break-inside: avoid; margin: 0 0 18px; }
   .gitem.is-hidden { display: none; }
-  .gitem__btn { display: block; width: 100%; text-align: left; }
-  .gitem__media { display: block; overflow: hidden; border-radius: 3px; background: var(--ivory-2); }
-  .gitem--portrait:nth-child(5n + 1) .gitem__media { border-radius: 999px 999px 3px 3px; }
-  .gitem__media .img { transition: transform 1.2s var(--ease-out); }
-  .gitem__btn:hover .img { transform: scale(1.045); }
-  .gitem__cap { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-top: 10px; }
-  .gitem__cap .serif { font-size: 15px; font-style: italic; line-height: 1.2; }
-  .gitem__cap .label { font-size: 9px; color: var(--ink-3); flex: none; }
-  @media (max-width: 479px) { .gitem__cap .label { display: none; } }
-  @media (min-width: 768px) { .gallery__grid { columns: 3; column-gap: 20px; } .gitem { margin-bottom: 36px; } .gitem__cap .serif { font-size: 17px; } }
-  @media (min-width: 1200px) {
-    .gallery__grid { columns: 4; column-gap: 28px; }
-    .gitem:nth-child(4n + 2) { padding-inline: 8%; }
-    .gitem:nth-child(7n + 3) { padding-inline: 4% 12%; }
-  }
-  @media (min-width: 1024px) { .gallery__filters { justify-content: center; } }
+  .gitem__btn { display: block; width: 100%; }
+  .gitem__media { display: block; overflow: hidden; border-radius: 4px; background: var(--paper-2); }
+  .gitem__media .img { transition: transform 1s var(--ease-out); }
+  .gitem__btn:hover .img { transform: scale(1.04); }
+  .gitem__cap { display: flex; justify-content: space-between; gap: 10px; padding-top: 8px; font-size: 13px; }
+  .gitem__cap span:first-child { font-family: var(--serif); font-size: 17px; line-height: 1.2; }
+  @media (max-width: 479px) { .gitem__cap .muted { display: none; } }
+  @media (min-width: 768px) { .gallery__grid { columns: 3; column-gap: 18px; } .gitem { margin-bottom: 30px; } }
+  @media (min-width: 1200px) { .gallery__grid { columns: 4; column-gap: 24px; } }
+  @media (min-width: 1024px) { .gallery__filters { justify-content: flex-start; } }
 
-  /* lightbox */
-  .lightbox { position: fixed; inset: 0; z-index: 150; display: grid; grid-template-rows: auto 1fr; visibility: hidden; pointer-events: none; }
+  .lightbox { position: fixed; inset: 0; z-index: 150; display: grid; grid-template-rows: auto 1fr; visibility: hidden; pointer-events: none; color: var(--paper); }
   .lightbox.is-open { visibility: visible; pointer-events: auto; }
-  .lightbox__bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, #2b0911, #0b0405 70%); opacity: 0; }
-  .lightbox { color: var(--cream); }
-  .lightbox__frame img { view-transition-name: lb-photo; box-shadow: 0 40px 100px -30px rgba(255, 40, 70, 0.35); }
-  .lightbox__top { position: relative; display: flex; justify-content: space-between; align-items: center; padding-block: max(18px, env(safe-area-inset-top)) 0; height: 64px; }
-  .lightbox__close { display: inline-flex; gap: 10px; align-items: center; color: #ff4d66; padding: 10px 0; }
-  .lightbox__count { color: rgba(246, 233, 218, 0.7); }
-  .lightbox__figure { position: relative; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 8px var(--gutter) 90px; min-height: 0; }
-  .lightbox__frame { min-height: 0; display: flex; justify-content: center; overflow: hidden; border-radius: 3px; }
-  .lightbox__frame img { max-width: 100%; max-height: calc(100svh - 190px); width: auto; height: auto; object-fit: contain; }
-  .lightbox__cap { display: flex; gap: 16px; align-items: baseline; }
-  .lightbox__cap .serif { font-style: italic; font-size: 20px; }
-  .lightbox__cap .label { color: rgba(246, 233, 218, 0.55); font-size: 10px; }
-  .lightbox__nav { position: absolute; bottom: max(22px, env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line-dark); display: grid; place-items: center; color: var(--cream); transition: background 0.4s, color 0.4s; }
-  .lightbox__nav svg { width: 22px; }
-  .lightbox__nav:hover { background: var(--red); color: var(--ivory); box-shadow: none; }
-  .lightbox__nav--prev { left: calc(50% - 68px); }
-  .lightbox__nav--next { right: calc(50% - 68px); }
+  .lightbox__bg { position: absolute; inset: 0; background: var(--ink); opacity: 0; }
+  .lightbox__top { position: relative; display: flex; justify-content: space-between; align-items: center; height: 64px; padding-top: env(safe-area-inset-top); font-size: 13px; }
+  .lightbox__close { color: var(--accent); font-weight: 600; padding: 10px 0; }
+  .lightbox__figure { position: relative; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 4px var(--gutter) 90px; min-height: 0; }
+  .lightbox__frame { min-height: 0; display: flex; justify-content: center; }
+  .lightbox__frame img { max-width: 100%; max-height: calc(100svh - 180px); width: auto; height: auto; object-fit: contain; border-radius: 3px; }
+  .lightbox__cap { display: flex; gap: 14px; align-items: baseline; font-size: 13px; }
+  .lightbox__cap .serif { font-size: 22px; }
+  .lightbox__nav { position: absolute; bottom: max(20px, env(safe-area-inset-bottom)); width: 54px; height: 54px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line-d); font-size: 20px; transition: background 0.3s, color 0.3s; }
+  .lightbox__nav:hover { background: var(--accent); color: var(--ink); box-shadow: none; }
+  .lightbox__nav--prev { left: calc(50% - 64px); }
+  .lightbox__nav--next { right: calc(50% - 64px); }
   @media (min-width: 1024px) {
-    .lightbox__figure { padding-bottom: 40px; }
-    .lightbox__frame img { max-height: calc(100svh - 150px); }
-    .lightbox__nav { top: 50%; bottom: auto; margin-top: -28px; }
+    .lightbox__figure { padding-bottom: 36px; }
+    .lightbox__frame img { max-height: calc(100svh - 140px); }
+    .lightbox__nav { top: 50%; bottom: auto; margin-top: -27px; }
     .lightbox__nav--prev { left: var(--gutter); }
     .lightbox__nav--next { right: var(--gutter); }
   }

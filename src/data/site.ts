@@ -6,14 +6,13 @@
 
 export const site = {
   name: 'Ybrain Photography',
-  tagline: 'Kerala wedding & portrait photography',
+  tagline: 'Photography studio',
   description:
-    'Ybrain Photography — cinematic Kerala wedding, couple, newborn, portrait and event photography from a new, lamp-lit studio in Kerala.',
+    'Ybrain Photography — weddings, couples, maternity, newborn, portraits and celebrations, photographed with honesty, warmth and light.',
   established: '2026',
 
   /** WhatsApp number in international format, digits only (91 = India). ⚠️ REPLACE */
   whatsapp: '919000000000',
-  /** Shown to visitors */
   phoneDisplay: '+91 90000 00000',
   email: 'hello@ybrainphotography.com',
   instagram: 'https://www.instagram.com/',
@@ -22,63 +21,47 @@ export const site = {
   studio: {
     line1: 'Ybrain Studio',
     line2: 'Kerala, India',
+    note: 'Available for travel worldwide',
     hours: 'Mon – Sat · 10am – 7pm',
-    note: 'Studio visits by appointment',
-    mapUrl: 'https://maps.google.com/?q=Kerala',
   },
 };
 
+/** Gallery categories — photos come from files named <id>-NN-*.jpg in src/photos/ */
 export const categories = [
-  { id: 'weddings', name: 'Weddings', ml: 'കല്യാണം', blurb: 'Temple, church & nikah — the whole day, told whole.' },
-  { id: 'couples', name: 'Couples', ml: 'ഒരുമിച്ച്', blurb: 'Pre-weddings, monsoon walks, backwater evenings.' },
-  { id: 'newborn', name: 'Newborn', ml: 'കുഞ്ഞ്', blurb: 'Slow, safe, sleepy sessions in the warm studio.' },
-  { id: 'portraits', name: 'Portraits', ml: 'മുഖം', blurb: 'Bridal, family and personal portraits in soft light.' },
-  { id: 'events', name: 'Events', ml: 'ആഘോഷം', blurb: 'Receptions, mehendi nights, melam and celebrations.' },
+  { id: 'weddings', name: 'Weddings', blurb: 'The whole day, told honestly — rituals, nerves, laughter and all.' },
+  { id: 'couples', name: 'Couples', blurb: 'Pre-weddings and getaways, from city nights to foggy mountain roads.' },
+  { id: 'maternity', name: 'Maternity', blurb: 'Soft, airy sessions for the months of waiting.' },
+  { id: 'newborn', name: 'Newborn', blurb: 'Tiny hands, sleepy faces, slow and safe sessions.' },
+  { id: 'portraits', name: 'Portraits', blurb: 'Editorial portraits with colour, character and light.' },
+  { id: 'celebrations', name: 'Celebrations', blurb: 'Parties, trips and the joy in between.' },
 ] as const;
 
-/** Featured stories — photos come from src/photos/story-0X-cover / story-0X-detail */
+/** Hero slideshow — photo slots, in order */
+export const heroSlides = [
+  { slot: 'portraits-01', caption: 'Marigold', kind: 'Portrait' },
+  { slot: 'couples-02', caption: 'The twirl', kind: 'Couple' },
+  { slot: 'weddings-01', caption: 'Petal shower', kind: 'Wedding' },
+  { slot: 'newborn-02', caption: 'Forehead to forehead', kind: 'Newborn' },
+  { slot: 'couples-07', caption: 'City lights', kind: 'Couple' },
+];
+
+/** Featured stories — each is a short series of photos */
 export const stories = [
-  {
-    slot: 'story-01',
-    couple: ['Anjali', 'Rahul'],
-    type: 'Temple wedding',
-    place: 'Guruvayur',
-    date: 'January',
-    excerpt:
-      'A 6:40am muhurtham, three generations on one mandapam, and jasmine everywhere. We arrived before the first lamp was lit and left after the last sadya leaf was folded.',
-  },
-  {
-    slot: 'story-02',
-    couple: ['Meera', 'Joseph'],
-    type: 'Church wedding & backwaters',
-    place: 'Kumarakom',
-    date: 'March',
-    excerpt:
-      'A white-and-gold church ceremony, then an evening drifting on a kettuvallam. The light on the lake did half our work for us.',
-  },
-  {
-    slot: 'story-03',
-    couple: ['Fathima', 'Aslam'],
-    type: 'Mehendi & nikah',
-    place: 'Kozhikode',
-    date: 'May',
-    excerpt:
-      'Two nights of oppana songs, fairy lights and henna-stained laughter — and a quiet, golden nikah the morning after.',
-  },
-  {
-    slot: 'story-04',
-    couple: ['Baby Ishaan'],
-    type: 'Newborn session',
-    place: 'Ybrain Studio',
-    date: '12 days old',
-    excerpt:
-      'Warm room, white noise, a grandmother humming a thaarattu. Three hours, two feeds, and one very sleepy little man.',
-  },
+  { title: 'Awaited', kind: 'Maternity session', place: 'Ybrain Studio', slots: ['maternity-01', 'maternity-05', 'maternity-07'],
+    text: 'A white room, soft fabric and a lot of waiting. A quiet session made for the months before hello.' },
+  { title: 'Mani & Lakshmi', kind: 'Wedding', place: 'Lakeside', slots: ['weddings-04', 'weddings-02', 'weddings-03'],
+    text: 'Fresh flowers on the sleeves, mist on the water, and two people who could not stop laughing.' },
+  { title: 'After dark', kind: 'Couple travel shoot', place: 'Sapa, Vietnam', slots: ['couples-05', 'couples-07', 'couples-06'],
+    text: 'Fog, headlights and a mountain town at night — a getaway shoot that felt like a film still.' },
+  { title: 'First days', kind: 'Newborn session', place: 'At home', slots: ['newborn-02', 'newborn-07', 'newborn-03'],
+    text: 'Tiny fingers, deep sleep, and the softest light we could find. Slow, safe and unhurried.' },
+  { title: 'The twirl', kind: 'Couple portraits', place: 'Studio', slots: ['couples-02', 'couples-04', 'couples-03'],
+    text: 'A slice of window light on the floor, a lehenga that would not stay still.' },
 ];
 
 export const process = [
-  { n: '01', title: 'Say hello', text: 'Send us a WhatsApp with your date and a few words about you. We reply within a day.' },
-  { n: '02', title: 'Visit the studio', text: 'Coffee, albums to hold, and a long chat about your families, rituals and wishes.' },
-  { n: '03', title: 'We plan your day', text: 'Timelines, muhurtham light, family lists — so on the day, you just live it.' },
-  { n: '04', title: 'Your story, delivered', text: 'A first preview within a week, the full gallery and heirloom album after.' },
+  { n: '01', title: 'Say hello', text: 'Send a WhatsApp with your date and a few words about you. We reply within a day.' },
+  { n: '02', title: 'Plan together', text: 'A call or a studio visit to talk about you, your people and the feeling you want to keep.' },
+  { n: '03', title: 'The shoot', text: 'We guide gently and stay out of the way, so the photos look like you on your best day.' },
+  { n: '04', title: 'Your gallery', text: 'A first preview within a week, the full edited gallery and albums after.' },
 ];

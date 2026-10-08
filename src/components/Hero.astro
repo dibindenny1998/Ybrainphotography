@@ -1,113 +1,101 @@
 ---
-/**
- * Hero — a dark, ember-lit 3D space. Photos float in depth; scrolling dollies
- * the camera through them and into the final photograph (hero-01).
- */
 import Img from './Img.astro';
-import { site } from '../data/site';
-import { photo } from '../lib/photos';
-const slots = [
-  'hero-02', 'weddings-01', 'couples-02', 'hero-03', 'portraits-02', 'events-02', 'newborn-01', 'hero-04',
-  'weddings-05', 'couples-03', 'portraits-03', 'events-03', 'weddings-02', 'newborn-03', 'couples-01', 'portraits-01',
-];
-const tunnel = await Promise.all(slots.map(async (s) => { const p = await photo(s); return { src: p.srcset ? p.srcset.split(',').pop()!.trim().split(' ')[0] : p.src, w: p.width, h: p.height }; }));
-const fin = await photo('hero-01');
-const finalPhoto = { src: fin.srcset ? fin.srcset.split(',').pop()!.trim().split(' ')[0] : fin.src, w: fin.width, h: fin.height };
+import { heroSlides, categories } from '../data/site';
 ---
-<section class="hero is-dark" id="top" data-theme="dark" aria-label="Introduction">
-  <div class="hero__pin" data-hero-pin>
-    <div class="lamp" data-lamp></div>
-    <canvas class="hero__gl" data-tunnel aria-hidden="true"></canvas>
-
-    <!-- shown only if WebGL is unavailable -->
-    <div class="hero__fallback" aria-hidden="true">
-      <span class="hero__fb hero__fb--1"><Img slot="hero-02" fit="cover" alt="" eager sizes="30vw" /></span>
-      <span class="hero__fb hero__fb--2"><Img slot="hero-04" fit="cover" alt="" eager sizes="30vw" /></span>
-      <span class="hero__fb hero__fb--3"><Img slot="hero-03" fit="cover" alt="" eager sizes="30vw" /></span>
-    </div>
-
-    <div class="hero__ui wrap">
-      <div class="hero__top">
-        <p class="label hero__meta" data-hero-fade><span data-scramble>{site.tagline}</span></p>
-        <p class="label hero__meta hero__meta--r" data-hero-fade>Est. {site.established} <span class="hero__star">✦</span> Kerala</p>
-      </div>
-
-      <h1 class="hero__title" data-hero-title aria-label="We frame the quiet in-between.">
-        <span class="hero__line" aria-hidden="true"><span class="hero__chars" data-hero-chars data-kinetic>We frame</span></span>
-        <span class="hero__line" aria-hidden="true"><span class="hero__chars" data-hero-chars data-kinetic>the <em>quiet</em></span></span>
-        <span class="hero__line" aria-hidden="true"><span class="hero__chars" data-hero-chars data-kinetic>in-between.</span></span>
+<section class="hero dark" id="top" data-theme="dark" aria-label="Introduction">
+  <div class="hero__grid wrap">
+    <div class="hero__text">
+      <p class="tag hero__tag" data-hero-fade>Photography studio · Est. 2026</p>
+      <h1 class="hero__title display" data-hero-title>
+        <span class="line-mask"><span data-hero-line>Moments,</span></span>
+        <span class="line-mask"><span data-hero-line><em>made</em></span></span>
+        <span class="line-mask"><span data-hero-line>timeless.</span></span>
       </h1>
-
       <div class="hero__foot">
-        <p class="hero__intro" data-hero-fade>
-          Cinematic wedding, couple, newborn &amp; portrait photography from a new, lamp-lit studio in Kerala.
+        <p class="hero__intro muted" data-hero-fade>
+          Weddings, couples, maternity, newborn and portraits, photographed with honesty, warmth and a lot of light.
         </p>
-        <a href="#work" class="hero__scroll label" data-hero-fade aria-label="Scroll to enter">
-          <span class="hero__mouse"><i></i></span><span>Scroll to enter</span>
-        </a>
+        <div class="hero__ctas" data-hero-fade>
+          <a href="#contact" class="btn btn--accent" data-magnetic="0.25"><span class="btn__roll"><span data-t="Book a shoot">Book a shoot</span></span></a>
+          <a href="#work" class="btn btn--ghost"><span class="btn__roll"><span data-t="See the work">See the work</span></span></a>
+        </div>
       </div>
     </div>
 
-    <div class="hero__caption wrap" data-hero-caption aria-hidden="true">
-      <p class="label hero__kicker">Weddings · Couples · Newborn · Portraits · Events</p>
-      <p class="hero__cline">Every ritual. Every glance.<br /><em>Every lamp lit.</em></p>
-    </div>
-    <div class="hero__progress" aria-hidden="true"><i data-hero-progress></i></div>
+    <figure class="hero__show" data-hero-show data-cursor="Work">
+      <div class="hero__slides" data-hero-slides>
+        {heroSlides.map((s, i) => (
+          <div class:list={['hero__slide', { 'is-active': i === 0 }]} data-hero-slide>
+            <Img slot={s.slot} fit="cover" eager={i === 0} sizes="(min-width: 1024px) 40vw, 92vw" />
+          </div>
+        ))}
+      </div>
+      <figcaption class="hero__cap">
+        <span class="hero__count"><span data-hero-index>01</span> / {String(heroSlides.length).padStart(2, '0')}</span>
+        <span class="hero__capt">
+          {heroSlides.map((s, i) => <span class:list={['hero__capt-i', { 'is-active': i === 0 }]} data-hero-capt><em>{s.caption}</em> — {s.kind}</span>)}
+        </span>
+      </figcaption>
+      <div class="hero__progress"><i data-hero-progress></i></div>
+    </figure>
   </div>
-  <script type="application/json" data-tunnel-photos set:html={JSON.stringify({ photos: tunnel, final: finalPhoto })} />
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      {[0, 1].map(() => (
+        <div class="ticker__group">
+          {categories.map((c) => <span class="ticker__item">{c.name}<i>✺</i></span>)}
+        </div>
+      ))}
+    </div>
+  </div>
 </section>
 
 <style is:global>
-  .hero { position: relative; }
-  .hero__pin { position: relative; height: 100svh; overflow: hidden; background: radial-gradient(ellipse 80% 70% at 50% 55%, #3a0b16 0%, #14070a 55%, #070304 100%); }
-  .hero__gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  .hero__fallback { display: none; }
-  .no-gl .hero__fallback { display: block; position: absolute; inset: 0; }
-  .hero__fb { position: absolute; display: block; overflow: hidden; border-radius: 4px; opacity: 0.55; }
-  .hero__fb .img { width: 100%; height: 100%; object-fit: cover; }
-  .hero__fb--1 { width: 26vw; aspect-ratio: 2 / 3; left: 4%; top: 18%; }
-  .hero__fb--2 { width: 22vw; aspect-ratio: 1; right: 5%; top: 12%; }
-  .hero__fb--3 { width: 20vw; aspect-ratio: 4 / 5; right: 22%; bottom: 6%; }
+  .hero { position: relative; overflow: hidden; padding-top: clamp(84px, 11vh, 120px); }
+  .hero__grid { display: grid; gap: 28px; padding-bottom: clamp(28px, 5vh, 56px); }
+  .hero__tag { color: var(--stone-2); }
+  .hero__title { font-size: clamp(4.2rem, 19vw, 15rem); margin: 14px 0 0; line-height: 0.86; }
+  .hero__title em { color: var(--accent); }
+  .hero__title .line-mask { padding-bottom: 0.06em; }
+  .hero__title [data-hero-line] { display: inline-block; }
+  .hero__foot { display: grid; gap: 22px; margin-top: 22px; }
+  .hero__intro { margin: 0; max-width: 34ch; font-size: 16px; }
+  .hero__ctas { display: flex; flex-wrap: wrap; gap: 10px; }
 
-  .hero__ui { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding-top: 96px; padding-bottom: 28px; pointer-events: none; }
-  .hero__ui a { pointer-events: auto; }
-  .hero__top { display: flex; justify-content: space-between; gap: 16px; color: rgba(246, 233, 218, 0.75); }
-  .hero__meta { margin: 0; font-size: 10px; }
-  .hero__top .hero__meta:first-child { max-width: 16ch; }
-  .hero__meta--r { text-align: right; }
-  .hero__star { color: #ff4d66; }
+  .hero__show { margin: 0; position: relative; order: -1; }
+  .hero__slides { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 6px; background: var(--ink-3); }
+  .hero__slide { position: absolute; inset: 0; clip-path: inset(0 0 100% 0); }
+  .hero__slide.is-active { clip-path: inset(0 0 0 0); z-index: 1; }
+  .hero__slide .img { width: 100%; height: 100%; object-fit: cover; }
+  .hero__cap { display: flex; justify-content: space-between; gap: 16px; padding-top: 12px; font-size: 13px; color: var(--stone-2); }
+  .hero__count { font-variant-numeric: tabular-nums; color: var(--paper); font-weight: 500; }
+  .hero__capt { position: relative; flex: 1; text-align: right; height: 1.6em; overflow: hidden; }
+  .hero__capt-i { position: absolute; right: 0; top: 0; white-space: nowrap; opacity: 0; transform: translateY(100%); transition: opacity 0.5s, transform 0.6s var(--ease); }
+  .hero__capt-i.is-active { opacity: 1; transform: none; }
+  .hero__capt em { font-family: var(--serif); font-size: 1.15em; color: var(--paper); }
+  .hero__progress { height: 2px; background: var(--line-d); margin-top: 10px; overflow: hidden; }
+  .hero__progress i { display: block; height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
 
-  .hero__title {
-    margin: 0; text-align: center; font-family: var(--serif); font-weight: 400; color: var(--cream);
-    font-size: clamp(3.4rem, 15.5vw, 15rem); line-height: 0.88; letter-spacing: -0.04em;
-    text-shadow: 0 10px 60px rgba(0, 0, 0, 0.5); will-change: transform, opacity, filter;
+  @media (max-width: 767px) {
+    .hero__show { margin-inline: calc(var(--gutter) * -0.35); }
+    .hero__slides { aspect-ratio: auto; height: 52svh; }
+    .hero__title { font-size: clamp(3.6rem, 18vw, 6rem); }
   }
-  .hero__line { display: block; overflow: clip; padding: 0.04em 0.06em 0.1em; margin-bottom: -0.1em; }
-  .hero__chars { display: inline-block; }
-  .hero__title em { font-style: italic; color: #ff3d5a; text-shadow: 0 0 50px rgba(255, 40, 80, 0.6); }
-
-  .hero__foot { display: grid; gap: 22px; align-items: end; }
-  .hero__intro { margin: 0; max-width: 34ch; font-size: 15px; line-height: 1.6; color: rgba(246, 233, 218, 0.78); }
-  .hero__scroll { display: inline-flex; align-items: center; gap: 14px; font-size: 10px; color: var(--cream); }
-  .hero__mouse { width: 22px; height: 34px; border: 1px solid rgba(246, 233, 218, 0.6); border-radius: 12px; position: relative; }
-  .hero__mouse i { position: absolute; left: 50%; top: 7px; width: 2px; height: 6px; margin-left: -1px; border-radius: 2px; background: #ff4d66; animation: wheel 1.8s var(--ease) infinite; }
-  @keyframes wheel { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(10px); opacity: 0; } 100% { opacity: 0; } }
-
-  .hero__caption { position: absolute; left: 0; right: 0; bottom: 12%; color: var(--cream); opacity: 0; visibility: hidden; text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6); }
-  .hero__kicker { margin: 0 0 16px; font-size: 10px; opacity: 0.85; }
-  .hero__cline { margin: 0; font-family: var(--serif); font-size: clamp(2.4rem, 7vw, 6.5rem); line-height: 0.98; letter-spacing: -0.03em; }
-  .hero__cline em { font-style: italic; color: var(--cream); }
-  .hero__caption::before { content: ''; position: absolute; inset: -40vh 0 -20vh; z-index: -1; background: linear-gradient(180deg, transparent, rgba(40, 3, 12, 0.75) 70%); }
-  .hero__progress { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 0; height: 2px; background: rgba(246, 233, 218, 0.1); }
-  .hero__progress i { position: absolute; inset: 0; background: #ff3d5a; transform: scaleX(0); transform-origin: left; box-shadow: 0 0 12px #ff3d5a; }
-
-  @media (min-width: 768px) {
-    .hero__ui { padding-top: 110px; }
-    .hero__meta { font-size: 11px; }
-    .hero__top .hero__meta:first-child { max-width: none; }
-    .hero__foot { grid-template-columns: 1fr auto; }
-    .hero__intro { font-size: 16px; }
+  @media (min-width: 1024px) {
+    .hero { min-height: 100svh; display: flex; flex-direction: column; justify-content: space-between; }
+    .hero__grid { grid-template-columns: 1.25fr 0.75fr; align-items: end; gap: 5vw; padding-bottom: 4vh; }
+    .hero__show { order: 0; }
+    .hero__slides { aspect-ratio: auto; height: min(72svh, 760px); }
+    .hero__title { font-size: clamp(6rem, min(14vw, 23svh), 16rem); }
+    .hero__foot { grid-template-columns: 1fr auto; align-items: end; margin-top: 4vh; }
   }
-  @media (min-width: 1024px) { .hero__title { font-size: clamp(5rem, min(12.5vw, 20svh), 15rem); } }
-  .no-motion .hero__caption, html:not(.js) .hero__caption { display: none; }
+
+  /* marigold ticker */
+  .ticker { background: var(--accent); color: var(--ink); overflow: hidden; padding-block: 14px; }
+  .ticker__track { display: flex; width: max-content; animation: ticker 32s linear infinite; }
+  .ticker__group { display: flex; flex: none; }
+  .ticker__item { display: inline-flex; align-items: center; gap: 28px; padding-right: 28px; font-family: var(--serif); font-size: clamp(1.6rem, 3.4vw, 2.8rem); line-height: 1.1; white-space: nowrap; }
+  .ticker__item i { font-style: normal; font-size: 0.6em; }
+  @keyframes ticker { to { transform: translateX(-50%); } }
 </style>

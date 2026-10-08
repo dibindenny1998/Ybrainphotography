@@ -1,5 +1,5 @@
 ---
-/** Preloader, navigation, full-screen menu, sound toggle, custom cursor, WhatsApp button */
+/** Preloader, navigation, menu, cursor and floating WhatsApp button */
 import Logo from './Logo.astro';
 import Img from './Img.astro';
 import WhatsApp from './icons/WhatsApp.astro';
@@ -8,199 +8,127 @@ const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hi Ybrain!
 const links = [
   { href: '#work', label: 'Work', n: '01' },
   { href: '#stories', label: 'Stories', n: '02' },
-  { href: '#studio', label: 'Studio', n: '03' },
-  { href: '#enquire', label: 'Enquire', n: '04' },
+  { href: '#about', label: 'About', n: '03' },
+  { href: '#contact', label: 'Contact', n: '04' },
 ];
-const shuffle = ['hero-02', 'weddings-01', 'couples-02', 'newborn-01', 'portraits-01', 'events-03', 'hero-04', 'hero-03'];
+const flicks = ['couples-03', 'newborn-01', 'celebrations-01', 'maternity-01', 'weddings-05', 'portraits-01'];
 ---
-<!-- PRELOADER: a stack of photos shuffles, the shutter closes, flash -->
 <div class="loader" aria-hidden="true">
-  <div class="loader__inner">
-    <canvas class="loader__embers" data-loader-embers></canvas>
-    <div class="loader__frame" data-loader-frame>
-      {shuffle.map((s, i) => <div class="loader__shot" data-loader-shot><Img slot={s} fit="cover" alt="" eager={i < 3} sizes="40vw" /></div>)}
-    </div>
-    <Logo class="loader__logo" draw />
-    <div class="loader__meta">
-      <span class="label">Kerala · Weddings & Portraits</span>
-      <span class="loader__count serif"><span class="loader__num">00</span></span>
-    </div>
+  <div class="loader__frame" data-loader-frame>
+    {flicks.map((s, i) => <div class="loader__shot" data-loader-shot><Img slot={s} fit="cover" alt="" eager={i < 2} sizes="240px" /></div>)}
   </div>
-  <div class="loader__flash"></div>
+  <div class="loader__brand"><Logo class="loader__logo" draw /></div>
+  <div class="loader__count"><span data-loader-num>0</span><sup>%</sup></div>
+  <div class="loader__bar"><i data-loader-bar></i></div>
 </div>
 
-<!-- NAV -->
 <header class="nav" data-nav>
-  <a href="#top" class="nav__logo" aria-label="Ybrain Photography — back to top" data-magnetic="0.25"><Logo /></a>
+  <a href="#top" class="nav__logo" aria-label="Ybrain Photography — home"><Logo /></a>
   <nav class="nav__links" aria-label="Main">
-    {links.slice(0, 3).map((l) => (
-      <a href={l.href} class="nav__link"><span data-hover-text={l.label}>{l.label}</span></a>
-    ))}
+    {links.slice(0, 3).map((l) => <a href={l.href} class="nav__link"><span data-t={l.label}>{l.label}</span></a>)}
   </nav>
   <div class="nav__right">
-    <button class="sound" data-sound aria-pressed="false" aria-label="Turn sound on">
-      <span class="sound__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span class="label sound__label">Sound</span>
-    </button>
-    <a href="#enquire" class="btn btn--red nav__cta" data-magnetic="0.3"><span class="btn__roll"><span data-t="Enquire">Enquire</span></span></a>
-    <button class="nav__burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu" data-menu-toggle>
-      <span class="label nav__burger-label">Menu</span>
-      <span class="nav__burger-lines"><i></i><i></i></span>
-    </button>
+    <a href="#contact" class="btn btn--accent nav__cta" data-magnetic="0.25"><span class="btn__roll"><span data-t="Book a shoot">Book a shoot</span></span></a>
+    <button class="nav__burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu" data-menu-toggle><i></i><i></i></button>
   </div>
 </header>
 
-<!-- MENU -->
 <div class="menu" id="menu" aria-hidden="true" data-menu>
   <div class="menu__bg"></div>
   <div class="menu__body">
     <ul class="menu__list">
-      {links.map((l) => (
-        <li><a href={l.href} class="menu__link" data-menu-link><span class="menu__n">{l.n}</span><span class="menu__word">{l.label}</span></a></li>
-      ))}
+      {links.map((l) => <li><a href={l.href} class="menu__link" data-menu-link><span class="menu__n">{l.n}</span><span class="menu__word">{l.label}</span></a></li>)}
     </ul>
     <div class="menu__foot">
-      <a href={wa} target="_blank" rel="noopener" class="menu__wa"><WhatsApp class="btn__icon" /> WhatsApp</a>
-      <a href={site.instagram} target="_blank" rel="noopener">{site.instagramHandle}</a>
-      <span>{site.studio.line2}</span>
+      <a href={wa} target="_blank" rel="noopener" class="btn btn--accent"><WhatsApp class="btn__icon" /> WhatsApp us</a>
+      <a href={site.instagram} target="_blank" rel="noopener" class="label">{site.instagramHandle}</a>
     </div>
   </div>
 </div>
 
-<!-- CURSOR (fine pointers only) -->
-<div class="cursor" aria-hidden="true"><div class="cursor__ring"><span class="cursor__label"></span></div><div class="cursor__dot"></div></div>
+<div class="cursor" aria-hidden="true"><span class="cursor__label"></span></div>
 
-<!-- FLOATING WHATSAPP -->
-<a href={wa} class="fab" target="_blank" rel="noopener" aria-label="Chat with Ybrain on WhatsApp" data-magnetic="0.4" data-fab>
-  <WhatsApp class="fab__icon" />
-  <span class="fab__ring"></span>
-</a>
+<a href={wa} class="fab" target="_blank" rel="noopener" aria-label="Chat on WhatsApp" data-fab><WhatsApp class="fab__icon" /></a>
 
 <style is:global>
-  /* ── loader */
-  .loader { position: fixed; inset: 0; z-index: 200; display: none; pointer-events: none; }
-  .js .loader { display: block; pointer-events: auto; }
-  .loader__inner {
-    position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 60%, #2b0911 0%, #0d0506 60%, #050203 100%);
-    display: grid; place-items: center; align-content: center; gap: 26px; color: var(--cream); overflow: hidden;
-  }
-  .loader__embers { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .loader__frame { position: relative; width: min(46vw, 230px); aspect-ratio: 4 / 5; border-radius: 4px; overflow: hidden; box-shadow: 0 40px 90px -30px rgba(255, 40, 70, 0.5); }
-  .loader__shot { position: absolute; inset: 0; clip-path: inset(100% 0 0 0); }
+  /* loader */
+  .loader { position: fixed; inset: 0; z-index: 200; background: var(--ink); color: var(--paper); display: none; }
+  .js .loader { display: block; }
+  .loader__frame { position: absolute; left: 50%; top: 50%; width: min(42vw, 220px); aspect-ratio: 4 / 5; transform: translate(-50%, -50%); overflow: hidden; border-radius: 4px; }
+  .loader__shot { position: absolute; inset: 0; opacity: 0; }
+  .loader__shot:first-child { opacity: 1; }
   .loader__shot .img { width: 100%; height: 100%; object-fit: cover; }
-  .loader__logo { position: absolute; width: min(70vw, 420px); overflow: visible; color: #ff3d5a; filter: drop-shadow(0 0 18px rgba(255, 50, 80, 0.55)); }
-  .loader__logo.logo path { stroke-width: 5; }
-  .loader__meta { position: absolute; left: var(--gutter); right: var(--gutter); bottom: max(28px, env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: baseline; color: rgba(246, 233, 218, 0.7); }
-  .loader__count { font-size: clamp(3rem, 9vw, 7rem); font-style: italic; color: var(--cream); line-height: 1; font-variant-numeric: tabular-nums; }
-  .loader__flash { position: absolute; inset: 0; background: #fff6ec; opacity: 0; pointer-events: none; }
+  .loader__brand { position: absolute; left: var(--gutter); top: max(22px, env(safe-area-inset-top)); width: 110px; color: var(--paper); }
+  .loader__logo.logo path { stroke-width: 9; }
+  .loader__count { position: absolute; right: var(--gutter); bottom: max(26px, env(safe-area-inset-bottom)); font-family: var(--serif); font-size: clamp(5rem, 16vw, 13rem); line-height: 0.8; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .loader__count sup { font-size: 0.3em; vertical-align: top; color: var(--accent); margin-left: 0.05em; }
+  .loader__bar { position: absolute; left: var(--gutter); bottom: max(30px, env(safe-area-inset-bottom)); width: min(40vw, 260px); height: 2px; background: var(--line-d); }
+  .loader__bar i { position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; }
 
-  /* ── logo */
+  /* logo */
   .logo { overflow: visible; }
-  .logo path { fill: none; stroke: currentColor; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+  .logo path { fill: none; stroke: currentColor; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
   .logo circle { fill: currentColor; }
   .logo--draw path { stroke-dasharray: 1; stroke-dashoffset: 1; }
 
-  /* ── nav */
+  /* nav */
   .nav {
-    position: fixed; z-index: 100; top: 0; left: 0; right: 0; color: var(--ink);
-    display: flex; align-items: center; justify-content: space-between; gap: 24px;
-    padding: 14px var(--gutter); padding-top: max(14px, env(safe-area-inset-top));
-    transition: transform 0.7s var(--ease), background-color 0.5s, box-shadow 0.5s, color 0.5s;
+    position: fixed; z-index: 100; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    padding: 14px var(--gutter); padding-top: max(14px, env(safe-area-inset-top)); color: var(--paper);
+    transition: transform 0.6s var(--ease), color 0.4s, background-color 0.4s;
   }
-  .nav.is-scrolled { background: color-mix(in srgb, var(--ivory) 80%, transparent); backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); box-shadow: 0 1px 0 var(--line); }
-  .nav-dark .nav { color: var(--cream); }
-  .nav-dark .nav.is-scrolled { background: rgba(13, 5, 6, 0.55); box-shadow: 0 1px 0 var(--line-dark); }
   .nav.is-hidden { transform: translateY(-110%); }
-  .nav__logo { color: var(--red); display: block; width: 96px; transition: color 0.5s; }
-  .nav-dark .nav__logo { color: #ff3d5a; }
-  .nav__logo .logo path { stroke-width: 9; }
-  .nav__links { display: none; gap: 40px; }
-  .nav__link { display: inline-block; overflow: hidden; height: 1.5em; line-height: 1.5; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 500; }
-  .nav__link span { display: block; position: relative; transition: transform 0.6s var(--ease); }
-  .nav__link span::after { content: attr(data-hover-text); position: absolute; left: 0; top: 100%; color: var(--red); }
-  .nav-dark .nav__link span::after { color: #ff4d66; }
+  .nav.is-solid { background: rgba(13, 12, 11, 0.92); }
+  .nav-light .nav { color: var(--ink); }
+  .nav-light .nav.is-solid { background: rgba(244, 241, 236, 0.94); box-shadow: 0 1px 0 var(--line); }
+  .nav__logo { width: 92px; display: block; }
+  .nav__links { display: none; gap: 36px; }
+  .nav__link { display: inline-block; overflow: hidden; height: 1.4em; line-height: 1.4; font-size: 14px; font-weight: 500; }
+  .nav__link span { display: block; position: relative; transition: transform 0.5s var(--ease); }
+  .nav__link span::after { content: attr(data-t); position: absolute; left: 0; top: 100%; }
   .nav__link:hover span { transform: translateY(-100%); }
-  .nav__right { display: flex; align-items: center; gap: 14px; }
-  .nav__cta { --h: 44px; display: none; padding: 0 22px; font-size: 11px; }
-  .nav__burger { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 4px 0 6px; position: relative; z-index: 2; }
-  .nav__burger-lines { position: relative; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); display: grid; place-items: center; transition: background 0.4s; }
-  .nav-dark .nav__burger-lines { background: var(--red); }
-  .nav__burger-lines i { position: absolute; width: 16px; height: 1.5px; background: var(--ivory); transition: transform 0.6s var(--ease); }
-  .nav__burger-lines i:first-child { transform: translateY(-3px); }
-  .nav__burger-lines i:last-child { transform: translateY(3px); }
-  .menu-open .nav { color: var(--cream); background: transparent !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-  .menu-open .nav__burger-lines { background: var(--cream); }
-  .menu-open .nav__burger-lines i { background: var(--red); }
-  .menu-open .nav__burger-lines i:first-child { transform: rotate(45deg); }
-  .menu-open .nav__burger-lines i:last-child { transform: rotate(-45deg); }
-  .menu-open .nav__logo { color: var(--cream); }
-  .menu-open .nav__cta { opacity: 0; pointer-events: none; }
-
-  /* sound toggle */
-  .sound { display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 6px; }
-  .sound__label { display: none; font-size: 10px; }
-  .sound__bars { display: flex; align-items: flex-end; gap: 2.5px; height: 14px; }
-  .sound__bars i { width: 2px; height: 3px; background: currentColor; border-radius: 1px; transition: height 0.3s; }
-  .sound.is-on .sound__bars i { animation: eq 0.9s ease-in-out infinite alternate; }
-  .sound.is-on .sound__bars i:nth-child(2) { animation-delay: -0.3s; }
-  .sound.is-on .sound__bars i:nth-child(3) { animation-delay: -0.6s; }
-  .sound.is-on .sound__bars i:nth-child(4) { animation-delay: -0.15s; }
-  @keyframes eq { from { height: 3px; } to { height: 14px; } }
-
+  .nav__right { display: flex; align-items: center; gap: 12px; }
+  .nav__cta { --h: 42px; display: none; padding: 0 20px; }
+  .nav__burger { position: relative; width: 44px; height: 44px; border-radius: 50%; background: var(--accent); z-index: 2; }
+  .nav__burger i { position: absolute; left: 14px; width: 16px; height: 1.5px; background: var(--ink); transition: transform 0.5s var(--ease); }
+  .nav__burger i:first-child { top: 18px; }
+  .nav__burger i:last-child { top: 24px; }
+  .menu-open .nav__burger i:first-child { transform: translateY(3px) rotate(45deg); }
+  .menu-open .nav__burger i:last-child { transform: translateY(-3px) rotate(-45deg); }
+  .menu-open .nav { color: var(--paper); background: transparent !important; box-shadow: none !important; }
   @media (min-width: 1024px) {
     .nav__links { display: flex; }
     .nav__cta { display: inline-flex; }
     .nav__burger { display: none; }
-    .nav__logo { width: 112px; }
-    .sound__label { display: inline; }
+    .nav__logo { width: 104px; }
   }
 
-  /* ── menu */
-  .menu { position: fixed; inset: 0; z-index: 95; pointer-events: none; visibility: hidden; }
-  .menu.is-open { pointer-events: auto; visibility: visible; }
-  .menu__bg { position: absolute; inset: 0; background: var(--velvet); clip-path: circle(0% at calc(100% - 40px) 36px); }
-  .menu__body { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 120px var(--gutter) max(32px, env(safe-area-inset-bottom)); color: var(--cream); }
+  /* menu */
+  .menu { position: fixed; inset: 0; z-index: 95; visibility: hidden; pointer-events: none; }
+  .menu.is-open { visibility: visible; pointer-events: auto; }
+  .menu__bg { position: absolute; inset: 0; background: var(--ink); transform: scaleY(0); transform-origin: top; }
+  .menu__body { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 110px var(--gutter) max(30px, env(safe-area-inset-bottom)); color: var(--paper); }
   .menu__list { list-style: none; margin: 0; padding: 0; }
-  .menu__list li { overflow: hidden; border-bottom: 1px solid rgba(246, 240, 230, 0.2); }
-  .menu__link { display: flex; align-items: baseline; gap: 18px; padding: 10px 0 6px; }
-  .menu__n { font-family: var(--serif); font-style: italic; font-size: 14px; opacity: 0.7; }
-  .menu__word { display: block; font-family: var(--serif); font-size: clamp(3.2rem, 15vw, 6rem); line-height: 1; letter-spacing: -0.03em; }
-  .menu__link:active .menu__word { font-style: italic; }
-  .menu__foot { display: flex; flex-wrap: wrap; gap: 14px 28px; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; }
-  .menu__wa { display: inline-flex; align-items: center; gap: 10px; }
+  .menu__list li { overflow: hidden; border-bottom: 1px solid var(--line-d); }
+  .menu__link { display: flex; align-items: baseline; gap: 16px; padding: 8px 0; }
+  .menu__n { font-size: 12px; color: var(--accent); font-weight: 600; }
+  .menu__word { display: block; font-family: var(--serif); font-size: clamp(3.4rem, 16vw, 6rem); line-height: 1.02; letter-spacing: -0.02em; }
+  .menu__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 24px; }
 
-  /* ── cursor */
+  /* cursor (desktop only) */
   .cursor { display: none; }
   @media (hover: hover) and (pointer: fine) {
-    .has-cursor .cursor { display: block; position: fixed; inset: 0 auto auto 0; z-index: 300; pointer-events: none; mix-blend-mode: normal; }
-    .has-cursor, .has-cursor a, .has-cursor button { cursor: none; }
-    .has-cursor input, .has-cursor textarea { cursor: text; }
+    .has-cursor .cursor {
+      display: grid; place-items: center; position: fixed; left: 0; top: 0; z-index: 300; pointer-events: none;
+      width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%; background: var(--accent); color: var(--ink);
+      transform: scale(0); transition: transform 0.35s var(--ease-out);
+    }
+    .has-cursor .cursor.is-on { transform: scale(1); }
   }
-  .cursor__dot { position: absolute; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--red); }
-  .cursor__ring {
-    position: absolute; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%;
-    border: 1px solid rgba(176, 18, 47, 0.5); display: grid; place-items: center;
-    transition: width 0.5s var(--ease), height 0.5s var(--ease), margin 0.5s var(--ease), background-color 0.4s, border-color 0.4s;
-  }
-  .cursor__label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ivory); opacity: 0; transition: opacity 0.3s; font-weight: 500; }
-  .cursor.is-link .cursor__ring { width: 64px; height: 64px; margin: -32px 0 0 -32px; border-color: var(--red); }
-  .cursor.is-label .cursor__ring { width: 96px; height: 96px; margin: -48px 0 0 -48px; background: var(--red); border-color: var(--red); }
-  .cursor.is-label .cursor__label { opacity: 1; }
-  .cursor.is-label .cursor__dot, .cursor.is-link .cursor__dot { opacity: 0; }
-  .cursor.is-on-red .cursor__ring { border-color: var(--cream); }
-  .cursor.is-on-red .cursor__dot { background: var(--cream); }
-  .cursor.is-on-red.is-label .cursor__ring { background: var(--cream); }
-  .cursor.is-on-red.is-label .cursor__label { color: var(--red); }
+  .cursor__label { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 
-  /* ── WhatsApp FAB */
-  .fab {
-    position: fixed; z-index: 80; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
-    width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
-    background: var(--velvet); color: #fff8f0; box-shadow: 0 12px 30px -8px rgba(176, 18, 47, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.18);
-    transform: scale(0);
-  }
-  html:not(.js) .fab { transform: none; }
+  /* WhatsApp */
+  .fab { position: fixed; z-index: 80; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--ink); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.45); transform: scale(0); transition: transform 0.5s var(--ease-out); }
+  .fab.is-on, html:not(.js) .fab { transform: scale(1); }
   .fab__icon { width: 26px; height: 26px; }
-  .fab__ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--red); animation: ring 2.6s var(--ease-out) infinite; }
-  @keyframes ring { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.7); opacity: 0; } }
 </style>

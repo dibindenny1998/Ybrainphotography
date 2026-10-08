@@ -14,7 +14,6 @@ const ld = {
   telephone: site.phoneDisplay,
   email: site.email,
   address: { '@type': 'PostalAddress', addressRegion: 'Kerala', addressCountry: 'IN' },
-  areaServed: 'Kerala',
   sameAs: [site.instagram],
 };
 ---
@@ -26,7 +25,7 @@ const ld = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#FBF6EE" />
+    <meta name="theme-color" content="#0D0C0B" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:type" content="website" />
@@ -43,6 +42,5 @@ const ld = {
   </head>
   <body>
     <slot />
-    <div class="grain" aria-hidden="true"></div>
   </body>
 </html>

@@ -1,166 +1,95 @@
 ---
-/** Red marquee band, manifesto, and the dark "work" block (cursor trail + category index) */
+/** Statement + services index */
 import Img from './Img.astro';
-import Jasmine from './icons/Jasmine.astro';
 import Arrow from './icons/Arrow.astro';
 import { categories } from '../data/site';
 import { category } from '../lib/photos';
 const groups = await Promise.all(categories.map(async (c) => ({ ...c, photos: await category(c.id) })));
-const counts = Object.fromEntries(groups.map((g) => [g.id, g.photos.length]));
-const covers = Object.fromEntries(groups.map((g) => [g.id, g.photos[0]]));
-const trailSrcs = groups.flatMap((g) => g.photos).map((p) => (p.srcset ? p.srcset.split(',')[1]?.trim().split(' ')[0] ?? p.src : p.src));
-const manifesto =
-  'We believe the best photographs happen *between* the rituals — a grandmother’s hand on a bride’s head, the hush before the *thali,* the laugh nobody planned. We stay quiet, watch closely, and frame what you’ll want to *feel again* in forty years.';
-const words = manifesto.split(' ').map((w) => ({ text: w.replace(/\*/g, ''), em: w.includes('*') }));
+const statement =
+  'We photograph people, not poses. The *glance* nobody planned, the *laugh* in the middle of a ritual, the light that only lasts a minute, kept for the *next fifty years.*';
+const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.includes('*') }));
+const covers = ['portraits-03', 'couples-01', 'maternity-02', 'newborn-01', 'portraits-02', 'celebrations-02'];
 ---
-<div class="marquee" aria-hidden="true" data-marquee data-on-red>
-  {[0, 1].map((row) => (
-    <div class:list={['marquee__row', row ? 'marquee__row--b' : '']} data-marquee-row={row ? -1 : 1}>
-      {[0, 1].map(() => (
-        <div class="marquee__track">
-          {categories.map((c, i) => (
-            <span class="marquee__item">
-              <span class:list={['marquee__word', (i + row) % 2 ? 'is-outline' : '']} data-kinetic>{c.name}</span>
-              <Jasmine class="marquee__flower" />
-            </span>
-          ))}
-        </div>
-      ))}
-    </div>
-  ))}
-</div>
-
-<section class="manifesto section wrap" aria-labelledby="manifesto-title">
-  <p class="eyebrow"><span class="eyebrow__n">i.</span><span data-scramble>The approach</span></p>
-  <h2 id="manifesto-title" class="sr-only">Our approach</h2>
-  <p class="manifesto__text" data-manifesto>
-    {words.map((w) => <><span class:list={['mword', { 'mword--em': w.em }]}>{w.text}</span>{' '}</>)}
+<section class="statement section wrap" aria-labelledby="statement-title">
+  <p class="tag">About the work</p>
+  <h2 id="statement-title" class="sr-only">Our approach</h2>
+  <p class="statement__text" data-statement>
+    {words.map((w) => <><span class:list={['sw', { 'sw--em': w.em }]}>{w.t}</span>{' '}</>)}
   </p>
-  <div class="manifesto__sign">
-    <span class="manifesto__lamp" data-speed="0.85" data-gl><Img slot="hero-03" fit="cover" alt="" sizes="240px" /></span>
-    <p class="manifesto__note">
-      <span class="label">Ybrain Studio</span>
-      <span class="serif">Unhurried, unposed, unmistakably Kerala.</span>
-    </p>
+  <div class="statement__pics" aria-hidden="true">
+    <span class="statement__pic statement__pic--a" data-speed="0.9"><Img slot="couples-03" fit="cover" alt="" sizes="(min-width: 1024px) 18vw, 40vw" /></span>
+    <span class="statement__pic statement__pic--b" data-speed="1.1"><Img slot="weddings-05" fit="cover" alt="" sizes="(min-width: 1024px) 22vw, 50vw" /></span>
   </div>
 </section>
 
-<section class="work is-dark" id="work" data-theme="dark" aria-labelledby="index-title">
-  <div class="lamp" data-lamp></div>
-
-  <!-- cursor image trail -->
-  <div class="trail" data-trail data-cursor="Move" data-trail-srcs={JSON.stringify(trailSrcs)}>
-    <div class="trail__layer" data-trail-layer></div>
-    <div class="trail__text wrap">
-      <p class="eyebrow"><span class="eyebrow__n">ii.</span><span data-scramble>The work</span></p>
-      <h2 id="index-title" class="trail__title" data-kinetic>
-        <span class="trail__l" data-split-chars>Kerala,</span>
-        <span class="trail__l trail__l--i" data-split-chars><em>frame</em> by</span>
-        <span class="trail__l" data-split-chars><em>frame.</em></span>
-      </h2>
-      <p class="trail__hint label"><span class="trail__dot"></span><span class="trail__hint-d">Move your cursor</span><span class="trail__hint-m">Touch &amp; drag</span></p>
-    </div>
+<section class="services dark section" id="work" data-theme="dark" aria-labelledby="services-title">
+  <div class="services__head wrap">
+    <p class="tag">What we shoot</p>
+    <h2 id="services-title" class="display services__title" data-split>Six ways<br />to be <em>remembered.</em></h2>
   </div>
-
-  <ul class="index__list" data-index>
-    {categories.map((c, i) => (
-      <li class="index__item">
-        <a href="#gallery" class="index__row wrap" data-filter-link={c.id} data-cursor="View" data-index-row={c.id}>
-          <span class="index__n serif">0{i + 1}</span>
-          <span class="index__name" data-scramble>{c.name}</span>
-          <span class="index__ml" lang="ml">{c.ml}</span>
-          <span class="index__blurb">{c.blurb}</span>
-          <span class="index__count label">{String(counts[c.id]).padStart(2, '0')} frames</span>
-          <span class="index__thumb"><Img photo={covers[c.id]} fit="cover" alt="" sizes="120px" /></span>
-          <Arrow class="index__arrow" />
+  <ul class="services__list" data-services>
+    {groups.map((g, i) => (
+      <li class="srv">
+        <a href="#gallery" class="srv__row wrap" data-filter-link={g.id} data-srv={g.id} data-cursor="View">
+          <span class="srv__n">0{i + 1}</span>
+          <span class="srv__name">{g.name}</span>
+          <span class="srv__blurb muted">{g.blurb}</span>
+          <span class="srv__count">{String(g.photos.length).padStart(2, '0')}</span>
+          <span class="srv__thumb"><Img slot={covers[i]} fit="cover" alt="" sizes="96px" /></span>
+          <Arrow class="srv__arrow" />
         </a>
       </li>
     ))}
   </ul>
-  <div class="index__float" aria-hidden="true" data-index-float>
-    {categories.map((c) => (
-      <div class="index__float-img" data-float-img={c.id}><Img photo={covers[c.id]} fit="cover" alt="" sizes="360px" /></div>
-    ))}
+  <div class="srv-float" aria-hidden="true" data-srv-float>
+    {groups.map((g, i) => <div class="srv-float__img" data-srv-img={g.id}><Img slot={covers[i]} fit="cover" alt="" sizes="320px" /></div>)}
   </div>
 </section>
 
 <style is:global>
-  /* marquee — a velvet red band */
-  .marquee { padding-block: clamp(28px, 5vw, 64px); overflow: hidden; background: var(--velvet); color: var(--cream); position: relative; }
-  .marquee::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(90, 5, 20, 0.6), transparent 18%, transparent 82%, rgba(90, 5, 20, 0.6)); pointer-events: none; }
-  .marquee__row { display: flex; width: max-content; }
-  .marquee__row--b { margin-top: 0.04em; }
-  .marquee__track { display: flex; flex: none; }
-  .marquee__item { display: inline-flex; align-items: center; gap: 0.3em; padding-right: 0.3em; font-family: var(--serif); font-size: clamp(3.6rem, 11vw, 10rem); line-height: 1.02; letter-spacing: -0.03em; white-space: nowrap; }
-  .marquee__word { font-style: italic; }
-  .marquee__word.is-outline { font-style: normal; color: transparent; -webkit-text-stroke: 1.4px rgba(255, 244, 232, 0.9); }
-  .marquee__flower { width: 0.34em; height: 0.34em; color: #ffd9c2; flex: none; }
-
-  /* manifesto */
-  .manifesto { display: grid; gap: clamp(32px, 5vw, 60px); }
-  .manifesto__text { margin: 0; font-family: var(--serif); font-size: clamp(1.8rem, 4.4vw, 4.3rem); line-height: 1.1; letter-spacing: -0.02em; max-width: 1300px; }
-  @media (prefers-reduced-motion: no-preference) { .js .mword { opacity: 0.12; } }
-  .mword { display: inline-block; }
-  .mword--em { font-style: italic; color: var(--red); }
-  .manifesto__sign { display: flex; align-items: center; gap: 22px; }
-  .manifesto__lamp { width: 96px; aspect-ratio: 4 / 5; border-radius: 999px 999px 4px 4px; overflow: hidden; flex: none; display: block; }
-  .manifesto__lamp .img { width: 100%; height: 100%; object-fit: cover; }
-  .manifesto__note { margin: 0; display: grid; gap: 6px; }
-  .manifesto__note .serif { font-size: clamp(1.1rem, 2vw, 1.4rem); font-style: italic; }
+  .statement { display: grid; gap: 34px; }
+  .statement__text { margin: 0; font-family: var(--serif); font-size: clamp(2.2rem, 5.6vw, 5.6rem); line-height: 1.02; letter-spacing: -0.02em; max-width: 17ch; }
+  .sw--em { font-style: italic; color: var(--ink); background: linear-gradient(transparent 62%, var(--accent) 62%, var(--accent) 92%, transparent 92%); }
+  .statement__pics { position: relative; display: flex; gap: 14px; align-items: flex-end; }
+  .statement__pic { display: block; overflow: hidden; border-radius: 4px; }
+  .statement__pic .img { width: 100%; height: 100%; object-fit: cover; }
+  .statement__pic--a { width: 42%; aspect-ratio: 4 / 5; }
+  .statement__pic--b { width: 54%; aspect-ratio: 1; margin-bottom: 12%; }
   @media (min-width: 1024px) {
-    .manifesto { grid-template-columns: 220px 1fr; align-items: start; }
-    .manifesto__sign { grid-column: 2; justify-content: flex-end; }
-    .manifesto__lamp { width: 140px; }
+    .statement { grid-template-columns: 1.4fr 1fr; grid-template-areas: 'tag tag' 'text pics'; column-gap: 6vw; align-items: start; }
+    .statement .tag { grid-area: tag; }
+    .statement__text { grid-area: text; }
+    .statement__pics { grid-area: pics; margin-top: 4vw; }
   }
 
-  /* dark work block */
-  .work { padding-bottom: clamp(40px, 6vw, 80px); overflow: hidden; }
-  .trail { position: relative; height: 100svh; min-height: 560px; overflow: hidden; touch-action: pan-y; }
-  .trail__layer { position: absolute; inset: 0; z-index: 0; }
-  .trail__text { position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column; justify-content: center; gap: 30px; pointer-events: none; }
-  .trail__title { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(4rem, 17vw, 17rem); line-height: 0.86; letter-spacing: -0.045em; mix-blend-mode: difference; color: #fff; }
-  .trail__l { display: block; overflow: clip; padding-bottom: 0.06em; }
-  .trail__l--i { padding-left: 0.9em; }
-  .trail__title em { font-style: italic; }
-  .trail__hint { display: inline-flex; align-items: center; gap: 12px; color: rgba(246, 233, 218, 0.7); }
-  .trail__dot { width: 8px; height: 8px; border-radius: 50%; background: #ff3d5a; box-shadow: 0 0 0 0 rgba(255, 61, 90, 0.6); animation: pulse 2s infinite; }
-  @keyframes pulse { 70% { box-shadow: 0 0 0 12px rgba(255, 61, 90, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 61, 90, 0); } }
-  .trail__hint-m { display: none; }
-  @media (hover: none) { .trail__hint-d { display: none; } .trail__hint-m { display: inline; } }
-
-  .index__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-dark); }
-  .index__item { border-bottom: 1px solid var(--line-dark); overflow: hidden; position: relative; isolation: isolate; }
-  .index__row {
-    position: relative; display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: 'n name thumb' 'n blurb thumb';
-    align-items: center; column-gap: 16px; row-gap: 6px; padding-block: 22px; transition: color 0.5s var(--ease);
-  }
-  .index__row::before { content: ''; position: absolute; inset: 0; background: var(--velvet); transform: scaleY(0); transform-origin: bottom; transition: transform 0.6s var(--ease); z-index: -1; }
-  .index__n { grid-area: n; align-self: start; font-style: italic; color: #ff4d66; font-size: 14px; padding-top: 0.6em; }
-  .index__name { grid-area: name; font-family: var(--serif); font-size: clamp(2.6rem, 11vw, 8rem); line-height: 0.95; letter-spacing: -0.035em; transition: transform 0.7s var(--ease); }
-  .index__ml { display: none; }
-  .index__blurb { grid-area: blurb; font-size: 13px; color: rgba(246, 233, 218, 0.62); max-width: 36ch; }
-  .index__count { display: none; }
-  .index__thumb { grid-area: thumb; width: 64px; aspect-ratio: 4 / 5; border-radius: 999px 999px 3px 3px; overflow: hidden; display: block; }
-  .index__thumb .img { width: 100%; height: 100%; object-fit: cover; }
-  .index__arrow { display: none; }
-  .index__float { display: none; }
+  .services__head { display: grid; gap: 24px; margin-bottom: clamp(40px, 6vw, 80px); }
+  .services__head .tag { color: var(--stone-2); }
+  .services__title { font-size: clamp(3.2rem, 9vw, 8.5rem); }
+  .services__title em { color: var(--accent); }
+  .services__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-d); }
+  .srv { border-bottom: 1px solid var(--line-d); position: relative; overflow: hidden; }
+  .srv__row { position: relative; display: grid; grid-template-columns: 36px 1fr auto; grid-template-areas: 'n name thumb' 'n blurb thumb'; column-gap: 14px; row-gap: 4px; align-items: center; padding-block: 20px; isolation: isolate; transition: color 0.4s; }
+  .srv__row::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--accent); transform: scaleY(0); transform-origin: bottom; transition: transform 0.5s var(--ease); }
+  .srv__n { grid-area: n; align-self: start; padding-top: 0.9em; font-size: 12px; font-weight: 600; color: var(--accent); }
+  .srv__name { grid-area: name; font-family: var(--serif); font-size: clamp(2.6rem, 11vw, 6.5rem); line-height: 1; letter-spacing: -0.02em; transition: transform 0.6s var(--ease); }
+  .srv__blurb { grid-area: blurb; font-size: 14px; max-width: 40ch; }
+  .srv__count, .srv__arrow { display: none; }
+  .srv__thumb { grid-area: thumb; display: block; width: 64px; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 3px; }
+  .srv__thumb .img { width: 100%; height: 100%; object-fit: cover; }
+  .srv-float { display: none; }
   @media (min-width: 1024px) {
-    .index__row { grid-template-columns: 80px minmax(0, 1fr) 200px 260px 120px 40px; grid-template-areas: 'n name ml blurb count arrow'; padding-block: 26px; }
-    .index__ml { display: block; grid-area: ml; font-size: 18px; color: #ff4d66; }
-    .index__count { display: block; grid-area: count; color: rgba(246, 233, 218, 0.62); text-align: right; }
-    .index__thumb { display: none; }
-    .index__arrow { display: block; grid-area: arrow; width: 32px; justify-self: end; color: #ff4d66; transition: transform 0.6s var(--ease), color 0.5s; }
-    .index__row:hover::before { transform: scaleY(1); }
-    .index__row:hover .index__n, .index__row:hover .index__blurb, .index__row:hover .index__count, .index__row:hover .index__ml, .index__row:hover .index__arrow { color: var(--cream); }
-    .index__row:hover .index__name { transform: translateX(0.18em); font-style: italic; }
-    .index__row:hover .index__arrow { transform: translateX(6px); }
-    .index__float {
-      display: block; position: fixed; left: 0; top: 0; z-index: 70; width: 260px; aspect-ratio: 4 / 5; pointer-events: none;
-      border-radius: 999px 999px 6px 6px; overflow: hidden; opacity: 0; transform: scale(0.6);
-      box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.7);
-    }
-    .index__float-img { position: absolute; inset: 0; opacity: 0; transition: opacity 0.45s; }
-    .index__float-img .img { width: 100%; height: 100%; object-fit: cover; }
-    .index__float-img.is-active { opacity: 1; }
+    .srv__row { grid-template-columns: 70px minmax(0, 1fr) 340px 60px 40px; grid-template-areas: 'n name blurb count arrow'; padding-block: 22px; }
+    .srv__thumb { display: none; }
+    .srv__count { display: block; grid-area: count; font-size: 13px; font-weight: 500; text-align: right; color: var(--stone-2); }
+    .srv__arrow { display: block; grid-area: arrow; width: 28px; justify-self: end; transition: transform 0.5s var(--ease); }
+    .srv__row:hover { color: var(--ink); }
+    .srv__row:hover::before { transform: scaleY(1); }
+    .srv__row:hover .srv__n, .srv__row:hover .srv__blurb, .srv__row:hover .srv__count { color: var(--ink); }
+    .srv__row:hover .srv__name { transform: translateX(14px); font-style: italic; }
+    .srv__row:hover .srv__arrow { transform: translateX(4px) rotate(-45deg); }
+    .srv-float { display: block; position: fixed; left: 0; top: 0; z-index: 70; width: 240px; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 4px; pointer-events: none; opacity: 0; transform: scale(0.7); box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5); }
+    .srv-float__img { position: absolute; inset: 0; opacity: 0; transition: opacity 0.35s; }
+    .srv-float__img.is-active { opacity: 1; }
+    .srv-float__img .img { width: 100%; height: 100%; object-fit: cover; }
   }
 </style>

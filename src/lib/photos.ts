@@ -5,12 +5,10 @@
  *
  * Files are matched by the start of their name ("slot"), e.g. the slot
  * `weddings-03` matches `weddings-03-nirapara.svg` OR `weddings-03.jpg`.
- * If a real photo (jpg / png / webp / avif) and an .svg placeholder share a
- * slot, the real photo wins automatically — so you can simply drop your photo
- * in and the placeholder steps aside.
+ * If two files share a slot, a jpg / png / webp / avif wins over an .svg.
  *
  * Gallery categories are read from the folder too: every file starting with
- * `weddings-`, `couples-`, `newborn-`, `portraits-` or `events-` appears in
+ * `weddings-`, `couples-`, `portraits-`, `maternity-`, `newborn-` or `celebrations-` appears in
  * that category, sorted by name. Add `weddings-08-anything.jpg` and it shows up.
  */
 import { getImage } from 'astro:assets';
@@ -36,14 +34,12 @@ export interface Photo {
 }
 
 const CATEGORY_WORDS: Record<string, string> = {
-  hero: 'Ybrain Photography',
-  weddings: 'Kerala wedding',
+  weddings: 'Wedding',
   couples: 'Couple portrait',
-  newborn: 'Newborn portrait',
   portraits: 'Portrait',
-  events: 'Event',
-  story: 'Featured story',
-  studio: 'The Ybrain studio',
+  maternity: 'Maternity portrait',
+  newborn: 'Newborn portrait',
+  celebrations: 'Celebration',
 };
 
 const entries = Object.entries(modules).map(([path, mod]) => {
@@ -71,9 +67,9 @@ async function build(e: (typeof entries)[number]): Promise<Photo> {
   let srcset: string | undefined;
   if (!placeholder) {
     // Real photos: generate optimised WebP in several widths at build time.
-    const widths = [480, 800, 1200, 1800, 2400].filter((w) => w <= meta.width);
-    if (!widths.length) widths.push(meta.width);
-    const img = await getImage({ src: meta as any, widths, format: 'webp', quality: 82 });
+    const widths = [360, 640, 960, 1400, 2000].filter((w) => w < meta.width);
+    widths.push(meta.width);
+    const img = await getImage({ src: meta as any, widths, format: 'webp', quality: 80 });
     src = img.src;
     srcset = img.srcSet.attribute;
   }

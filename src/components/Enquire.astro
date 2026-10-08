@@ -1,141 +1,116 @@
 ---
 import Logo from './Logo.astro';
+import Img from './Img.astro';
 import WhatsApp from './icons/WhatsApp.astro';
 import Arrow from './icons/Arrow.astro';
 import { site, categories } from '../data/site';
-const types = ['Wedding', 'Couple shoot', 'Newborn', 'Portrait', 'Event'];
+const types = categories.map((c) => c.name.replace(/s$/, ''));
 const year = new Date().getFullYear();
 ---
-<section class="enquire" id="enquire" aria-labelledby="enquire-title" data-on-red data-theme="dark">
-  <canvas class="enquire__embers" data-embers aria-hidden="true"></canvas>
-  <div class="enquire__inner wrap">
-    <div class="enquire__head">
-      <p class="eyebrow enquire__eyebrow"><span class="eyebrow__n">vi.</span><span data-scramble>Enquire</span></p>
-      <h2 id="enquire-title" class="display enquire__title" data-split>Let's tell<br /><em>your</em> story.</h2>
-      <p class="enquire__lede">
-        Tell us a little about your day. Tapping send opens WhatsApp with your message ready — we usually reply within a few hours.
-      </p>
-      <div class="enquire__direct">
-        <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener" class="enquire__line"><WhatsApp class="btn__icon" /> {site.phoneDisplay}</a>
-        <a href={`mailto:${site.email}`} class="enquire__line">{site.email}</a>
-        <a href={site.instagram} target="_blank" rel="noopener" class="enquire__line">{site.instagramHandle}</a>
+<section class="contact dark" id="contact" data-theme="dark" aria-labelledby="contact-title">
+  <div class="contact__strip" aria-hidden="true">
+    {['couples-01', 'newborn-02', 'portraits-03', 'weddings-02', 'couples-04'].map((s) => <span class="contact__pic"><Img slot={s} fit="cover" alt="" sizes="22vw" /></span>)}
+  </div>
+  <div class="contact__inner wrap">
+    <div class="contact__head">
+      <p class="tag">Contact</p>
+      <h2 id="contact-title" class="display contact__title" data-split>Let's make<br />something <em>timeless.</em></h2>
+      <p class="contact__lede muted">Tell us a little about your plans. Tapping send opens WhatsApp with your message ready, and we usually reply within a few hours.</p>
+      <div class="contact__direct">
+        <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener" class="contact__line"><WhatsApp class="btn__icon" />{site.phoneDisplay}</a>
+        <a href={`mailto:${site.email}`} class="contact__line">{site.email}</a>
+        <a href={site.instagram} target="_blank" rel="noopener" class="contact__line">{site.instagramHandle}</a>
       </div>
     </div>
 
     <form class="form" data-wa-form data-wa-number={site.whatsapp} novalidate>
       <fieldset class="form__types">
-        <legend class="label">I'm planning a</legend>
+        <legend class="label muted">I'm looking for</legend>
         <div class="form__chips">
-          {types.map((t, i) => (
-            <label class="tchip"><input type="radio" name="type" value={t} checked={i === 0} /><span>{t}</span></label>
-          ))}
+          {types.map((t, i) => <label class="tchip"><input type="radio" name="type" value={t} checked={i === 0} /><span>{t}</span></label>)}
         </div>
       </fieldset>
       <div class="form__grid">
-        <label class="field"><span class="label">Your name</span><input name="name" autocomplete="name" required placeholder="Anjali" /></label>
-        <label class="field"><span class="label">Date</span><input name="date" type="date" /></label>
-        <label class="field"><span class="label">Place / venue</span><input name="place" placeholder="Guruvayur, Kochi…" /></label>
-        <label class="field"><span class="label">Phone (optional)</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+91" /></label>
-        <label class="field field--wide"><span class="label">Tell us about it</span><textarea name="message" rows="3" placeholder="Families, rituals, the feeling you want to remember…"></textarea></label>
+        <label class="field"><span class="label muted">Your name</span><input name="name" autocomplete="name" required placeholder="Your name" /></label>
+        <label class="field"><span class="label muted">Date</span><input name="date" type="date" /></label>
+        <label class="field"><span class="label muted">Location</span><input name="place" placeholder="City or venue" /></label>
+        <label class="field"><span class="label muted">Phone (optional)</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+91" /></label>
+        <label class="field field--wide"><span class="label muted">Tell us about it</span><textarea name="message" rows="3" placeholder="The people, the place, the feeling you want to keep…"></textarea></label>
       </div>
       <div class="form__foot">
-        <button class="btn btn--ivory form__send" type="submit" data-magnetic="0.25"><WhatsApp class="btn__icon" /> <span class="btn__roll"><span data-t="Send on WhatsApp">Send on WhatsApp</span></span></button>
+        <button class="btn btn--accent form__send" type="submit" data-magnetic="0.2"><WhatsApp class="btn__icon" /><span class="btn__roll"><span data-t="Send on WhatsApp">Send on WhatsApp</span></span></button>
         <p class="form__err" role="alert" data-form-err></p>
       </div>
     </form>
   </div>
 </section>
 
-<footer class="footer is-dark" data-theme="dark">
-  <div class="lamp" data-lamp></div>
+<footer class="footer dark" data-theme="dark">
   <div class="footer__top wrap">
-    <div class="footer__col">
-      <span class="label footer__k">Studio</span>
-      <p>{site.studio.line1}<br />{site.studio.line2}<br />{site.studio.note}</p>
-    </div>
-    <div class="footer__col">
-      <span class="label footer__k">Hours</span>
-      <p>{site.studio.hours}</p>
-    </div>
-    <div class="footer__col">
-      <span class="label footer__k">Explore</span>
-      <p>{categories.map((c) => <a href="#gallery" data-filter-link={c.id} class="footer__link">{c.name}</a>)}</p>
-    </div>
-    <div class="footer__col">
-      <span class="label footer__k">Follow</span>
-      <p><a class="footer__link" href={site.instagram} target="_blank" rel="noopener">Instagram</a><a class="footer__link" href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener">WhatsApp</a></p>
-    </div>
+    <div class="footer__col"><span class="label muted">Studio</span><p>{site.studio.line1}<br />{site.studio.line2}<br />{site.studio.note}</p></div>
+    <div class="footer__col"><span class="label muted">Hours</span><p>{site.studio.hours}</p></div>
+    <div class="footer__col"><span class="label muted">Work</span><p>{categories.map((c) => <a href="#gallery" data-filter-link={c.id} class="footer__link">{c.name}</a>)}</p></div>
+    <div class="footer__col"><span class="label muted">Follow</span><p><a class="footer__link" href={site.instagram} target="_blank" rel="noopener">Instagram</a><a class="footer__link" href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener">WhatsApp</a></p></div>
   </div>
-  <div class="footer__mark wrap" data-footer-mark><Logo draw /></div>
+  <div class="footer__mark wrap" data-footer-mark><span class="footer__word" aria-hidden="true">Ybrain</span><Logo class="footer__sig" draw /></div>
   <div class="footer__bottom wrap">
     <span>© {year} {site.name}</span>
-    <span class="footer__ml" lang="ml">ഓർമ്മകൾ, ചിത്രങ്ങളായി</span>
-    <a href="#top" class="arrow-link" data-to-top><span>Back to top</span><Arrow /></a>
+    <a href="#top" class="arrow-link"><span>Back to top</span><Arrow /></a>
   </div>
 </footer>
 
 <style is:global>
-  .enquire { background: var(--velvet); color: #fff8f0; position: relative; overflow: hidden; }
-  .enquire::before { content: ''; position: absolute; width: 70vw; aspect-ratio: 1; right: -20vw; top: -25vw; border-radius: 50%; background: radial-gradient(circle, rgba(214, 52, 82, 0.45), transparent 65%); pointer-events: none; }
-  .enquire__inner { position: relative; }
-  .enquire__inner { display: grid; gap: 56px; padding-block: clamp(96px, 14vw, 180px); }
-  .enquire__eyebrow { color: rgba(246, 240, 230, 0.8); }
-  .enquire__eyebrow .eyebrow__n { color: var(--ivory); }
-  .enquire__head { display: grid; gap: 26px; align-content: start; }
-  .enquire__title { font-size: clamp(3.4rem, 13vw, 10rem); }
-  .enquire__title em { color: var(--ivory); }
-  .enquire__lede { margin: 0; max-width: 40ch; opacity: 0.88; font-size: 15px; }
-  .enquire__direct { display: grid; gap: 10px; margin-top: 8px; }
-  .enquire__line { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; letter-spacing: 0.06em; width: fit-content; border-bottom: 1px solid rgba(246, 240, 230, 0.3); padding-bottom: 4px; transition: border-color 0.4s; }
-  .enquire__line:hover { border-color: var(--ivory); }
+  .contact { position: relative; overflow: hidden; }
+  .contact__strip { display: flex; gap: 8px; padding: 8px; }
+  .contact__pic { flex: 1; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 3px; }
+  .contact__pic:nth-child(n + 4) { display: none; }
+  .contact__pic .img { width: 100%; height: 100%; object-fit: cover; }
+  @media (min-width: 768px) { .contact__pic:nth-child(n + 4) { display: block; } .contact__pic { aspect-ratio: 4 / 5; } }
+  .contact__inner { display: grid; gap: 52px; padding-block: clamp(64px, 9vw, 130px); }
+  .contact__head { display: grid; gap: 22px; align-content: start; }
+  .contact__head .tag { color: var(--stone-2); }
+  .contact__title { font-size: clamp(3.2rem, 9vw, 8rem); }
+  .contact__title em { color: var(--accent); }
+  .contact__lede { margin: 0; max-width: 42ch; font-size: 15px; }
+  .contact__direct { display: grid; gap: 10px; }
+  .contact__line { display: inline-flex; align-items: center; gap: 10px; width: fit-content; font-size: 15px; border-bottom: 1px solid var(--line-d); padding-bottom: 4px; transition: border-color 0.3s, color 0.3s; }
+  .contact__line:hover { border-color: var(--accent); color: var(--accent); }
 
-  .form { display: grid; gap: 34px; }
+  .form { display: grid; gap: 30px; }
   .form__types { border: 0; padding: 0; margin: 0; }
-  .form__types legend { margin-bottom: 14px; opacity: 0.8; }
+  .form__types legend { margin-bottom: 12px; }
   .form__chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .tchip input { position: absolute; opacity: 0; pointer-events: none; }
-  .tchip span {
-    display: inline-flex; align-items: center; height: 42px; padding: 0 18px; border-radius: 999px; cursor: pointer;
-    box-shadow: inset 0 0 0 1px rgba(246, 240, 230, 0.45); font-size: 13px; letter-spacing: 0.06em; transition: background-color 0.35s, color 0.35s, box-shadow 0.35s;
-  }
-  .tchip span:hover { box-shadow: inset 0 0 0 1px var(--ivory); }
-  .tchip input:checked + span { background: #fff8f0; color: var(--red); box-shadow: 0 6px 18px -8px rgba(40, 0, 10, 0.6); }
-  .tchip input:focus-visible + span { outline: 1.5px solid var(--ivory); outline-offset: 3px; }
-  .form__grid { display: grid; gap: 22px; }
+  .tchip span { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line-d); font-size: 13px; cursor: pointer; transition: background-color 0.3s, color 0.3s, box-shadow 0.3s; }
+  .tchip span:hover { box-shadow: inset 0 0 0 1px var(--paper); }
+  .tchip input:checked + span { background: var(--accent); color: var(--ink); box-shadow: none; font-weight: 600; }
+  .tchip input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .form__grid { display: grid; gap: 20px; }
   .field { display: grid; gap: 6px; }
-  .field .label { opacity: 0.75; font-size: 10px; }
+  .field .label { font-size: 10px; }
   .field input, .field textarea {
-    width: 100%; background: transparent; border: 0; border-bottom: 1px solid rgba(246, 240, 230, 0.45); border-radius: 0;
-    color: var(--ivory); font-family: var(--serif); font-size: 22px; padding: 6px 0 10px; outline: none; transition: border-color 0.4s;
-    -webkit-appearance: none; appearance: none; min-height: 48px;
+    width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--line-d); border-radius: 0; color: var(--paper);
+    font-family: var(--serif); font-size: 24px; padding: 4px 0 10px; outline: none; min-height: 48px; transition: border-color 0.3s; -webkit-appearance: none; appearance: none;
   }
-  .field textarea { resize: vertical; line-height: 1.35; }
-  .field input::placeholder, .field textarea::placeholder { color: rgba(246, 240, 230, 0.42); font-style: italic; }
-  .field input:focus, .field textarea:focus { border-color: var(--ivory); }
+  .field textarea { resize: vertical; line-height: 1.3; }
+  .field input::placeholder, .field textarea::placeholder { color: rgba(244, 241, 236, 0.32); }
+  .field input:focus, .field textarea:focus { border-color: var(--accent); }
   .field input[type='date'] { color-scheme: dark; }
-  .form__foot { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
-  .form__send { --h: 60px; padding: 0 32px; }
-  .form__err { margin: 0; font-size: 13px; font-style: italic; font-family: var(--serif); min-height: 1em; }
+  .form__foot { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .form__send { --h: 58px; padding: 0 28px; font-size: 14px; }
+  .form__err { margin: 0; color: var(--accent); font-size: 14px; min-height: 1em; }
+  @media (min-width: 768px) { .form__grid { grid-template-columns: 1fr 1fr; column-gap: 28px; } .field--wide { grid-column: 1 / -1; } }
+  @media (min-width: 1024px) { .contact__inner { grid-template-columns: 1fr 1fr; gap: 7vw; } }
 
-  @media (min-width: 768px) {
-    .form__grid { grid-template-columns: 1fr 1fr; column-gap: 32px; }
-    .field--wide { grid-column: 1 / -1; }
-  }
-  @media (min-width: 1024px) {
-    .enquire__inner { grid-template-columns: 1fr 1fr; gap: 8vw; }
-  }
-
-  .footer { padding-top: clamp(64px, 10vw, 120px); overflow: hidden; }
-  .enquire__embers { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; mix-blend-mode: screen; }
-  .footer__top { display: grid; grid-template-columns: 1fr 1fr; gap: 36px 24px; }
-  .footer__k { color: #ff4d66; display: block; margin-bottom: 12px; }
-  .footer__col p { margin: 0; font-size: 14px; color: rgba(246, 233, 218, 0.7); line-height: 1.8; }
+  .footer { padding-top: clamp(56px, 8vw, 100px); border-top: 1px solid var(--line-d); overflow: hidden; }
+  .footer__top { display: grid; grid-template-columns: 1fr 1fr; gap: 32px 20px; }
+  .footer__col p { margin: 10px 0 0; font-size: 14px; color: var(--stone-2); line-height: 1.8; }
   .footer__link { display: block; width: fit-content; transition: color 0.3s; }
-  .footer__link:hover { color: #ff4d66; }
-  .footer__mark { color: #ff3d5a; filter: drop-shadow(0 0 30px rgba(255, 40, 80, 0.45)); margin-top: clamp(48px, 8vw, 100px); }
-  .footer__mark .logo { width: 100%; height: auto; }
-  .footer__mark .logo path { stroke-width: 3.2; }
-  .footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px 24px; padding-block: 28px max(28px, env(safe-area-inset-bottom)); font-size: 12px; color: rgba(246, 233, 218, 0.6); border-top: 1px solid var(--line-dark); margin-top: clamp(24px, 4vw, 48px); padding-right: calc(var(--gutter) + 70px); }
-  .footer__ml { font-size: 13px; color: #ff4d66; }
+  .footer__link:hover { color: var(--accent); }
+  .footer__mark { position: relative; margin-top: clamp(40px, 7vw, 90px); }
+  .footer__word { display: block; font-family: var(--serif); font-size: clamp(6rem, 30vw, 30rem); line-height: 0.78; letter-spacing: -0.045em; color: var(--paper); }
+  .footer__sig { position: absolute; right: var(--gutter); bottom: 6%; width: clamp(110px, 22vw, 320px); color: var(--accent); transform: rotate(-6deg); }
+  .footer__sig.logo path { stroke-width: 6; }
+  .footer__bottom { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 26px max(26px, env(safe-area-inset-bottom)); margin-top: 20px; border-top: 1px solid var(--line-d); font-size: 13px; color: var(--stone-2); padding-right: calc(var(--gutter) + 64px); }
   @media (min-width: 1024px) { .footer__top { grid-template-columns: repeat(4, 1fr); } }
 </style>
