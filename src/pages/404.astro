@@ -1,15 +1,157 @@
 ---
 import Base from '../layouts/Base.astro';
 import Arrow from '../components/icons/Arrow.astro';
+import { photo } from '../lib/photos';
+// prints that drop in when the visitor "takes a picture"
+const shots = await Promise.all(['couples-02', 'maternity-04', 'newborn-07', 'weddings-02', 'portraits-01', 'celebrations-02', 'couples-07', 'newborn-03'].map((s) => photo(s)));
+const shotData = JSON.stringify(shots.map((p) => ({ src: p.srcset ? p.srcset.split(',')[1]?.trim().split(' ')[0] ?? p.src : p.src, cap: p.caption })));
 ---
 <Base title="Page not found">
-  <section class="phead lit nf">
+  <section class="nf" data-nf data-shots={shotData}>
     <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="wrap nf__in">
-      <span class="kicker">404</span>
-      <h1 class="h1">This frame <em>wasn't taken.</em></h1>
-      <a href="/" class="link">Back home <Arrow /></a>
+
+    <!-- viewfinder -->
+    <div class="vf" aria-hidden="true">
+      <i class="vf__c vf__c--tl"></i><i class="vf__c vf__c--tr"></i><i class="vf__c vf__c--bl"></i><i class="vf__c vf__c--br"></i>
+      <span class="vf__hud vf__hud--tl"><b class="vf__rec"></b>REC · Frame not found</span>
+      <span class="vf__hud vf__hud--tr">ISO 404</span>
+      <span class="vf__hud vf__hud--bl">f/4.04 · 1/404s</span>
+      <span class="vf__hud vf__hud--br" data-nf-count>0 shots</span>
     </div>
+
+    <div class="nf__prints" aria-hidden="true" data-nf-prints></div>
+
+    <div class="nf__num" aria-hidden="true" data-nf-num>404</div>
+    <div class="nf__ring" aria-hidden="true" data-nf-ring><i></i></div>
+
+    <div class="nf__ui wrap">
+      <h1 class="nf__t" data-nf-ui>This frame didn’t make <em>the edit.</em></h1>
+      <p class="nf__p" data-nf-ui>The page you’re looking for has moved or never existed. <span class="nf__hint">Tap anywhere to take a picture while you’re here.</span></p>
+      <div class="nf__acts" data-nf-ui>
+        <a href="/" class="btn" data-mag>Back home</a>
+        <a href="/portfolio/" class="link">See the portfolio <Arrow /></a>
+      </div>
+    </div>
+    <div class="nf__flash" aria-hidden="true" data-nf-flash></div>
+    <div class="nf__shutter" aria-hidden="true"><i data-nf-blade></i><i data-nf-blade></i></div>
   </section>
 </Base>
-<style>.nf { min-height: 80svh; } .nf__in { display: grid; gap: 30px; justify-items: start; }</style>
+
+<style>
+  .nf { position: relative; min-height: 100svh; overflow: hidden; background: var(--light); background-color: var(--paper); display: grid; place-items: center; cursor: crosshair; user-select: none; -webkit-user-select: none; }
+  .vf { position: absolute; inset: clamp(76px, 11vh, 110px) clamp(14px, 3vw, 40px) clamp(16px, 3vh, 34px); pointer-events: none; z-index: 3; }
+  .vf__c { position: absolute; width: clamp(22px, 3vw, 44px); aspect-ratio: 1; border: 0 solid var(--umber); opacity: 0.55; }
+  .vf__c--tl { top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px; }
+  .vf__c--tr { top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px; }
+  .vf__c--bl { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+  .vf__c--br { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+  .vf__hud { position: absolute; display: inline-flex; align-items: center; gap: 8px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-2); font-variant-numeric: tabular-nums; }
+  .vf__hud--tl { top: 14px; left: 18px; } .vf__hud--tr { top: 14px; right: 18px; } .vf__hud--bl { bottom: 14px; left: 18px; } .vf__hud--br { bottom: 14px; right: 18px; }
+  .vf__rec { width: 8px; height: 8px; border-radius: 50%; background: #e0485f; animation: rec 1.2s steps(2, jump-none) infinite; }
+  @keyframes rec { 50% { opacity: 0; } }
+
+  .nf__num { position: absolute; z-index: 1; left: 50%; top: 36%; transform: translate(-50%, -50%); font-family: var(--serif); font-weight: 300; font-size: clamp(8.5rem, 36vw, 24rem); line-height: 0.8; letter-spacing: -0.06em; color: var(--rose); opacity: 0.9; pointer-events: none; will-change: filter, transform; }
+  .nf__ring { position: absolute; z-index: 2; left: 0; top: 0; width: clamp(90px, 12vw, 150px); aspect-ratio: 1; margin: calc(clamp(90px, 12vw, 150px) / -2) 0 0 calc(clamp(90px, 12vw, 150px) / -2); border: 1.5px solid var(--umber); border-radius: 50%; opacity: 0.5; pointer-events: none; }
+  .nf__ring i::before, .nf__ring i::after { content: ''; position: absolute; left: 50%; top: 50%; background: var(--umber); }
+  .nf__ring i::before { width: 16px; height: 1.5px; margin: -0.75px 0 0 -8px; }
+  .nf__ring i::after { width: 1.5px; height: 16px; margin: -8px 0 0 -0.75px; }
+  .nf__ring.is-lock { border-color: #3d9a6a; opacity: 0.9; }
+
+  .nf__prints { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+  .nf :global(.nf__print) { position: absolute; left: 0; top: 0; width: clamp(120px, 15vw, 210px); padding: 7px 7px 26px; background: #fff; border-radius: 3px; box-shadow: 0 30px 60px -26px rgba(90, 40, 40, 0.55); }
+  .nf :global(.nf__print img) { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .nf :global(.nf__print span) { position: absolute; left: 0; right: 0; bottom: 6px; text-align: center; font-family: var(--serif); font-style: italic; font-size: 12px; color: var(--text-2); }
+
+  .nf__ui { position: relative; z-index: 4; align-self: end; display: grid; gap: 18px; justify-items: center; text-align: center; padding-bottom: clamp(56px, 10vh, 110px); }
+  .nf__t { margin: 0; font-family: var(--serif); font-weight: 300; font-size: clamp(2rem, 4.4vw, 4rem); line-height: 1.05; letter-spacing: -0.025em; max-width: 16ch; }
+  .nf__t em { font-style: italic; color: var(--rose); }
+  .nf__p { margin: 0; max-width: 44ch; color: var(--text-2); font-size: 15px; }
+  .nf__hint { display: block; margin-top: 6px; font-size: 13px; color: var(--rose); }
+  .nf__acts { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 16px 28px; margin-top: 6px; cursor: auto; }
+
+  .nf__flash { position: absolute; inset: 0; z-index: 6; background: #fff; opacity: 0; pointer-events: none; }
+  .nf__shutter { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+  .nf__shutter i { position: absolute; left: 0; right: 0; height: 50.5%; background: #1d1414; transform: scaleY(0); }
+  .nf__shutter i:first-child { top: 0; transform-origin: top; }
+  .nf__shutter i:last-child { bottom: 0; transform-origin: bottom; }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  const nf = document.querySelector<HTMLElement>('[data-nf]');
+  if (nf) {
+    const num = nf.querySelector<HTMLElement>('[data-nf-num]')!;
+    const ring = nf.querySelector<HTMLElement>('[data-nf-ring]')!;
+    const prints = nf.querySelector<HTMLElement>('[data-nf-prints]')!;
+    const count = nf.querySelector<HTMLElement>('[data-nf-count]')!;
+    const flash = nf.querySelector<HTMLElement>('[data-nf-flash]')!;
+    const blades = [...nf.querySelectorAll<HTMLElement>('[data-nf-blade]')];
+    const shots: { src: string; cap: string }[] = JSON.parse(nf.dataset.shots || '[]');
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const blur = { v: still ? 0 : 26 };
+    const paint = () => (num.style.filter = blur.v > 0.2 ? `blur(${blur.v.toFixed(1)}px)` : 'none');
+    paint();
+    // the focus ring starts at the centre of the "404"
+    const centre = () => { const r = num.getBoundingClientRect(), n = nf.getBoundingClientRect(); return { x: r.left - n.left + r.width / 2, y: r.top - n.top + r.height / 2 }; };
+    let c = centre();
+    gsap.set(ring, { x: c.x, y: c.y });
+    const rx = gsap.quickTo(ring, 'x', { duration: 0.45, ease: 'power3' }), ry = gsap.quickTo(ring, 'y', { duration: 0.45, ease: 'power3' });
+
+    // 1 · the camera hunts for focus, then locks
+    let ready = false;
+    gsap.timeline({ onComplete: () => { ready = true; } })
+      .from('[data-nf-ui]', { y: 30, autoAlpha: 0, duration: 1.1, stagger: 0.1, ease: 'expo.out' }, 0.2)
+      .to(blur, { v: 3, duration: 0.7, ease: 'power2.inOut', onUpdate: paint }, 0.1)
+      .to(blur, { v: 11, duration: 0.35, ease: 'power2.inOut', onUpdate: paint })
+      .to(blur, { v: 0, duration: 0.55, ease: 'power3.out', onUpdate: paint })
+      .fromTo(num, { scale: 1.08 }, { scale: 1, duration: 1.7, ease: 'expo.out' }, 0)
+      .add(() => ring.classList.add('is-lock'))
+      .fromTo(ring, { scale: 1.25 }, { scale: 1, duration: 0.5, ease: 'back.out(3)' }, '<');
+
+    // 2 · desktop: the focus ring follows the mouse; the further from the 404, the softer it gets
+    if (fine && !still) {
+      nf.addEventListener('mousemove', (e) => {
+        const n = nf.getBoundingClientRect(), x = e.clientX - n.left, y = e.clientY - n.top;
+        rx(x); ry(y);
+        if (!ready) return;
+        c = centre();
+        const d = Math.hypot(x - c.x, y - c.y) / Math.max(n.width, n.height);
+        ring.classList.toggle('is-lock', d < 0.08);
+        gsap.to(blur, { v: Math.min(18, Math.max(0, (d - 0.06) * 60)), duration: 0.5, ease: 'power2.out', overwrite: true, onUpdate: paint });
+      });
+      nf.addEventListener('mouseleave', () => { rx(c.x); ry(c.y); ring.classList.add('is-lock'); gsap.to(blur, { v: 0, duration: 0.6, overwrite: true, onUpdate: paint }); });
+    } else if (!still) {
+      // phones: the ring drifts slowly around the number
+      gsap.to(ring, { x: '+=40', y: '-=26', duration: 2.6, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2 });
+    }
+
+    // 3 · tap / click anywhere: shutter + flash, a print drops onto the pile
+    let n = 0;
+    window.addEventListener('resize', () => { c = centre(); });
+    nf.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a, button')) return;
+      const s = shots[n % shots.length];
+      n++;
+      count.textContent = `${n} shot${n === 1 ? '' : 's'}`;
+      const b = nf.getBoundingClientRect();
+      const el = document.createElement('div');
+      el.className = 'nf__print';
+      el.innerHTML = `<img src="${s.src}" alt=""><span>${s.cap}</span>`;
+      prints.appendChild(el);
+      const w = el.offsetWidth, h = el.offsetHeight;
+      const x = Math.min(Math.max(e.clientX - b.left - w / 2, 8), b.width - w - 8), y = Math.min(Math.max(e.clientY - b.top - h / 2, 80), b.height - h - 8);
+      if (still) { gsap.set(el, { x, y, rotate: gsap.utils.random(-10, 10) }); }
+      else {
+        gsap.timeline()
+          .to(blades, { scaleY: 1, duration: 0.07, ease: 'power2.in' })
+          .to(blades, { scaleY: 0, duration: 0.16, ease: 'power2.out' })
+          .fromTo(flash, { opacity: 0.85 }, { opacity: 0, duration: 0.5, ease: 'power2.out' }, 0.07)
+          .fromTo(el, { x, y: y - 60, rotate: gsap.utils.random(-30, 30), scale: 1.25, opacity: 0 }, { y, rotate: gsap.utils.random(-12, 12), scale: 1, opacity: 1, duration: 0.8, ease: 'back.out(1.6)' }, 0.1)
+          .fromTo(el.querySelector('img'), { filter: 'brightness(2.2) saturate(0)' }, { filter: 'brightness(1) saturate(1)', duration: 1.6, ease: 'power2.out' }, 0.15);
+      }
+      // keep the pile small
+      if (prints.children.length > 7) { const old = prints.firstElementChild as HTMLElement; gsap.to(old, { opacity: 0, y: '+=40', duration: 0.4, onComplete: () => old.remove() }); }
+    });
+  }
+</script>

@@ -1,23 +1,35 @@
 ---
 import '../styles/global.css';
-import { site, nav } from '../data/site';
+import { site, nav, founder } from '../data/site';
 import WhatsApp from '../components/icons/WhatsApp.astro';
 
 interface Props { title?: string; description?: string; tone?: 'light' | 'dark'; heroDark?: boolean }
 const { title, description = site.description, tone = 'light', heroDark = false } = Astro.props;
-const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — Weddings, maternity, newborn & portraits`;
+const fullTitle = title ? `${title} — ${site.name}, Thrissur` : `${site.name} — Wedding, Maternity & Newborn Photographer in Thrissur, Kerala`;
 const path = Astro.url.pathname;
 const canonical = new URL(path, Astro.site);
 const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hello Ybrain, I would like to know more about a photo session.')}`;
 const ld = {
   '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
+  '@type': ['LocalBusiness', 'ProfessionalService'],
+  '@id': new URL('/#business', Astro.site).toString(),
   name: site.name,
   description: site.description,
   url: Astro.site?.toString(),
-  image: new URL('/og-image.png', Astro.site).toString(),
-  telephone: site.phoneDisplay,
-  address: { '@type': 'PostalAddress', addressRegion: 'Kerala', addressCountry: 'IN' },
+  logo: new URL('/apple-touch-icon.png', Astro.site).toString(),
+  image: new URL('/og-image.jpg', Astro.site).toString(),
+  telephone: '+91' + site.phone,
+  email: site.email,
+  priceRange: '₹₹',
+  address: { '@type': 'PostalAddress', streetAddress: site.studio.plusCode, addressLocality: site.studio.city, addressRegion: 'Kerala', addressCountry: 'IN' },
+  geo: { '@type': 'GeoCoordinates', latitude: site.studio.geo.lat, longitude: site.studio.geo.lng },
+  hasMap: site.studio.mapUrl,
+  areaServed: ['Thrissur', 'Kerala', 'India'],
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '10:00', closes: '19:00' },
+  ],
+  founder: { '@type': 'Person', name: founder.name, jobTitle: founder.role },
+  sameAs: [site.instagram],
 };
 const year = new Date().getFullYear();
 ---
@@ -33,11 +45,17 @@ const year = new Date().getFullYear();
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Ybrain Photography — photographer and studio in Thrissur, Kerala" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL('/og-image.png', Astro.site)} />
+    <meta property="og:image" content={new URL('/og-image.jpg', Astro.site)} />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={new URL('/og-image.jpg', Astro.site)} />
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
     <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
@@ -73,7 +91,7 @@ const year = new Date().getFullYear();
         <div class="ftr__top">
           <div class="ftr__brand">
             <span class="mark__name">YBRAIN</span><span class="mark__sub">Photography</span>
-            <p class="muted">Weddings, couples, maternity, newborn and portraits. A new studio in Kerala, open since {site.studio.opened}.</p>
+            <p class="muted">Weddings, couples, maternity, newborn and portraits. A new studio in Thrissur, Kerala, open since {site.studio.opened}.</p>
           </div>
           <div class="ftr__col">
             <span class="kicker">Visit</span>

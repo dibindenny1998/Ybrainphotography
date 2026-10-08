@@ -8,20 +8,23 @@
 export const site = {
   name: 'Ybrain Photography',
   description:
-    'Ybrain Photography — weddings, couples, maternity, newborn and portrait photography, and a new studio in Kerala. Unhurried, honest and full of light.',
+    'Ybrain Photography — wedding, couple, maternity, newborn and portrait photographer in Thrissur, Kerala, with a new photography studio. Unhurried, honest and full of light.',
 
   phone: '9562914467',
   phoneDisplay: '+91 95629 14467',
   /** International format, digits only */
   whatsapp: '919562914467',
   email: 'hello@ybrainphotography.com', // TODO: confirm email
-  instagram: 'https://www.instagram.com/', // TODO: real Instagram link
-  instagramHandle: '@ybrainphotography', // TODO: real handle
+  instagram: 'https://www.instagram.com/ybrain_photography/',
+  instagramHandle: '@ybrain_photography',
 
   studio: {
     opened: '3 October 2026',
-    address: ['Ybrain Photography Studio', 'Kerala, India'], // TODO: full street address
-    mapUrl: 'https://maps.google.com/?q=Ybrain+Photography+Studio', // TODO: exact Google Maps link
+    address: ['Ybrain Photography Studio', 'F62C+PPM, Thrissur', 'Kerala, India'], // TODO: add the street name when ready
+    city: 'Thrissur',
+    plusCode: '7J2RF62C+PPM',
+    geo: { lat: 10.45184, lng: 76.2218 },
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=7J2RF62C%2BPPM',
     hours: [
       ['Monday – Saturday', '10:00 – 19:00'],
       ['Sunday', 'By appointment'],
