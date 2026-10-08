@@ -160,19 +160,19 @@ function reveals() {
     gsap.set(el, { opacity: 1 });
     SplitText.create(el, {
       type: 'lines', mask: 'lines', autoSplit: true,
-      onSplit: (s) => gsap.from(s.lines, { yPercent: 110, duration: 1.4, stagger: 0.1, ease: E, scrollTrigger: { trigger: el, start: 'top 88%', once: true } }),
+      onSplit: (s) => gsap.from(s.lines, { yPercent: 110, duration: 1.4, stagger: 0.1, ease: E, scrollTrigger: { trigger: el, start: 'top 96%', once: true } }),
     });
   });
   // text & small things: fade up
   ScrollTrigger.batch('[data-r]', {
-    start: 'top 92%', once: true,
+    start: 'top 97%', once: true,
     onEnter: (b) => gsap.fromTo(b, { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 1.3, ease: E, stagger: 0.08 }),
   });
   // images: wipe up + settle
   $$('[data-ri]').forEach((el) => {
     const img = $('img', el);
-    const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
-    tl.fromTo(el, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut' });
+    const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 98%', once: true } });
+    tl.fromTo(el, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.1, ease: 'expo.out' });
     if (img) tl.fromTo(img, { scale: 1.25 }, { scale: 1, duration: 2, ease: E, clearProps: 'transform' }, 0.1);
   });
   // parallax
@@ -213,16 +213,16 @@ function homeExtras() {
     if (img) gsap.fromTo(img, { scale: 1.35, yPercent: -6 }, { scale: 1, yPercent: 6, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } });
   });
 
-  // stories strip: pinned and sliding sideways on desktop, swipe on phones
+  // stories strip: drifts sideways as the page scrolls past (never holds the page); swipe on phones
   const track = $('[data-strip-track]');
   const bar = $('[data-strip-bar]');
   if (track && bar) {
     const mm = gsap.matchMedia();
     mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
       const dist = () => Math.max(0, track.scrollWidth - innerWidth);
-      gsap.to(track, {
+      gsap.fromTo(track, { x: 0 }, {
         x: () => -dist(), ease: 'none',
-        scrollTrigger: { trigger: '[data-strip-pin]', start: 'top top', end: () => '+=' + dist(), pin: true, scrub: 0.8, invalidateOnRefresh: true, onUpdate: (st) => gsap.set(bar, { scaleX: st.progress }) },
+        scrollTrigger: { trigger: '[data-strip]', start: 'top 85%', end: 'bottom 15%', scrub: 0.6, invalidateOnRefresh: true, onUpdate: (st) => gsap.set(bar, { scaleX: st.progress }) },
       });
     });
     mm.add('(max-width: 1023px), (prefers-reduced-motion: reduce)', () => {
@@ -563,10 +563,10 @@ async function boot() {
   chrome();
   storyOpening();
   const startPanels = heroPanels();
+  founderGather();
   homeExtras();
   photoRoll();
   storyStack();
-  founderGather();
   reveals();
   filter();
   portfolio();

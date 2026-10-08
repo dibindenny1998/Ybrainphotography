@@ -19,8 +19,8 @@ const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hello Ybra
           <a href={site.studio.mapUrl} target="_blank" rel="noopener" class="link">Get directions <Arrow /></a>
         </div>
       </div>
+      <div class="sth__img frame" data-ri data-zoomout><Img slot="studio-01" fit="cover" eager sizes="(min-width: 1024px) 46vw, 92vw" /></div>
     </div>
-    <div class="wrap"><div class="sth__img frame" data-ri><Img slot="studio-01" fit="cover" eager sizes="100vw" /></div></div>
   </section>
 
   <section class="space">
@@ -43,7 +43,7 @@ const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hello Ybra
 
   <section class="duo">
     <div class="wrap duo__in">
-      <div class="frame duo__a" data-ri><Img slot="maternity-01" fit="cover" sizes="(min-width: 900px) 40vw, 92vw" /></div>
+      <div class="frame duo__a" data-ri><Img slot="maternity-02" fit="cover" sizes="(min-width: 900px) 40vw, 92vw" /></div>
       <div class="frame duo__b" data-ri style="--d:.12s"><Img slot="newborn-07" fit="cover" sizes="(min-width: 900px) 30vw, 92vw" /></div>
     </div>
   </section>
@@ -65,10 +65,11 @@ const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hello Ybra
 
 <style>
   .sth { padding-top: clamp(150px, 20vw, 230px); padding-bottom: clamp(80px, 10vw, 140px); }
-  .sth__in { margin-bottom: clamp(60px, 8vw, 110px); }
+  .sth__in { display: grid; gap: clamp(50px, 7vw, 90px); align-items: center; }
   .sth__text { display: grid; gap: 30px; justify-items: start; max-width: 760px; }
   .sth__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 22px 34px; }
   .sth__img { aspect-ratio: 16 / 10; }
+  @media (min-width: 1024px) { .sth__in { grid-template-columns: 1fr 1fr; gap: 6vw; } .sth__img { aspect-ratio: 1 / 1; } }
   .ses { display: grid; gap: 60px; }
   .ses__head { display: grid; gap: 24px; }
   .ses__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--line); }

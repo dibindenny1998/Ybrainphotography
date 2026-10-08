@@ -163,7 +163,7 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
 
   <!-- STORIES: a film strip that slides sideways while pinned -->
   <section class="strip lit" data-strip>
-    <div class="strip__pin" data-strip-pin>
+    <div class="strip__pin">
       <div class="wrap strip__head">
         <span class="kicker" data-r>Stories</span>
         <h2 class="h2" data-split>Whole days, <em>kept whole.</em></h2>
@@ -184,7 +184,7 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
   </section>
 
   <!-- PRICING TEASER -->
-  <section class="ptz space">
+  <section class="ptz space-s">
     <div class="wrap">
       <div class="ptz__head">
         <span class="kicker" data-r>Pricing</span>
@@ -192,12 +192,12 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
       </div>
       <div class="ptz__grid">
         {packages.map((pk, i) => (
-          <a href="/pricing/" class:list={['pcard', { 'pcard--f': pk.featured }]} data-r data-tilt>
+          <div class:list={['pcard', { 'pcard--f': pk.featured }]} data-r data-tilt>
             <span class="pcard__note">{pk.note}</span>
             <span class="pcard__name">{pk.name}</span>
             <span class="pcard__from">from <b>{pk.from}</b></span>
-            <span class="link pcard__l">See what's included <Arrow /></span>
-          </a>
+            <ul class="pcard__inc">{pk.includes.map((x) => <li>{x}</li>)}</ul>
+          </div>
         ))}
       </div>
     </div>
@@ -351,11 +351,11 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
   .strip__bar { height: 1.5px; background: var(--line); margin-top: 36px; overflow: hidden; }
   .strip__bar i { display: block; height: 100%; background: var(--rose); transform: scaleX(0); transform-origin: left; }
   @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-    :global(.js) .strip { padding-block: 0; }
-    :global(.js) .strip__pin { height: 100svh; display: flex; flex-direction: column; justify-content: center; }
     :global(.js) .strip__vp { overflow: visible; }
-    :global(.js) .strip__head { grid-template-columns: 1fr auto; align-items: end; }
-    :global(.js) .strip__head .kicker { grid-column: 1 / -1; }
+  }
+  @media (min-width: 1024px) {
+    .strip__head { grid-template-columns: 1fr auto; align-items: end; }
+    .strip__head .kicker { grid-column: 1 / -1; }
   }
   @media (min-width: 1024px) {
     .strip__card { width: 27vw; }
@@ -366,7 +366,6 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
   .ptz__head { display: grid; gap: 24px; margin-bottom: clamp(40px, 6vw, 80px); }
   .ptz__grid { display: grid; gap: 18px; }
   .pcard { display: grid; gap: 14px; align-content: start; padding: 34px 30px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px var(--line); transition: box-shadow 0.5s, transform 0.6s var(--ease); transform-style: preserve-3d; }
-  .pcard:hover { box-shadow: 0 0 0 1px rgba(196, 86, 106, 0.4), 0 30px 60px -30px rgba(120, 60, 50, 0.4); }
   .pcard--f { background: var(--grad); box-shadow: none; }
   .pcard__note { font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-3); }
   .pcard--f .pcard__note { color: var(--umber); opacity: 0.7; }
@@ -374,7 +373,10 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
   .pcard__from { font-size: 14px; color: var(--text-2); }
   .pcard--f .pcard__from { color: var(--umber); }
   .pcard__from b { display: block; margin-top: 4px; font-family: var(--serif); font-weight: 400; font-size: clamp(2rem, 3vw, 2.8rem); color: var(--umber); letter-spacing: -0.02em; }
-  .pcard__l { margin-top: 10px; justify-self: start; }
+  .pcard__inc { list-style: none; margin: 8px 0 0; padding: 16px 0 0; border-top: 1px solid var(--line); display: grid; gap: 8px; font-size: 14px; color: var(--text-2); }
+  .pcard__inc li::before { content: '✦'; margin-right: 10px; font-size: 9px; color: var(--rose); vertical-align: 2px; }
+  .pcard--f .pcard__inc { color: #4d3936; border-color: rgba(46, 34, 36, 0.18); }
+  .pcard--f .pcard__inc li::before { color: var(--umber); }
   @media (min-width: 900px) { .ptz__grid { grid-template-columns: repeat(3, 1fr); gap: 2vw; } }
 
   .roll { padding-bottom: clamp(20px, 3vw, 40px); }
