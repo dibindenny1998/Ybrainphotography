@@ -203,10 +203,12 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
     </div>
   </section>
 
-  <!-- ROLLING PHOTO STRIP -->
-  <div class="roll" aria-hidden="true" data-roll>
-    <div class="roll__track" data-roll-track>
-      {[0, 1].map(() => <div class="roll__g">{rollP.map((p) => <div class="roll__i"><Img photo={p} fit="cover" alt="" sizes="260px" /></div>)}</div>)}
+  <!-- ROLLING PHOTO STRIP: drifts on its own, swipe it with a finger, rushes when you scroll -->
+  <div class="roll" data-roll>
+    <div class="roll__vp" data-roll-vp aria-label="More photographs — swipe to browse">
+      <div class="roll__track">
+        {[0, 1].map((k) => <div class="roll__g" aria-hidden={k === 1 ? 'true' : undefined}>{rollP.map((p) => <a href="/portfolio/" class="roll__i" tabindex={k === 1 ? -1 : undefined}><Img photo={p} fit="cover" alt={p.alt} sizes="260px" /></a>)}</div>)}
+      </div>
     </div>
   </div>
 
@@ -375,12 +377,15 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
   .pcard__l { margin-top: 10px; justify-self: start; }
   @media (min-width: 900px) { .ptz__grid { grid-template-columns: repeat(3, 1fr); gap: 2vw; } }
 
-  .roll { overflow: hidden; padding-bottom: clamp(20px, 3vw, 40px); }
-  .roll__track { display: flex; width: max-content; }
+  .roll { padding-bottom: clamp(20px, 3vw, 40px); }
+  .roll__vp { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; cursor: grab; }
+  .roll__vp::-webkit-scrollbar { display: none; }
+  .roll__vp.is-drag { cursor: grabbing; }
+  .roll__track { display: flex; width: max-content; padding-bottom: 30px; }
   .roll__g { display: flex; gap: 14px; padding-right: 14px; }
-  .roll__i { width: clamp(150px, 18vw, 260px); aspect-ratio: 4 / 5; overflow: hidden; border-radius: 6px; flex: none; }
+  .roll__i { display: block; width: clamp(150px, 18vw, 260px); aspect-ratio: 4 / 5; overflow: hidden; border-radius: 6px; flex: none; }
   .roll__i:nth-child(even) { margin-top: 30px; }
-  .roll__i .img { width: 100%; height: 100%; object-fit: cover; }
+  .roll__i .img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
   .words__in { display: grid; justify-items: center; text-align: center; gap: 26px; }
   .words__q { margin: 0; max-width: 30ch; font-family: var(--serif); font-style: italic; font-weight: 300; font-size: clamp(1.6rem, 3vw, 2.6rem); line-height: 1.3; }

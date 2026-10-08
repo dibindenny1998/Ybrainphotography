@@ -233,17 +233,6 @@ function homeExtras() {
     });
   }
 
-  // rolling photo strip: drifts on its own, rushes when you scroll fast
-  const roll = $('[data-roll-track]');
-  if (roll) {
-    const t = gsap.to(roll, { xPercent: -50, duration: 40, ease: 'none', repeat: -1 });
-    ScrollTrigger.create({
-      trigger: '[data-roll]', start: 'top bottom', end: 'bottom top',
-      onToggle: (st) => (st.isActive ? t.play() : t.pause()),
-      onUpdate: (st) => { const v = Math.abs(st.getVelocity()); gsap.to(t, { timeScale: 1 + Math.min(v / 250, 6), duration: 0.2, overwrite: true }); gsap.to(t, { timeScale: 1, duration: 1.4, delay: 0.25 }); },
-    });
-  }
-
   // FAQ: smooth open
   $$('details.qa').forEach((d) => d.addEventListener('toggle', () => { if (d.open) gsap.from($('.qa__a', d), { height: 0, opacity: 0, duration: 0.6, ease: E, clearProps: 'all' }); }));
 
@@ -364,6 +353,43 @@ function portfolio() {
     fresh.forEach((e) => { const im = $('img', e); if (im) gsap.fromTo(im, { scale: 1.3 }, { scale: 1, duration: 2, ease: E, clearProps: 'transform' }); });
   };
   ScrollTrigger.batch(items, { start: 'top 95%', onEnter: deal });
+}
+
+/* ── rolling photo strip: a real swipeable scroller that drifts on its own,
+   pauses while touched/dragged, and rushes ahead when the page is scrolled */
+function photoRoll() {
+  const vp = $('[data-roll-vp]');
+  if (!vp) return;
+  const track = vp.firstElementChild as HTMLElement;
+  const half = () => track.scrollWidth / 2;
+  let pos = 1, held = false, inView = false, boost = 0, timer = 0, lastY = scrollY;
+  const hold = () => { held = true; clearTimeout(timer); };
+  const release = () => { clearTimeout(timer); timer = window.setTimeout(() => { pos = vp.scrollLeft; held = false; }, 900); };
+  vp.addEventListener('touchstart', hold, { passive: true });
+  vp.addEventListener('touchend', release, { passive: true });
+  vp.addEventListener('wheel', () => { hold(); release(); }, { passive: true });
+  // desktop: drag with the mouse
+  let dragX = 0, dragL = 0, dragging = false, moved = false;
+  vp.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; dragging = true; moved = false; dragX = e.clientX; dragL = vp.scrollLeft; hold(); vp.classList.add('is-drag'); });
+  window.addEventListener('pointermove', (e) => { if (!dragging) return; const dx = e.clientX - dragX; if (Math.abs(dx) > 4) moved = true; vp.scrollLeft = dragL - dx; });
+  window.addEventListener('pointerup', () => { if (!dragging) return; dragging = false; vp.classList.remove('is-drag'); release(); });
+  vp.addEventListener('click', (e) => { if (moved) { e.preventDefault(); moved = false; } }, true);
+  // endless: jump by one set when either end is reached
+  vp.addEventListener('scroll', () => {
+    const h = half();
+    if (vp.scrollLeft >= h) { vp.scrollLeft -= h; dragL -= h; pos -= h; }
+    else if (vp.scrollLeft <= 0) { vp.scrollLeft += h; dragL += h; pos += h; }
+  }, { passive: true });
+  new IntersectionObserver(([e]) => (inView = e.isIntersecting)).observe(vp);
+  window.addEventListener('scroll', () => { const y = scrollY; boost = Math.min(boost + Math.abs(y - lastY) * 0.35, 28); lastY = y; }, { passive: true });
+  gsap.ticker.add((_t, dt) => {
+    if (!inView || held || document.hidden) return;
+    pos += Math.min(dt, 50) * 0.045 + boost; // ~45px a second, more while the page scrolls
+    boost *= 0.9;
+    const h = half();
+    if (pos >= h) pos -= h;
+    vp.scrollLeft = pos;
+  });
 }
 
 /* ── header, menu, cursor, magnetic */
@@ -514,6 +540,7 @@ async function boot() {
   storyOpening();
   const startPanels = heroPanels();
   homeExtras();
+  photoRoll();
   founderGather();
   reveals();
   filter();
