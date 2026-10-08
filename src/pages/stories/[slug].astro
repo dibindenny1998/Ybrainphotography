@@ -81,7 +81,8 @@ const pics = await Promise.all(story.photos.map((s) => photo(s)));
   .nx { padding-top: clamp(60px, 8vw, 110px); border-top: 1px solid var(--line); }
   .nx__top { margin-bottom: 40px; }
   .nx__band { position: relative; display: block; color: #fff; }
-  .nx__img { aspect-ratio: 21 / 9; border-radius: 0; min-height: 320px; }
+  .nx { overflow: hidden; }
+  .nx__img { width: 100%; height: clamp(320px, 42vw, 620px); border-radius: 0; }
   .nx__img::after { content: ''; position: absolute; inset: 0; background: rgba(36, 24, 24, 0.35); transition: background-color 0.6s; }
   .nx__band:hover .nx__img::after { background: rgba(36, 24, 24, 0.15); }
   .nx__txt { position: absolute; inset: 0; z-index: 1; display: grid; place-content: center; justify-items: center; gap: 16px; text-align: center; }
