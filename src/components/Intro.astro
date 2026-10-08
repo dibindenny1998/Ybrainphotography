@@ -1,0 +1,144 @@
+---
+/** Marquee band, manifesto (scroll-lit words) and the category index */
+import Img from './Img.astro';
+import Jasmine from './icons/Jasmine.astro';
+import Arrow from './icons/Arrow.astro';
+import { categories } from '../data/site';
+import { category, photo } from '../lib/photos';
+const counts = Object.fromEntries(await Promise.all(categories.map(async (c) => [c.id, (await category(c.id)).length])));
+const covers = Object.fromEntries(await Promise.all(categories.map(async (c) => [c.id, (await category(c.id))[0]])));
+const manifesto =
+  'We believe the best photographs happen *between* the rituals — a grandmother’s hand on a bride’s head, the hush before the *thali,* the laugh nobody planned. We stay quiet, watch closely, and frame what you’ll want to *feel again* in forty years.';
+const words = manifesto.split(' ').map((w) => ({ text: w.replace(/\*/g, ''), em: w.includes('*') }));
+---
+<div class="marquee" aria-hidden="true" data-marquee>
+  {[0, 1].map((row) => (
+    <div class:list={['marquee__row', row ? 'marquee__row--b' : '']} data-marquee-row={row ? -1 : 1}>
+      {[0, 1].map(() => (
+        <div class="marquee__track">
+          {categories.map((c, i) => (
+            <span class="marquee__item">
+              <span class:list={['marquee__word', (i + row) % 2 ? 'is-outline' : '']}>{c.name}</span>
+              <Jasmine class="marquee__flower" />
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  ))}
+</div>
+
+<section class="manifesto section wrap" aria-labelledby="manifesto-title">
+  <p class="eyebrow"><span class="eyebrow__n">i.</span>The approach</p>
+  <h2 id="manifesto-title" class="sr-only">Our approach</h2>
+  <p class="manifesto__text" data-manifesto>
+    {words.map((w) => <><span class:list={['mword', { 'mword--em': w.em }]}>{w.text}</span>{' '}</>)}
+  </p>
+  <div class="manifesto__sign">
+    <span class="manifesto__lamp" data-speed="0.85"><Img slot="hero-03" fit="cover" alt="" sizes="240px" /></span>
+    <p class="manifesto__note">
+      <span class="label">Ybrain Studio</span>
+      <span class="serif">Unhurried, unposed, unmistakably Kerala.</span>
+    </p>
+  </div>
+</section>
+
+<section class="index section" id="work" aria-labelledby="index-title">
+  <div class="wrap index__head">
+    <p class="eyebrow"><span class="eyebrow__n">ii.</span>The work</p>
+    <h2 id="index-title" class="display index__title" data-split>Five ways<br /> we tell <em>a story</em></h2>
+  </div>
+  <ul class="index__list" data-index>
+    {categories.map((c, i) => (
+      <li class="index__item">
+        <a href="#gallery" class="index__row wrap" data-filter-link={c.id} data-cursor="View" data-index-row={c.id}>
+          <span class="index__n serif">0{i + 1}</span>
+          <span class="index__name display">{c.name}</span>
+          <span class="index__ml" lang="ml">{c.ml}</span>
+          <span class="index__blurb">{c.blurb}</span>
+          <span class="index__count label">{String(counts[c.id]).padStart(2, '0')} frames</span>
+          <span class="index__thumb"><Img photo={covers[c.id]} fit="cover" alt="" sizes="120px" /></span>
+          <Arrow class="index__arrow" />
+        </a>
+      </li>
+    ))}
+  </ul>
+  <div class="index__float" aria-hidden="true" data-index-float>
+    {categories.map((c) => (
+      <div class="index__float-img" data-float-img={c.id}><Img photo={covers[c.id]} fit="cover" alt="" sizes="360px" /></div>
+    ))}
+  </div>
+</section>
+
+<style is:global>
+  /* marquee */
+  .marquee { padding-block: clamp(36px, 6vw, 72px); overflow: hidden; border-block: 1px solid var(--line); }
+  .marquee__row { display: flex; width: max-content; }
+  .marquee__row--b { margin-top: 0.06em; }
+  .marquee__track { display: flex; flex: none; }
+  .marquee__item { display: inline-flex; align-items: center; gap: 0.32em; padding-right: 0.32em; font-family: var(--serif); font-size: clamp(3.4rem, 10vw, 9rem); line-height: 1; letter-spacing: -0.03em; white-space: nowrap; }
+  .marquee__word { font-style: italic; }
+  .marquee__word.is-outline { font-style: normal; color: transparent; -webkit-text-stroke: 1px var(--red); }
+  .marquee__flower { width: 0.36em; height: 0.36em; color: var(--red); flex: none; }
+
+  /* manifesto */
+  .manifesto { display: grid; gap: clamp(32px, 5vw, 60px); }
+  .manifesto__text {
+    margin: 0; font-family: var(--serif); font-size: clamp(1.75rem, 4.3vw, 4.1rem); line-height: 1.12; letter-spacing: -0.02em; max-width: 22ch;
+    max-width: 1300px;
+  }
+  .mword { transition: none; }
+  .js .mword { opacity: 0.14; }
+  .mword--em { font-style: italic; color: var(--red); }
+  .manifesto__sign { display: flex; align-items: center; gap: 22px; }
+  .manifesto__lamp { width: 92px; aspect-ratio: 4 / 5; border-radius: 999px 999px 4px 4px; overflow: hidden; flex: none; display: block; }
+  .manifesto__note { margin: 0; display: grid; gap: 6px; }
+  .manifesto__note .serif { font-size: clamp(1.1rem, 2vw, 1.4rem); font-style: italic; }
+  @media (min-width: 1024px) {
+    .manifesto { grid-template-columns: 220px 1fr; align-items: start; }
+    .manifesto__sign { grid-column: 2; justify-content: flex-end; }
+    .manifesto__lamp { width: 130px; }
+  }
+
+  /* category index */
+  .index { padding-bottom: clamp(40px, 6vw, 80px); }
+  .index__head { display: grid; gap: 28px; margin-bottom: clamp(40px, 7vw, 100px); }
+  .index__title { font-size: clamp(3rem, 9.5vw, 9rem); }
+  .index__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .index__item { border-bottom: 1px solid var(--line); overflow: hidden; }
+  .index__row {
+    position: relative; display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: 'n name thumb' 'n blurb thumb';
+    align-items: center; column-gap: 16px; row-gap: 6px; padding-block: 22px;
+    transition: color 0.5s var(--ease), padding 0.6s var(--ease);
+  }
+  .index__row::before { content: ''; position: absolute; inset: 0; background: var(--red); transform: scaleY(0); transform-origin: bottom; transition: transform 0.6s var(--ease); z-index: -1; }
+  .index__item { position: relative; isolation: isolate; }
+  .index__n { grid-area: n; align-self: start; font-style: italic; color: var(--red); font-size: 14px; padding-top: 0.6em; transition: color 0.5s; }
+  .index__name { grid-area: name; font-size: clamp(2.6rem, 11vw, 8rem); line-height: 0.95; transition: transform 0.7s var(--ease), font-style 0s; }
+  .index__ml { display: none; }
+  .index__blurb { grid-area: blurb; font-size: 13px; color: var(--ink-2); max-width: 36ch; transition: color 0.5s; }
+  .index__count { display: none; }
+  .index__thumb { grid-area: thumb; width: 64px; aspect-ratio: 4 / 5; border-radius: 999px 999px 3px 3px; overflow: hidden; display: block; }
+  .index__arrow { display: none; }
+  .index__float { display: none; }
+
+  @media (min-width: 1024px) {
+    .index__row { grid-template-columns: 80px minmax(0, 1fr) 200px 260px 120px 40px; grid-template-areas: 'n name ml blurb count arrow'; padding-block: 26px; }
+    .index__ml { display: block; grid-area: ml; font-size: 18px; color: var(--red); opacity: 0.8; transition: color 0.5s; }
+    .index__count { display: block; grid-area: count; color: var(--ink-2); text-align: right; transition: color 0.5s; }
+    .index__thumb { display: none; }
+    .index__arrow { display: block; grid-area: arrow; width: 32px; justify-self: end; color: var(--red); transition: transform 0.6s var(--ease), color 0.5s; }
+    .index__row:hover { color: var(--ivory); }
+    .index__row:hover::before { transform: scaleY(1); }
+    .index__row:hover .index__n, .index__row:hover .index__blurb, .index__row:hover .index__count, .index__row:hover .index__ml, .index__row:hover .index__arrow { color: var(--ivory); }
+    .index__row:hover .index__name { transform: translateX(0.18em); font-style: italic; }
+    .index__row:hover .index__arrow { transform: translateX(6px); }
+    .index__float {
+      display: block; position: fixed; left: 0; top: 0; z-index: 60; width: 260px; aspect-ratio: 4 / 5; pointer-events: none;
+      border-radius: 999px 999px 6px 6px; overflow: hidden; opacity: 0; transform: scale(0.6);
+      box-shadow: 0 30px 60px -20px rgba(34, 23, 20, 0.45);
+    }
+    .index__float-img { position: absolute; inset: 0; opacity: 0; transition: opacity 0.45s; }
+    .index__float-img.is-active { opacity: 1; }
+  }
+</style>

@@ -1,0 +1,149 @@
+---
+import Img from './Img.astro';
+import Jasmine from './icons/Jasmine.astro';
+import { site, categories } from '../data/site';
+---
+<section class="hero" id="top" aria-label="Introduction">
+  <div class="hero__top wrap">
+    <p class="label hero__meta" data-hero-fade>{site.tagline}</p>
+    <p class="label hero__meta hero__meta--r" data-hero-fade>Est. {site.established} <span class="red">✦</span> Kerala</p>
+  </div>
+
+  <h1 class="hero__title display wrap" aria-label="We frame the quiet in-between.">
+    <span class="hero__row hero__row--1" aria-hidden="true">
+      <span class="line-mask"><span class="hero__words" data-hero-line>We frame</span></span>
+    </span>
+    <span class="hero__row hero__row--2" aria-hidden="true">
+      <span class="hero__pill hero__pill--a" data-hero-pill><Img slot="hero-02" eager fit="cover" alt="" sizes="20vw" /></span>
+      <span class="line-mask"><span class="hero__words" data-hero-line>the <em>quiet</em></span></span>
+    </span>
+    <span class="hero__row hero__row--3" aria-hidden="true">
+      <span class="line-mask"><span class="hero__words" data-hero-line>in-between</span></span>
+      <span class="hero__pill hero__pill--b" data-hero-pill><Img slot="hero-04" eager fit="cover" alt="" sizes="20vw" /></span>
+    </span>
+  </h1>
+
+  <div class="hero__foot wrap">
+    <p class="hero__intro" data-hero-fade>
+      Cinematic wedding, couple, newborn & portrait photography from a new, lamp-lit studio in Kerala — for the glances,
+      the rituals and the grandmothers' blessings you'll want to feel again in forty years.
+    </p>
+    <a href="#reel" class="hero__scroll label" data-hero-fade aria-label="Scroll to explore">
+      <span>Scroll</span><i></i>
+    </a>
+  </div>
+
+  <span class="hero__flower hero__flower--1" data-speed="0.7" aria-hidden="true"><Jasmine /></span>
+  <span class="hero__flower hero__flower--2" data-speed="1.25" aria-hidden="true"><Jasmine /></span>
+</section>
+
+<!-- Arch window that opens into a full-screen frame -->
+<section class="reel" id="reel" aria-label="Featured photograph">
+  <div class="reel__stage">
+    <div class="reel__words display" aria-hidden="true">
+      <span class="reel__w reel__w--l">Since the</span>
+      <span class="reel__w reel__w--r"><em>first lamp</em></span>
+    </div>
+    <div class="reel__frame" data-reel-frame>
+      <div class="reel__media" data-reel-media>
+        <Img slot="hero-01" fit="cover" sizes="100vw" eager />
+      </div>
+      <div class="reel__shade"></div>
+      <div class="reel__caption wrap" data-reel-caption>
+        <p class="reel__kicker label">Weddings · Couples · Newborn · Portraits · Events</p>
+        <p class="reel__line display">Every ritual. Every glance.<br /><em>Every lamp lit.</em></p>
+      </div>
+    </div>
+    <div class="reel__ticker label" aria-hidden="true">
+      {categories.map((c) => <span>{c.name}</span>)}
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .hero {
+    position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: space-between;
+    padding-top: 92px; padding-bottom: 28px; overflow: clip;
+  }
+  .hero__top { display: flex; justify-content: space-between; gap: 16px; color: var(--ink-2); }
+  .hero__meta { margin: 0; font-size: 10px; }
+  .hero__meta--r { text-align: right; }
+  .hero__top .hero__meta:first-child { max-width: 15ch; }
+
+  .hero__title { font-size: clamp(3.2rem, 15.2vw, 15.5rem); margin-block: 28px 20px; display: flex; flex-direction: column; }
+  .hero__row { display: flex; align-items: center; gap: 0.12em; white-space: nowrap; }
+  .hero__row--2 { justify-content: flex-end; }
+  .hero__row--3 { padding-left: 0.02em; }
+  .hero__words { display: inline-block; }
+  .hero__title em { font-style: italic; }
+  .hero__pill {
+    display: inline-block; flex: none; height: 0.74em; width: 1.2em; border-radius: 999px; overflow: hidden;
+    transform: translateY(0.04em); background: var(--blush);
+  }
+  .hero__pill--b { width: 1.05em; border-radius: 0.6em 0.6em 0.1em 0.1em; }
+  .hero__pill .img { width: 100%; height: 100%; object-fit: cover; }
+
+  .hero__foot { display: grid; gap: 28px; align-items: end; }
+  .hero__intro { margin: 0; max-width: 36ch; font-size: 15px; line-height: 1.65; color: var(--ink-2); }
+  .hero__scroll { display: inline-flex; align-items: center; gap: 14px; color: var(--ink); font-size: 10px; }
+  .hero__scroll i { position: relative; display: block; width: 72px; height: 1px; background: var(--line); overflow: hidden; }
+  .hero__scroll i::after { content: ''; position: absolute; inset: 0; background: var(--red); animation: scrollcue 2.2s var(--ease) infinite; }
+  @keyframes scrollcue { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(100%); } }
+
+  .hero__flower { position: absolute; color: var(--red); opacity: 0.55; pointer-events: none; }
+  .hero__flower svg { width: 100%; height: 100%; }
+  .hero__flower--1 { width: 34px; top: 22%; right: 9%; }
+  .hero__flower--2 { width: 22px; top: 19%; left: 54%; }
+
+  @media (min-width: 768px) {
+    .hero { padding-top: 110px; }
+    .hero__meta { font-size: 11px; }
+    .hero__top .hero__meta:first-child { max-width: none; }
+    .hero__foot { grid-template-columns: 1fr auto; }
+    .hero__intro { font-size: 16px; }
+  }
+  @media (min-width: 1024px) {
+    .hero__title { font-size: clamp(6rem, 13.2vw, 16rem); margin-block: 2vh 3vh; }
+    .hero__row--1 { padding-left: 0.04em; }
+    .hero__row--2 { justify-content: flex-start; padding-left: 1.6em; }
+    .hero__row--3 { justify-content: flex-end; }
+    .hero__pill { height: 0.72em; width: 1.6em; }
+    .hero__pill--b { width: 0.9em; height: 0.8em; }
+  }
+
+  /* ── reel */
+  .reel { position: relative; height: 100svh; }
+  .reel__stage { position: relative; height: 100svh; overflow: hidden; display: grid; place-items: center; }
+  .reel__frame {
+    position: absolute; inset: 0;
+    clip-path: inset(16% 22% 16% 22% round 50vw 50vw 0 0);
+  }
+  .no-motion .reel__frame, html:not(.js) .reel__frame { clip-path: inset(0); }
+  .no-motion .reel__caption, html:not(.js) .reel__caption, .no-motion .reel__shade, html:not(.js) .reel__shade { opacity: 1; }
+  .no-motion .reel__words, html:not(.js) .reel__words { display: none; }
+  .no-motion .reel__media, html:not(.js) .reel__media { transform: none; }
+  .reel__media { position: absolute; inset: 0; transform: scale(1.3); }
+  .reel__media .img { width: 100%; height: 100%; object-fit: cover; }
+  .reel__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(34, 23, 20, 0) 30%, rgba(34, 23, 20, 0.62) 78%, rgba(34, 23, 20, 0.72)); opacity: 0; }
+  .reel__caption { position: absolute; left: 0; right: 0; bottom: 13%; color: var(--ivory); opacity: 0; }
+  .reel__kicker { margin: 0 0 18px; font-size: 10px; opacity: 0.9; }
+  .reel__line { font-size: clamp(2.4rem, 7vw, 6.5rem); line-height: 0.98; }
+  .reel__line em { color: var(--ivory); }
+  .reel__words {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between;
+    padding-inline: var(--gutter); font-size: clamp(2.4rem, 9vw, 9rem); pointer-events: none; z-index: 2; color: var(--ink);
+  }
+  .reel__w { display: block; }
+  .reel__w--l { align-self: flex-start; margin-top: 4vh; }
+  .reel__w--r { align-self: flex-end; margin-bottom: 4vh; }
+  .reel__ticker {
+    position: absolute; bottom: 3vh; left: 0; right: 0; display: flex; justify-content: center; gap: 22px; flex-wrap: wrap;
+    padding-inline: var(--gutter); font-size: 9px; color: var(--ink-2); z-index: 1;
+  }
+  @media (max-width: 767px) {
+    .reel__frame { clip-path: inset(22% 12% 20% 12% round 50vw 50vw 0 0); }
+    .reel__w--l { margin-top: 9vh; }
+    .reel__w--r { margin-bottom: 9vh; }
+    .reel__ticker { display: none; }
+  }
+</style>

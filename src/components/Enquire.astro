@@ -1,0 +1,136 @@
+---
+import Logo from './Logo.astro';
+import WhatsApp from './icons/WhatsApp.astro';
+import Arrow from './icons/Arrow.astro';
+import { site, categories } from '../data/site';
+const types = ['Wedding', 'Couple shoot', 'Newborn', 'Portrait', 'Event'];
+const year = new Date().getFullYear();
+---
+<section class="enquire" id="enquire" aria-labelledby="enquire-title" data-on-red>
+  <div class="enquire__inner wrap">
+    <div class="enquire__head">
+      <p class="eyebrow enquire__eyebrow"><span class="eyebrow__n">v.</span>Enquire</p>
+      <h2 id="enquire-title" class="display enquire__title" data-split>Let's tell<br /><em>your</em> story.</h2>
+      <p class="enquire__lede">
+        Tell us a little about your day. Tapping send opens WhatsApp with your message ready — we usually reply within a few hours.
+      </p>
+      <div class="enquire__direct">
+        <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener" class="enquire__line"><WhatsApp class="btn__icon" /> {site.phoneDisplay}</a>
+        <a href={`mailto:${site.email}`} class="enquire__line">{site.email}</a>
+        <a href={site.instagram} target="_blank" rel="noopener" class="enquire__line">{site.instagramHandle}</a>
+      </div>
+    </div>
+
+    <form class="form" data-wa-form data-wa-number={site.whatsapp} novalidate>
+      <fieldset class="form__types">
+        <legend class="label">I'm planning a</legend>
+        <div class="form__chips">
+          {types.map((t, i) => (
+            <label class="tchip"><input type="radio" name="type" value={t} checked={i === 0} /><span>{t}</span></label>
+          ))}
+        </div>
+      </fieldset>
+      <div class="form__grid">
+        <label class="field"><span class="label">Your name</span><input name="name" autocomplete="name" required placeholder="Anjali" /></label>
+        <label class="field"><span class="label">Date</span><input name="date" type="date" /></label>
+        <label class="field"><span class="label">Place / venue</span><input name="place" placeholder="Guruvayur, Kochi…" /></label>
+        <label class="field"><span class="label">Phone (optional)</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+91" /></label>
+        <label class="field field--wide"><span class="label">Tell us about it</span><textarea name="message" rows="3" placeholder="Families, rituals, the feeling you want to remember…"></textarea></label>
+      </div>
+      <div class="form__foot">
+        <button class="btn btn--ivory form__send" type="submit" data-magnetic="0.25"><WhatsApp class="btn__icon" /> Send on WhatsApp</button>
+        <p class="form__err" role="alert" data-form-err></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__top wrap">
+    <div class="footer__col">
+      <span class="label footer__k">Studio</span>
+      <p>{site.studio.line1}<br />{site.studio.line2}<br />{site.studio.note}</p>
+    </div>
+    <div class="footer__col">
+      <span class="label footer__k">Hours</span>
+      <p>{site.studio.hours}</p>
+    </div>
+    <div class="footer__col">
+      <span class="label footer__k">Explore</span>
+      <p>{categories.map((c) => <a href="#gallery" data-filter-link={c.id} class="footer__link">{c.name}</a>)}</p>
+    </div>
+    <div class="footer__col">
+      <span class="label footer__k">Follow</span>
+      <p><a class="footer__link" href={site.instagram} target="_blank" rel="noopener">Instagram</a><a class="footer__link" href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener">WhatsApp</a></p>
+    </div>
+  </div>
+  <div class="footer__mark wrap" data-footer-mark><Logo draw /></div>
+  <div class="footer__bottom wrap">
+    <span>© {year} {site.name}</span>
+    <span class="footer__ml" lang="ml">ഓർമ്മകൾ, ചിത്രങ്ങളായി</span>
+    <a href="#top" class="arrow-link" data-to-top><span>Back to top</span><Arrow /></a>
+  </div>
+</footer>
+
+<style is:global>
+  .enquire { background: var(--red); color: var(--ivory); position: relative; overflow: hidden; }
+  .enquire__inner { display: grid; gap: 56px; padding-block: clamp(96px, 14vw, 180px); }
+  .enquire__eyebrow { color: rgba(246, 240, 230, 0.8); }
+  .enquire__eyebrow .eyebrow__n { color: var(--ivory); }
+  .enquire__head { display: grid; gap: 26px; align-content: start; }
+  .enquire__title { font-size: clamp(3.4rem, 13vw, 10rem); }
+  .enquire__title em { color: var(--ivory); }
+  .enquire__lede { margin: 0; max-width: 40ch; opacity: 0.88; font-size: 15px; }
+  .enquire__direct { display: grid; gap: 10px; margin-top: 8px; }
+  .enquire__line { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; letter-spacing: 0.06em; width: fit-content; border-bottom: 1px solid rgba(246, 240, 230, 0.3); padding-bottom: 4px; transition: border-color 0.4s; }
+  .enquire__line:hover { border-color: var(--ivory); }
+
+  .form { display: grid; gap: 34px; }
+  .form__types { border: 0; padding: 0; margin: 0; }
+  .form__types legend { margin-bottom: 14px; opacity: 0.8; }
+  .form__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tchip input { position: absolute; opacity: 0; pointer-events: none; }
+  .tchip span {
+    display: inline-flex; align-items: center; height: 42px; padding: 0 18px; border-radius: 999px; cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(246, 240, 230, 0.45); font-size: 13px; letter-spacing: 0.06em; transition: background-color 0.35s, color 0.35s, box-shadow 0.35s;
+  }
+  .tchip span:hover { box-shadow: inset 0 0 0 1px var(--ivory); }
+  .tchip input:checked + span { background: var(--ivory); color: var(--red); }
+  .tchip input:focus-visible + span { outline: 1.5px solid var(--ivory); outline-offset: 3px; }
+  .form__grid { display: grid; gap: 22px; }
+  .field { display: grid; gap: 6px; }
+  .field .label { opacity: 0.75; font-size: 10px; }
+  .field input, .field textarea {
+    width: 100%; background: transparent; border: 0; border-bottom: 1px solid rgba(246, 240, 230, 0.45); border-radius: 0;
+    color: var(--ivory); font-family: var(--serif); font-size: 22px; padding: 6px 0 10px; outline: none; transition: border-color 0.4s;
+    -webkit-appearance: none; appearance: none; min-height: 48px;
+  }
+  .field textarea { resize: vertical; line-height: 1.35; }
+  .field input::placeholder, .field textarea::placeholder { color: rgba(246, 240, 230, 0.42); font-style: italic; }
+  .field input:focus, .field textarea:focus { border-color: var(--ivory); }
+  .field input[type='date'] { color-scheme: dark; }
+  .form__foot { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+  .form__send { --h: 60px; padding: 0 32px; }
+  .form__err { margin: 0; font-size: 13px; font-style: italic; font-family: var(--serif); min-height: 1em; }
+
+  @media (min-width: 768px) {
+    .form__grid { grid-template-columns: 1fr 1fr; column-gap: 32px; }
+    .field--wide { grid-column: 1 / -1; }
+  }
+  @media (min-width: 1024px) {
+    .enquire__inner { grid-template-columns: 1fr 1fr; gap: 8vw; }
+  }
+
+  .footer { padding-top: clamp(64px, 10vw, 120px); overflow: hidden; }
+  .footer__top { display: grid; grid-template-columns: 1fr 1fr; gap: 36px 24px; }
+  .footer__k { color: var(--red); display: block; margin-bottom: 12px; }
+  .footer__col p { margin: 0; font-size: 14px; color: var(--ink-2); line-height: 1.8; }
+  .footer__link { display: block; width: fit-content; transition: color 0.3s; }
+  .footer__link:hover { color: var(--red); }
+  .footer__mark { color: var(--red); margin-top: clamp(48px, 8vw, 100px); }
+  .footer__mark .logo { width: 100%; height: auto; }
+  .footer__mark .logo path { stroke-width: 3.2; }
+  .footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px 24px; padding-block: 28px max(28px, env(safe-area-inset-bottom)); font-size: 12px; color: var(--ink-2); border-top: 1px solid var(--line); margin-top: clamp(24px, 4vw, 48px); padding-right: calc(var(--gutter) + 70px); }
+  .footer__ml { font-size: 13px; color: var(--red); }
+  @media (min-width: 1024px) { .footer__top { grid-template-columns: repeat(4, 1fr); } }
+</style>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+<title>First sleep — placeholder (newborn-04-first-sleep)</title>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#F7F1E7"/><stop offset="1" stop-color="#F1E6D7"/></linearGradient>
+<radialGradient id="disc"><stop offset="0" stop-color="#E7C3B6" stop-opacity=".75"/><stop offset=".7" stop-color="#EDD3C8" stop-opacity=".45"/><stop offset="1" stop-color="#EDD3C8" stop-opacity="0"/></radialGradient>
+<radialGradient id="glow"><stop offset="0" stop-color="#F2B9A3" stop-opacity=".75"/><stop offset=".5" stop-color="#F3CDBE" stop-opacity=".35"/><stop offset="1" stop-color="#F6E3D8" stop-opacity="0"/></radialGradient>
+<style>
+.l{fill:none;stroke:#9E1B32;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:draw 2.8s cubic-bezier(.65,0,.25,1) both}
+.t{stroke-width:.9;stroke-opacity:.75}
+.f{fill:#9E1B32}
+.tx{fill:#9E1B32;font-family:Helvetica,Arial,sans-serif}
+.fl{transform-box:fill-box;transform-origin:50% 100%;animation:flick 2.4s ease-in-out infinite alternate}
+@keyframes draw{from{stroke-dasharray:1;stroke-dashoffset:1}to{stroke-dasharray:1;stroke-dashoffset:0}}
+@keyframes flick{0%{transform:scale(1,1)}35%{transform:scale(.94,1.08)}70%{transform:scale(1.04,.95)}100%{transform:scale(.97,1.05)}}
+@media (prefers-reduced-motion:reduce){.l,.fl{animation:none}}
+</style>
+</defs>
+<rect width="1200" height="800" fill="url(#bg)"/>
+<circle cx="600" cy="400" r="312" fill="url(#disc)"/><g transform="translate(576 448) scale(1.7)"><path class="l" style="animation-delay:0.15s" pathLength="1" d="M-130,10 C-140,-40 -60,-60 20,-50 C80,-44 120,-20 120,10 C120,44 60,58 -10,56 C-80,54 -124,44 -130,10 Z"/><path class="l t" style="animation-delay:0.18s" pathLength="1" d="M-100,-30 C-40,0 20,10 90,-30 M-60,52 C-30,10 10,-20 60,-46 M20,54 C30,20 60,0 110,-6"/><circle class="l" style="animation-delay:0.22s" pathLength="1" cx="150" cy="-6" r="46"/><path class="l" style="animation-delay:0.26s" pathLength="1" d="M118,-36 C130,-62 176,-62 192,-28 C170,-40 140,-44 118,-36 Z"/><circle class="l t" style="animation-delay:0.29s" pathLength="1" cx="150" cy="-66" r="7"/><path class="l t" style="animation-delay:0.33s" pathLength="1" d="M150,8 C156,14 166,14 172,8 M152,10 L150,15 M160,12 L160,17 M168,10 L170,15"/><path class="l t" style="animation-delay:0.36s" pathLength="1" d="M180,22 C186,26 190,24 192,20"/><path class="l t" style="animation-delay:0.40s" pathLength="1" d="M124,24 C130,30 136,32 142,32"/></g><g transform="translate(600 400) scale(1)"><path class="l" style="animation-delay:0.43s" pathLength="1" d="M-420,-198 Q-417.84,-182.16 -402,-180 Q-417.84,-177.84 -420,-162 Q-422.16,-177.84 -438,-180 Q-422.16,-182.16 -420,-198 Z"/><path class="l" style="animation-delay:0.47s" pathLength="1" d="M400,-232 Q401.44,-221.44 412,-220 Q401.44,-218.56 400,-208 Q398.56,-218.56 388,-220 Q398.56,-221.44 400,-232 Z"/><path class="l" style="animation-delay:0.50s" pathLength="1" d="M460,144 Q461.92,158.08 476,160 Q461.92,161.92 460,176 Q458.08,161.92 444,160 Q458.08,158.08 460,144 Z"/></g>
+<rect x="54" y="54" width="1092" height="692" fill="none" stroke="#9E1B32" stroke-opacity=".28" stroke-width="1" vector-effect="non-scaling-stroke"/><g fill="#9E1B32" font-family="Georgia, 'Times New Roman', serif"><text x="78" y="719.6" font-size="31.2" font-style="italic" opacity=".85">First sleep</text><text x="1122" y="719.6" font-size="16.8" letter-spacing="4.8" text-anchor="end" opacity=".6" font-family="Helvetica, Arial, sans-serif">NEWBORN 04 FIRST SLEEP</text></g>
+</svg>

@@ -1,0 +1,100 @@
+---
+import Img from './Img.astro';
+import Arrow from './icons/Arrow.astro';
+import { stories } from '../data/site';
+---
+<section class="stories" id="stories" aria-labelledby="stories-title" data-stories>
+  <div class="stories__pin" data-stories-pin>
+    <div class="stories__track" data-stories-track>
+      <header class="stories__intro">
+        <p class="eyebrow"><span class="eyebrow__n">iii.</span>Featured stories</p>
+        <h2 id="stories-title" class="display stories__title" data-split>Whole days,<br /><em>told whole.</em></h2>
+        <p class="stories__lede">
+          A wedding isn't one photograph. It's the 5am oil bath, the nervous uncle, the sadya, the drive home in silence.
+          Here are a few days we were trusted with.
+        </p>
+        <span class="stories__hint label" aria-hidden="true">Scroll <Arrow /></span>
+      </header>
+
+      {stories.map((s, i) => (
+        <article class="story" data-story>
+          <div class="story__media">
+            <div class="story__cover" data-story-cover>
+              <div class="story__cover-in" data-story-parallax>
+                <Img slot={`${s.slot}-cover`} fit="cover" sizes="(min-width: 1024px) 60vw, 100vw" />
+              </div>
+            </div>
+            <div class="story__detail" data-story-detail>
+              <Img slot={`${s.slot}-detail`} fit="cover" sizes="(min-width: 1024px) 18vw, 40vw" />
+            </div>
+          </div>
+          <div class="story__text">
+            <p class="story__num label"><span class="serif">No. 0{i + 1}</span> — {s.type}</p>
+            <h3 class="story__names display">
+              {s.couple.length > 1 ? (<>{s.couple[0]} <em>&amp;</em> {s.couple[1]}</>) : s.couple[0]}
+            </h3>
+            <p class="story__place label">{s.place} <span class="red">✦</span> {s.date}</p>
+            <p class="story__excerpt">{s.excerpt}</p>
+            <a href="#enquire" class="arrow-link story__cta" data-enquire-type={i === 3 ? 'Newborn' : 'Wedding'}><span>Plan a day like this</span><Arrow /></a>
+          </div>
+        </article>
+      ))}
+    </div>
+    <div class="stories__progress" aria-hidden="true"><i data-stories-progress></i></div>
+  </div>
+</section>
+
+<style is:global>
+  .stories { position: relative; background: var(--ivory-2); }
+  .stories__track { display: grid; gap: clamp(80px, 14vw, 140px); padding: clamp(96px, 16vw, 160px) var(--gutter); }
+  .stories__intro { display: grid; gap: 26px; align-content: start; }
+  .stories__title { font-size: clamp(3rem, 11vw, 8.4rem); }
+  .stories__lede { margin: 0; max-width: 40ch; color: var(--ink-2); font-size: 15px; }
+  .stories__hint { display: none; align-items: center; gap: 14px; color: var(--red); }
+  .stories__hint svg { width: 36px; }
+  .stories__progress { display: none; }
+
+  .story { display: grid; gap: 34px; }
+  .story__media { position: relative; padding-bottom: 18%; }
+  .story__cover { position: relative; aspect-ratio: 3 / 2; overflow: hidden; border-radius: 3px; }
+  .story__cover-in { position: absolute; inset: -8%; }
+  .story__cover-in .img { width: 100%; height: 100%; object-fit: cover; }
+  .story__detail {
+    position: absolute; right: 6%; bottom: 0; width: 34%; aspect-ratio: 4 / 5; overflow: hidden;
+    border-radius: 999px 999px 3px 3px; outline: 8px solid var(--ivory-2);
+  }
+  .story__detail .img { width: 100%; height: 100%; object-fit: cover; }
+  .story:nth-child(odd) .story__detail { right: auto; left: 6%; }
+  .story__text { display: grid; gap: 14px; }
+  .story__num { margin: 0; color: var(--ink-2); }
+  .story__num .serif { font-style: italic; color: var(--red); letter-spacing: 0; text-transform: none; font-size: 15px; }
+  .story__names { font-size: clamp(2.8rem, 12vw, 6.2rem); }
+  .story__names em { font-size: 0.8em; }
+  .story__place { margin: 0; color: var(--ink-2); }
+  .story__excerpt { margin: 0; max-width: 46ch; color: var(--ink-2); font-size: 15px; }
+  .story__cta { color: var(--red); margin-top: 8px; }
+
+  @media (min-width: 1024px) {
+    .story { grid-template-columns: 1.35fr 1fr; align-items: center; gap: 4vw; }
+    .story__text { padding-left: 4vw; }
+    .story__names { font-size: clamp(3.6rem, 6vw, 7rem); }
+    .story__detail, .story:nth-child(odd) .story__detail { width: 30%; left: auto; right: -8%; bottom: -8%; }
+    .story__media { padding-bottom: 0; }
+  }
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .js .stories__pin { height: 100vh; overflow: hidden; position: relative; }
+    .js .stories__track { display: flex; flex-wrap: nowrap; align-items: center; gap: 9vw; height: 100%; width: max-content; padding: 0 var(--gutter); }
+    .js .stories__intro { width: 34vw; }
+    .js .stories__title { font-size: clamp(4rem, 7vw, 8rem); }
+    .js .stories__hint { display: inline-flex; }
+    .js .story { width: 76vw; grid-template-columns: 1.35fr 1fr; align-items: center; gap: 4vw; }
+    .js .story__media { padding-bottom: 0; }
+    .js .story__cover { aspect-ratio: auto; height: 64vh; }
+    .js .story__detail { width: 34%; right: -12%; bottom: -10%; }
+    .js .story:nth-child(odd) .story__detail { left: auto; right: -12%; }
+    .js .story__text { padding-left: 4vw; }
+    .js .story__names { font-size: clamp(3.6rem, 6vw, 7rem); }
+    .js .stories__progress { display: block; position: absolute; left: var(--gutter); right: var(--gutter); bottom: 5vh; height: 1px; background: var(--line); }
+    .js .stories__progress i { position: absolute; inset: 0; background: var(--red); transform: scaleX(0); transform-origin: left; }
+  }
+</style>

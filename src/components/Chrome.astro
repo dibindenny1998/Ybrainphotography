@@ -1,0 +1,183 @@
+---
+/** Preloader, navigation, full-screen menu, custom cursor, WhatsApp button */
+import Logo from './Logo.astro';
+import WhatsApp from './icons/WhatsApp.astro';
+import { site } from '../data/site';
+const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hi Ybrain! I would love to know more about your photography.')}`;
+const links = [
+  { href: '#work', label: 'Work', n: '01' },
+  { href: '#stories', label: 'Stories', n: '02' },
+  { href: '#studio', label: 'Studio', n: '03' },
+  { href: '#enquire', label: 'Enquire', n: '04' },
+];
+---
+<!-- PRELOADER -->
+<div class="loader" aria-hidden="true">
+  <div class="loader__inner">
+    <Logo class="loader__logo" draw />
+    <div class="loader__meta">
+      <span class="label">Kerala · Weddings & Portraits</span>
+      <span class="loader__count serif"><span class="loader__num">00</span></span>
+    </div>
+  </div>
+  <div class="loader__curtain"></div>
+</div>
+
+<!-- NAV -->
+<header class="nav" data-nav>
+  <a href="#top" class="nav__logo" aria-label="Ybrain Photography — back to top" data-magnetic="0.25"><Logo /></a>
+  <nav class="nav__links" aria-label="Main">
+    {links.slice(0, 3).map((l) => (
+      <a href={l.href} class="nav__link"><span data-hover-text={l.label}>{l.label}</span></a>
+    ))}
+  </nav>
+  <div class="nav__right">
+    <span class="nav__status label"><i></i>Studio now open</span>
+    <a href="#enquire" class="btn btn--red nav__cta" data-magnetic="0.3">Enquire</a>
+    <button class="nav__burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu" data-menu-toggle>
+      <span class="label nav__burger-label">Menu</span>
+      <span class="nav__burger-lines"><i></i><i></i></span>
+    </button>
+  </div>
+</header>
+
+<!-- MENU -->
+<div class="menu" id="menu" aria-hidden="true" data-menu>
+  <div class="menu__bg"></div>
+  <div class="menu__body">
+    <ul class="menu__list">
+      {links.map((l) => (
+        <li><a href={l.href} class="menu__link" data-menu-link><span class="menu__n">{l.n}</span><span class="menu__word">{l.label}</span></a></li>
+      ))}
+    </ul>
+    <div class="menu__foot">
+      <a href={wa} target="_blank" rel="noopener" class="menu__wa"><WhatsApp class="btn__icon" /> WhatsApp</a>
+      <a href={site.instagram} target="_blank" rel="noopener">{site.instagramHandle}</a>
+      <span>{site.studio.line2}</span>
+    </div>
+  </div>
+</div>
+
+<!-- CURSOR (fine pointers only) -->
+<div class="cursor" aria-hidden="true"><div class="cursor__ring"><span class="cursor__label"></span></div><div class="cursor__dot"></div></div>
+
+<!-- FLOATING WHATSAPP -->
+<a href={wa} class="fab" target="_blank" rel="noopener" aria-label="Chat with Ybrain on WhatsApp" data-magnetic="0.4" data-fab>
+  <WhatsApp class="fab__icon" />
+  <span class="fab__ring"></span>
+</a>
+
+<style is:global>
+  /* ── loader */
+  .loader { position: fixed; inset: 0; z-index: 200; display: none; pointer-events: none; }
+  .js .loader { display: block; pointer-events: auto; }
+  .loader__inner {
+    position: absolute; inset: 0; background: var(--ivory);
+    display: grid; place-items: center; align-content: center; gap: 28px;
+  }
+  .loader__logo { width: min(64vw, 380px); overflow: visible; }
+  .loader__meta { display: flex; align-items: baseline; justify-content: space-between; gap: 40px; width: min(64vw, 380px); color: var(--ink-2); }
+  .loader__count { font-size: 15px; font-style: italic; color: var(--red); font-variant-numeric: tabular-nums; }
+  .loader__curtain { position: absolute; inset: 0; background: var(--red); transform: scaleY(0); transform-origin: bottom; }
+
+  /* ── logo */
+  .logo { overflow: visible; }
+  .logo path { fill: none; stroke: currentColor; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+  .logo circle { fill: currentColor; }
+  .logo--draw path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .logo--draw circle { transform-box: fill-box; transform-origin: center; transform: scale(0); }
+  .loader .logo { color: var(--red); }
+  .loader .logo path { stroke-width: 5; }
+
+  /* ── nav */
+  .nav {
+    position: fixed; z-index: 100; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    padding: 14px var(--gutter);
+    padding-top: max(14px, env(safe-area-inset-top));
+    transition: transform 0.7s var(--ease), background-color 0.5s, box-shadow 0.5s;
+  }
+  .nav.is-scrolled { background: color-mix(in srgb, var(--ivory) 82%, transparent); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); box-shadow: 0 1px 0 var(--line); }
+  .nav.is-hidden { transform: translateY(-110%); }
+  .nav__logo { color: var(--red); display: block; width: 96px; }
+  .nav__logo .logo path { stroke-width: 9; }
+  .nav__links { display: none; gap: 40px; }
+  .nav__link { display: inline-block; overflow: hidden; height: 1.5em; line-height: 1.5; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 500; }
+  .nav__link span { display: block; position: relative; transition: transform 0.6s var(--ease); }
+  .nav__link span::after { content: attr(data-hover-text); position: absolute; left: 0; top: 100%; color: var(--red); }
+  .nav__link:hover span { transform: translateY(-100%); }
+  .nav__right { display: flex; align-items: center; gap: 18px; }
+  .nav__status { display: none; align-items: center; gap: 10px; color: var(--ink-2); font-size: 10px; }
+  .nav__status i { width: 7px; height: 7px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 0 rgba(158, 27, 50, 0.5); animation: pulse 2s infinite; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(158, 27, 50, 0); } 100% { box-shadow: 0 0 0 0 rgba(158, 27, 50, 0); } }
+  .nav__cta { --h: 44px; display: none; padding: 0 22px; font-size: 11px; }
+  .nav__burger { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 4px 0 16px; position: relative; z-index: 2; }
+  .nav__burger-lines { position: relative; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); display: grid; place-items: center; transition: background 0.4s; }
+  .nav__burger-lines i { position: absolute; width: 16px; height: 1.5px; background: var(--ivory); transition: transform 0.6s var(--ease); }
+  .nav__burger-lines i:first-child { transform: translateY(-3px); }
+  .nav__burger-lines i:last-child { transform: translateY(3px); }
+  .menu-open .nav__burger-lines { background: var(--ivory); }
+  .menu-open .nav__burger-lines i { background: var(--red); }
+  .menu-open .nav__burger-lines i:first-child { transform: rotate(45deg); }
+  .menu-open .nav__burger-lines i:last-child { transform: rotate(-45deg); }
+  .menu-open .nav__burger-label, .menu-open .nav__logo { color: var(--ivory); }
+  .menu-open .nav { background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .menu-open .nav__cta, .menu-open .nav__status { opacity: 0; pointer-events: none; }
+
+  @media (min-width: 1024px) {
+    .nav__links { display: flex; }
+    .nav__cta { display: inline-flex; }
+    .nav__burger { display: none; }
+    .nav__logo { width: 112px; }
+  }
+  @media (min-width: 1280px) { .nav__status { display: inline-flex; } }
+
+  /* ── menu */
+  .menu { position: fixed; inset: 0; z-index: 95; pointer-events: none; visibility: hidden; }
+  .menu.is-open { pointer-events: auto; visibility: visible; }
+  .menu__bg { position: absolute; inset: 0; background: var(--red); clip-path: circle(0% at calc(100% - 40px) 36px); }
+  .menu__body { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 120px var(--gutter) max(32px, env(safe-area-inset-bottom)); color: var(--ivory); }
+  .menu__list { list-style: none; margin: 0; padding: 0; }
+  .menu__list li { overflow: hidden; border-bottom: 1px solid rgba(246, 240, 230, 0.2); }
+  .menu__link { display: flex; align-items: baseline; gap: 18px; padding: 10px 0 6px; }
+  .menu__n { font-family: var(--serif); font-style: italic; font-size: 14px; opacity: 0.7; }
+  .menu__word { display: block; font-family: var(--serif); font-size: clamp(3.2rem, 15vw, 6rem); line-height: 1; letter-spacing: -0.03em; }
+  .menu__link:active .menu__word { font-style: italic; }
+  .menu__foot { display: flex; flex-wrap: wrap; gap: 14px 28px; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; }
+  .menu__wa { display: inline-flex; align-items: center; gap: 10px; }
+
+  /* ── cursor */
+  .cursor { display: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .has-cursor .cursor { display: block; position: fixed; inset: 0 auto auto 0; z-index: 300; pointer-events: none; }
+    .has-cursor, .has-cursor a, .has-cursor button { cursor: none; }
+    .has-cursor input, .has-cursor textarea { cursor: text; }
+  }
+  .cursor__dot { position: absolute; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--red); }
+  .cursor__ring {
+    position: absolute; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%;
+    border: 1px solid rgba(158, 27, 50, 0.5); display: grid; place-items: center;
+    transition: width 0.5s var(--ease), height 0.5s var(--ease), margin 0.5s var(--ease), background-color 0.4s, border-color 0.4s;
+  }
+  .cursor__label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ivory); opacity: 0; transition: opacity 0.3s; font-weight: 500; }
+  .cursor.is-link .cursor__ring { width: 64px; height: 64px; margin: -32px 0 0 -32px; border-color: var(--red); }
+  .cursor.is-label .cursor__ring { width: 96px; height: 96px; margin: -48px 0 0 -48px; background: var(--red); border-color: var(--red); }
+  .cursor.is-label .cursor__label { opacity: 1; }
+  .cursor.is-label .cursor__dot, .cursor.is-link .cursor__dot { opacity: 0; }
+  .cursor.is-on-red .cursor__ring { border-color: var(--ivory); }
+  .cursor.is-on-red .cursor__dot { background: var(--ivory); }
+  .cursor.is-on-red.is-label .cursor__ring { background: var(--ivory); }
+  .cursor.is-on-red.is-label .cursor__label { color: var(--red); }
+
+  /* ── WhatsApp FAB */
+  .fab {
+    position: fixed; z-index: 80; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
+    width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--red); color: var(--ivory); box-shadow: 0 10px 30px -8px rgba(125, 20, 39, 0.55);
+    transform: scale(0);
+  }
+  .no-js .fab, html:not(.js) .fab { transform: none; }
+  .fab__icon { width: 26px; height: 26px; }
+  .fab__ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--red); animation: ring 2.6s var(--ease-out) infinite; }
+  @keyframes ring { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.7); opacity: 0; } }
+</style>
