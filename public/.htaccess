@@ -1,7 +1,13 @@
 # Ybrain Photography — Hostinger / Apache settings
 
-# Always use HTTPS
 RewriteEngine On
+
+# One address for Google: send www. and the temporary Hostinger address to https://ybrainphotography.com
+RewriteCond %{HTTP_HOST} ^www\.ybrainphotography\.com$ [NC,OR]
+RewriteCond %{HTTP_HOST} \.hostingersite\.com$ [NC]
+RewriteRule ^(.*)$ https://ybrainphotography.com/$1 [L,R=301]
+
+# Always use HTTPS
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
