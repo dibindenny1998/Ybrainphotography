@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+---
+<Base title="Page not found — Ybrain Photography">
+  <main class="nf">
+    <a href="/" class="nf__logo" aria-label="Ybrain Photography home"><Logo /></a>
+    <h1 class="display">This frame<br /><em>wasn't taken.</em></h1>
+    <a href="/" class="btn btn--red">Back to the studio</a>
+  </main>
+  <style>
+    .nf { min-height: 100svh; display: grid; place-content: center; justify-items: center; gap: 36px; text-align: center; padding: 24px; }
+    .nf__logo { width: 150px; color: var(--red); }
+    .nf h1 { font-size: clamp(3rem, 10vw, 7rem); }
+    :global(.js) .nf { opacity: 1; }
+  </style>
+</Base>

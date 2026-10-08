@@ -58,7 +58,7 @@ function preloader(): Promise<void> {
     });
     tl.to(word, { strokeDashoffset: 0, duration: d, ease: 'power2.inOut' })
       .to(swash, { strokeDashoffset: 0, duration: d * 0.42, ease: 'power2.out' }, '-=0.12')
-      .to(dot, { scale: 1, duration: 0.5, ease: 'back.out(3)' }, '-=0.45')
+      .fromTo(dot, { attr: { r: 0 } }, { attr: { r: 6.5 }, duration: 0.5, ease: 'back.out(3)' }, '-=0.45')
       .to(counter, { v: 100, duration: tl.duration(), ease: 'power1.inOut', onUpdate: () => (num.textContent = String(Math.round(counter.v)).padStart(2, '0')) }, 0)
       .to('.loader__curtain', { scaleY: 1, duration: 0.85, ease: 'expo.inOut' }, '+=0.1')
       .set('.loader__inner', { autoAlpha: 0 })
@@ -499,13 +499,12 @@ function footer() {
   const dot = $('circle', mark);
   if (reduce) {
     gsap.set(paths, { strokeDashoffset: 0 });
-    gsap.set(dot, { scale: 1 });
     return;
   }
   const tl = gsap.timeline({ scrollTrigger: { trigger: mark, start: 'top 95%', end: 'bottom bottom', scrub: 1 } });
   tl.to(paths[0], { strokeDashoffset: 0, ease: 'none', duration: 1 })
     .to(paths[1], { strokeDashoffset: 0, ease: 'none', duration: 0.4 })
-    .to(dot, { scale: 1, ease: 'back.out(3)', duration: 0.1 }, 0.8);
+    .fromTo(dot, { attr: { r: 0 } }, { attr: { r: 6.5 }, ease: 'back.out(3)', duration: 0.1 }, 0.8);
 }
 
 /* ─────────────────────────────────────────── nav, menu, fab */

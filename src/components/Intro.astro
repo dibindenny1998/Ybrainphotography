@@ -88,7 +88,7 @@ const words = manifesto.split(' ').map((w) => ({ text: w.replace(/\*/g, ''), em:
     max-width: 1300px;
   }
   .mword { transition: none; }
-  .js .mword { opacity: 0.14; }
+  @media (prefers-reduced-motion: no-preference) { .js .mword { opacity: 0.14; } }
   .mword--em { font-style: italic; color: var(--red); }
   .manifesto__sign { display: flex; align-items: center; gap: 22px; }
   .manifesto__lamp { width: 92px; aspect-ratio: 4 / 5; border-radius: 999px 999px 4px 4px; overflow: hidden; flex: none; display: block; }
