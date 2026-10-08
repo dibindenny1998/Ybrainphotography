@@ -10,7 +10,7 @@ const statement =
 const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.includes('*') }));
 const covers = ['portraits-03', 'couples-01', 'maternity-02', 'newborn-01', 'portraits-02', 'celebrations-02'];
 ---
-<section class="statement section wrap" aria-labelledby="statement-title">
+<section class="statement section wrap light" aria-labelledby="statement-title">
   <p class="tag">About the work</p>
   <h2 id="statement-title" class="sr-only">Our approach</h2>
   <p class="statement__text" data-statement>
@@ -49,7 +49,7 @@ const covers = ['portraits-03', 'couples-01', 'maternity-02', 'newborn-01', 'por
 <style is:global>
   .statement { display: grid; gap: 34px; }
   .statement__text { margin: 0; font-family: var(--serif); font-size: clamp(2.2rem, 5.6vw, 5.6rem); line-height: 1.02; letter-spacing: -0.02em; max-width: 17ch; }
-  .sw--em { font-style: italic; color: var(--ink); background: linear-gradient(transparent 62%, var(--accent) 62%, var(--accent) 92%, transparent 92%); }
+  .sw--em { font-style: italic; background: var(--gold-deep); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 0.04em; }
   .statement__pics { position: relative; display: flex; gap: 14px; align-items: flex-end; }
   .statement__pic { display: block; overflow: hidden; border-radius: 4px; }
   .statement__pic .img { width: 100%; height: 100%; object-fit: cover; }
@@ -65,11 +65,10 @@ const covers = ['portraits-03', 'couples-01', 'maternity-02', 'newborn-01', 'por
   .services__head { display: grid; gap: 24px; margin-bottom: clamp(40px, 6vw, 80px); }
   .services__head .tag { color: var(--stone-2); }
   .services__title { font-size: clamp(3.2rem, 9vw, 8.5rem); }
-  .services__title em { color: var(--accent); }
   .services__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-d); }
   .srv { border-bottom: 1px solid var(--line-d); position: relative; overflow: hidden; }
   .srv__row { position: relative; display: grid; grid-template-columns: 36px 1fr auto; grid-template-areas: 'n name thumb' 'n blurb thumb'; column-gap: 14px; row-gap: 4px; align-items: center; padding-block: 20px; isolation: isolate; transition: color 0.4s; }
-  .srv__row::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--accent); transform: scaleY(0); transform-origin: bottom; transition: transform 0.5s var(--ease); }
+  .srv__row::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--gold); transform: scaleY(0); transform-origin: bottom; transition: transform 0.5s var(--ease); }
   .srv__n { grid-area: n; align-self: start; padding-top: 0.9em; font-size: 12px; font-weight: 600; color: var(--accent); }
   .srv__name { grid-area: name; font-family: var(--serif); font-size: clamp(2.6rem, 11vw, 6.5rem); line-height: 1; letter-spacing: -0.02em; transition: transform 0.6s var(--ease); }
   .srv__blurb { grid-area: blurb; font-size: 14px; max-width: 40ch; }

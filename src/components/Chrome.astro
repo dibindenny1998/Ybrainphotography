@@ -63,7 +63,7 @@ const flicks = ['couples-03', 'newborn-01', 'celebrations-01', 'maternity-01', '
   .loader__count { position: absolute; right: var(--gutter); bottom: max(26px, env(safe-area-inset-bottom)); font-family: var(--serif); font-size: clamp(5rem, 16vw, 13rem); line-height: 0.8; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
   .loader__count sup { font-size: 0.3em; vertical-align: top; color: var(--accent); margin-left: 0.05em; }
   .loader__bar { position: absolute; left: var(--gutter); bottom: max(30px, env(safe-area-inset-bottom)); width: min(40vw, 260px); height: 2px; background: var(--line-d); }
-  .loader__bar i { position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+  .loader__bar i { position: absolute; inset: 0; background: var(--gold); transform: scaleX(0); transform-origin: left; }
 
   /* logo */
   .logo { overflow: visible; }
@@ -89,7 +89,7 @@ const flicks = ['couples-03', 'newborn-01', 'celebrations-01', 'maternity-01', '
   .nav__link:hover span { transform: translateY(-100%); }
   .nav__right { display: flex; align-items: center; gap: 12px; }
   .nav__cta { --h: 42px; display: none; padding: 0 20px; }
-  .nav__burger { position: relative; width: 44px; height: 44px; border-radius: 50%; background: var(--accent); z-index: 2; }
+  .nav__burger { position: relative; width: 44px; height: 44px; border-radius: 50%; background: var(--gold); z-index: 2; }
   .nav__burger i { position: absolute; left: 14px; width: 16px; height: 1.5px; background: var(--ink); transition: transform 0.5s var(--ease); }
   .nav__burger i:first-child { top: 18px; }
   .nav__burger i:last-child { top: 24px; }
@@ -106,7 +106,7 @@ const flicks = ['couples-03', 'newborn-01', 'celebrations-01', 'maternity-01', '
   /* menu */
   .menu { position: fixed; inset: 0; z-index: 95; visibility: hidden; pointer-events: none; }
   .menu.is-open { visibility: visible; pointer-events: auto; }
-  .menu__bg { position: absolute; inset: 0; background: var(--ink); transform: scaleY(0); transform-origin: top; }
+  .menu__bg { position: absolute; inset: 0; background: var(--bg-dark); background-color: var(--ink); transform: scaleY(0); transform-origin: top; }
   .menu__body { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 110px var(--gutter) max(30px, env(safe-area-inset-bottom)); color: var(--paper); }
   .menu__list { list-style: none; margin: 0; padding: 0; }
   .menu__list li { overflow: hidden; border-bottom: 1px solid var(--line-d); }
@@ -120,7 +120,7 @@ const flicks = ['couples-03', 'newborn-01', 'celebrations-01', 'maternity-01', '
   @media (hover: hover) and (pointer: fine) {
     .has-cursor .cursor {
       display: grid; place-items: center; position: fixed; left: 0; top: 0; z-index: 300; pointer-events: none;
-      width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%; background: var(--accent); color: var(--ink);
+      width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%; background: var(--gold); color: var(--ink);
       transform: scale(0); transition: transform 0.35s var(--ease-out);
     }
     .has-cursor .cursor.is-on { transform: scale(1); }
@@ -128,7 +128,7 @@ const flicks = ['couples-03', 'newborn-01', 'celebrations-01', 'maternity-01', '
   .cursor__label { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 
   /* WhatsApp */
-  .fab { position: fixed; z-index: 80; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--ink); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.45); transform: scale(0); transition: transform 0.5s var(--ease-out); }
+  .fab { position: fixed; z-index: 80; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--gold); color: var(--ink); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 12px 30px -10px rgba(0, 0, 0, 0.5); transform: scale(0); transition: transform 0.5s var(--ease-out); }
   .fab.is-on, html:not(.js) .fab { transform: scale(1); }
   .fab__icon { width: 26px; height: 26px; }
 </style>

@@ -8,7 +8,7 @@ const items: { cat: string; catName: string; p: (typeof groups)[number]['photos'
 const max = Math.max(...groups.map((g) => g.photos.length));
 for (let i = 0; i < max; i++) for (const g of groups) if (g.photos[i]) items.push({ cat: g.id, catName: g.name, p: g.photos[i] });
 ---
-<section class="gallery section" id="gallery" aria-labelledby="gallery-title">
+<section class="gallery section light" id="gallery" aria-labelledby="gallery-title">
   <div class="gallery__head wrap">
     <p class="tag">Portfolio</p>
     <h2 id="gallery-title" class="display gallery__title" data-split>Selected <em>work</em></h2>
@@ -51,15 +51,14 @@ for (let i = 0; i < max; i++) for (const g of groups) if (g.photos[i]) items.pus
 <style is:global>
   .gallery__head { display: grid; gap: 22px; margin-bottom: clamp(24px, 4vw, 48px); }
   .gallery__title { font-size: clamp(3.4rem, 10vw, 9rem); }
-  .gallery__title em { color: var(--ink); background: linear-gradient(transparent 60%, var(--accent) 60%, var(--accent) 90%, transparent 90%); }
-  .gallery__bar { position: sticky; top: 0; z-index: 40; padding-block: 12px; margin-bottom: clamp(18px, 3vw, 36px); background: var(--paper); transition: top 0.6s var(--ease); }
+  .gallery__bar { position: sticky; top: 0; z-index: 40; padding-block: 12px; margin-bottom: clamp(18px, 3vw, 36px); background: rgba(246, 240, 231, 0.94); backdrop-filter: none; transition: top 0.6s var(--ease); }
   .nav-shown .gallery__bar { top: var(--navh, 70px); }
   .gallery__filters { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
   .gallery__filters::-webkit-scrollbar { display: none; }
   .chip { flex: none; height: 40px; padding: 0 16px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line); font-size: 13px; font-weight: 500; transition: background-color 0.3s, color 0.3s, box-shadow 0.3s; }
   .chip sup { font-size: 10px; color: var(--stone); margin-left: 2px; }
   .chip:hover { box-shadow: inset 0 0 0 1px var(--ink); }
-  .chip.is-active { background: var(--ink); color: var(--paper); box-shadow: none; }
+  .chip.is-active { background: var(--ink); color: var(--paper); box-shadow: inset 0 0 0 1px rgba(214, 182, 126, 0.5); }
   .chip.is-active sup { color: var(--accent); }
 
   .gallery__grid { columns: 2; column-gap: 10px; }
@@ -78,7 +77,7 @@ for (let i = 0; i < max; i++) for (const g of groups) if (g.photos[i]) items.pus
 
   .lightbox { position: fixed; inset: 0; z-index: 150; display: grid; grid-template-rows: auto 1fr; visibility: hidden; pointer-events: none; color: var(--paper); }
   .lightbox.is-open { visibility: visible; pointer-events: auto; }
-  .lightbox__bg { position: absolute; inset: 0; background: var(--ink); opacity: 0; }
+  .lightbox__bg { position: absolute; inset: 0; background: var(--bg-dark); background-color: var(--ink); opacity: 0; }
   .lightbox__top { position: relative; display: flex; justify-content: space-between; align-items: center; height: 64px; padding-top: env(safe-area-inset-top); font-size: 13px; }
   .lightbox__close { color: var(--accent); font-weight: 600; padding: 10px 0; }
   .lightbox__figure { position: relative; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 4px var(--gutter) 90px; min-height: 0; }
@@ -87,7 +86,7 @@ for (let i = 0; i < max; i++) for (const g of groups) if (g.photos[i]) items.pus
   .lightbox__cap { display: flex; gap: 14px; align-items: baseline; font-size: 13px; }
   .lightbox__cap .serif { font-size: 22px; }
   .lightbox__nav { position: absolute; bottom: max(20px, env(safe-area-inset-bottom)); width: 54px; height: 54px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line-d); font-size: 20px; transition: background 0.3s, color 0.3s; }
-  .lightbox__nav:hover { background: var(--accent); color: var(--ink); box-shadow: none; }
+  .lightbox__nav:hover { background: var(--gold); color: var(--ink); box-shadow: none; }
   .lightbox__nav--prev { left: calc(50% - 64px); }
   .lightbox__nav--next { right: calc(50% - 64px); }
   @media (min-width: 1024px) {

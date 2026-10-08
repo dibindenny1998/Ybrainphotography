@@ -41,7 +41,6 @@ import { stories } from '../data/site';
   .stories__head { display: grid; gap: 18px; margin-bottom: clamp(28px, 4vw, 48px); }
   .stories__head .tag { color: var(--stone-2); }
   .stories__title { font-size: clamp(3rem, 8.5vw, 8rem); }
-  .stories__title em { color: var(--accent); }
   .stories__hint { margin: 0; font-size: 13px; }
   .stories__hint-m { display: none; }
   .stories__viewport { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
@@ -60,7 +59,7 @@ import { stories } from '../data/site';
   .story__body { margin: 0 0 14px; font-size: 15px; max-width: 40ch; }
   .story__cta { color: var(--accent); }
   .stories__bar { margin-top: 36px; }
-  .stories__bar i { display: block; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+  .stories__bar i { display: block; height: 2px; background: var(--gold); transform: scaleX(0); transform-origin: left; }
   @media (hover: none) { .stories__hint-d { display: none; } .stories__hint-m { display: inline; } }
   @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
     .js .stories__pin { height: 100svh; display: flex; flex-direction: column; justify-content: center; }
