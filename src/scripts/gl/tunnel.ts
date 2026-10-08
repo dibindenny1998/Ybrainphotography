@@ -21,13 +21,14 @@ const planeFrag = /* glsl */ `
   uniform float uAlpha;
   uniform float uReady;
   uniform float uGlow;
+  uniform float uDim;
   varying vec2 vUv;
   void main() {
     vec4 c = texture2D(uTex, vUv);
     // thin lamp-light rim that brightens as the photo comes close
     vec2 e = min(vUv, 1.0 - vUv);
     float rim = 1.0 - smoothstep(0.0, 0.012, min(e.x, e.y));
-    vec3 col = c.rgb + vec3(1.0, 0.32, 0.36) * rim * 0.55 * uGlow;
+    vec3 col = c.rgb * uDim + vec3(1.0, 0.32, 0.36) * rim * 0.55 * uGlow;
     gl_FragColor = vec4(col, uAlpha * uReady);
   }
 `;
@@ -82,7 +83,7 @@ export function createTunnel(canvas: HTMLCanvasElement, photos: TunnelPhoto[], f
 
   const makePlane = (ph: TunnelPhoto) => {
     const mat = new ShaderMaterial({
-      uniforms: { uTex: { value: null }, uAlpha: { value: 0 }, uReady: { value: 0 }, uGlow: { value: 0 } },
+      uniforms: { uTex: { value: null }, uAlpha: { value: 0 }, uReady: { value: 0 }, uGlow: { value: 0 }, uDim: { value: 1 } },
       vertexShader: planeVert,
       fragmentShader: planeFrag,
       transparent: true,
@@ -111,7 +112,7 @@ export function createTunnel(canvas: HTMLCanvasElement, photos: TunnelPhoto[], f
     const { mesh, mat } = makePlane(ph);
     const z = START - i * SPACING;
     const ang = i * 2.39996 + 0.6; // golden angle → evenly scattered around the path
-    const rad = (mobile ? 1.1 : 2.4) + (i % 3) * (mobile ? 0.25 : 0.5);
+    const rad = (mobile ? 1.4 : 2.4) + (i % 3) * (mobile ? 0.25 : 0.5);
     const h = (mobile ? 1.3 : 2.0) + (i % 3) * (mobile ? 0.25 : 0.45);
     mesh.scale.set((h * ph.w) / ph.h, h, 1);
     mesh.position.set(Math.cos(ang) * rad * (mobile ? 1 : 1.35), Math.sin(ang) * rad * (mobile ? 1.3 : 0.72), z);
@@ -197,6 +198,8 @@ export function createTunnel(canvas: HTMLCanvasElement, photos: TunnelPhoto[], f
       const near = p === finP ? 1 : MathUtils.smoothstep(-d, 0.35, 2.4);
       p.mat.uniforms.uAlpha.value = far * near;
       p.mat.uniforms.uGlow.value = MathUtils.smoothstep(-d, 14, 3) * (p === finP ? 0 : 1);
+      // photos rest dimmed behind the headline, brightening as the journey starts
+      p.mat.uniforms.uDim.value = p === finP ? 1 : 0.58 + 0.42 * MathUtils.smoothstep(smooth, 0.02, 0.12);
       p.mesh.visible = p.mat.uniforms.uAlpha.value > 0.002;
       if (p !== finP) p.mesh.rotation.z = Math.sin(time * 0.3 + p.z) * 0.02;
     }
