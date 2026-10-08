@@ -3,25 +3,44 @@
 @import '@fontsource-variable/inter-tight';
 
 /* ───────────────────────────── tokens
-   Espresso + ivory, with a metallic champagne-gold gradient as the accent. */
+   Soft pastel gradients (peach · blush · lavender · powder blue · mint),
+   deep plum-ink text, and a peach→rose→lavender accent gradient. */
 :root {
-  --paper: #f6f0e7;
-  --paper-2: #ece2d4;
-  --ink: #120d0b;
-  --ink-2: #1c1512;
-  --ink-3: #2a201a;
-  --stone: #8d8074;
-  --stone-2: #bcae9e;
-  --accent: #d6b67e;      /* champagne (solid) */
-  --gold: linear-gradient(115deg, #f8e9c8 0%, #dfbd84 26%, #b48a4c 52%, #ecd5a5 76%, #a87d44 100%);
-  --gold-deep: linear-gradient(115deg, #b0844a 0%, #7d592b 45%, #c39858 100%);
-  --bg-dark:
-    radial-gradient(80% 60% at 88% 0%, rgba(214, 170, 110, 0.16), transparent 62%),
-    radial-gradient(70% 60% at 0% 100%, rgba(128, 34, 48, 0.24), transparent 66%),
-    linear-gradient(180deg, #17100d 0%, #0c0807 100%);
-  --bg-light: linear-gradient(180deg, #f9f5ef 0%, #efe5d7 100%);
-  --line: rgba(18, 13, 11, 0.12);
-  --line-d: rgba(246, 240, 231, 0.13);
+  --paper: #fffaf6;
+  --paper-2: #f6ece8;
+  --ink: #2a2131;
+  --ink-2: #3a2f42;
+  --ink-3: #ece2ee;
+  --stone: #85798a;
+  --stone-2: #6e6276;
+  --accent: #e2678f;      /* rose (solid) */
+  --grad: linear-gradient(115deg, #ffc4a3 0%, #f7a1bb 45%, #bba8f6 100%);
+  --gold: var(--grad);
+  --gold-deep: linear-gradient(110deg, #ef8a6c 0%, #e2678f 45%, #8e6be0 100%);
+  --mesh-a:
+    radial-gradient(60% 55% at 12% 8%, #ffd9c6 0%, transparent 62%),
+    radial-gradient(55% 55% at 92% 18%, #e4dafd 0%, transparent 62%),
+    radial-gradient(60% 60% at 70% 100%, #ffd4e2 0%, transparent 64%),
+    linear-gradient(180deg, #fff6f1 0%, #f8eef6 100%);
+  --mesh-b:
+    radial-gradient(55% 55% at 90% 0%, #dfeafe 0%, transparent 62%),
+    radial-gradient(60% 60% at 0% 90%, #ece0ff 0%, transparent 62%),
+    linear-gradient(180deg, #f8f4ff 0%, #f1f3ff 100%);
+  --mesh-c:
+    radial-gradient(55% 55% at 0% 0%, #ffe0d1 0%, transparent 60%),
+    radial-gradient(55% 60% at 100% 100%, #dff3ea 0%, transparent 62%),
+    linear-gradient(180deg, #fff8f2 0%, #f4f8f2 100%);
+  --mesh-d:
+    radial-gradient(60% 60% at 85% 10%, #ffd6e4 0%, transparent 62%),
+    radial-gradient(60% 60% at 10% 90%, #e2dcff 0%, transparent 62%),
+    linear-gradient(180deg, #fbf3fa 0%, #f3eefc 100%);
+  --bg-dark: var(--mesh-a);
+  --bg-light:
+    radial-gradient(45% 45% at 100% 0%, rgba(223, 241, 234, 0.9) 0%, transparent 62%),
+    radial-gradient(45% 50% at 0% 100%, rgba(227, 236, 251, 0.9) 0%, transparent 62%),
+    linear-gradient(180deg, #fffcf9 0%, #fbf4ef 100%);
+  --line: rgba(42, 33, 49, 0.12);
+  --line-d: rgba(42, 33, 49, 0.13);
 
   --serif: 'Instrument Serif', 'Times New Roman', serif;
   --sans: 'Inter Tight Variable', 'Inter', system-ui, -apple-system, sans-serif;
@@ -54,7 +73,7 @@ img, svg { display: block; max-width: 100%; }
 .img--cover { height: 100%; object-fit: cover; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-::selection { background: #e2c690; color: var(--ink); }
+::selection { background: #f7c1d1; color: var(--ink); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
@@ -67,10 +86,18 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .tag::before { content: ''; width: 18px; height: 1px; background: var(--gold); }
 .wrap { padding-inline: var(--gutter); }
 .section { position: relative; padding-block: clamp(88px, 12vw, 180px); }
-.dark { background: var(--bg-dark); background-color: var(--ink); color: var(--paper); }
+.dark {
+  /* "tinted" sections: pastel mesh instead of a dark background (variable names kept for the components) */
+  --paper: #2a2131; --stone-2: #6e6276; --line-d: rgba(42, 33, 49, 0.13);
+  background: var(--bg-dark); background-color: #fff6f1; color: #2a2131;
+}
 .light { background: var(--bg-light); }
+.services.dark { background: var(--mesh-b); }
+.stories.dark { background: var(--mesh-d); }
+.contact.dark { background: var(--mesh-c); }
+.footer.dark { background: var(--mesh-a); }
 /* metallic gradient text */
-.gold-text, .dark .display em, .dark .gold { background: var(--gold); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.gold-text, .dark .display em, .dark .gold { background: var(--gold-deep); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 0.05em; }
 .light .display em, .light .gold-deep { background: var(--gold-deep); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .dark .muted { color: var(--stone-2); }
 .muted { color: var(--stone); }
@@ -94,12 +121,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .btn:hover .btn__roll > span { transform: translateY(-100%); }
 .btn--accent {
   background: var(--gold); background-size: 220% 100%; background-position: 0% 0; color: var(--ink);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 12px 30px -14px rgba(176, 132, 74, 0.75);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 14px 30px -14px rgba(226, 103, 143, 0.6);
   transition: background-position 0.9s var(--ease), box-shadow 0.5s;
 }
 .btn--accent::before { display: none; }
-.btn--accent:hover { background-position: 100% 0; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 16px 36px -14px rgba(176, 132, 74, 0.9); }
-.btn--ink { background: var(--ink); color: var(--paper); }
+.btn--accent:hover { background-position: 100% 0; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 18px 36px -14px rgba(142, 107, 224, 0.6); }
+.btn--ink { background: var(--ink); color: #fffaf6; }
 .btn--ink::before { background: var(--gold); }
 .btn--ink:hover { color: var(--ink); }
 .btn--ghost { box-shadow: inset 0 0 0 1px currentColor; }

@@ -70,7 +70,7 @@ function preloader(): Promise<void> {
       if (!target) return;
       Flip.fit(frame, target, { duration: 1.1, ease: 'expo.inOut', absolute: true });
       gsap.to(['.loader__count', '.loader__bar', '.loader__brand'], { autoAlpha: 0, duration: 0.4 });
-      gsap.to(loader, { backgroundColor: 'rgba(13,12,11,0)', duration: 0.6, delay: 0.55 });
+      gsap.to('[data-loader-bg]', { autoAlpha: 0, duration: 0.6, delay: 0.55 });
     }, flickEnd + 0.15)
       .add(() => { startScroll(); resolve(); }, flickEnd + 0.75)
       .to({}, { duration: 1.35 });

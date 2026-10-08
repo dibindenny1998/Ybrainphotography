@@ -57,8 +57,8 @@ import { heroSlides, categories } from '../data/site';
   .hero__tag { color: var(--stone-2); }
   .hero__title { font-size: clamp(4.2rem, 19vw, 15rem); margin: 14px 0 0; line-height: 0.86; }
   .hero__title em { padding-right: 0.06em; }
-  .hero::before { content: ''; position: absolute; right: -10vw; top: 10vh; width: 60vw; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(214, 170, 110, 0.14), transparent 65%); pointer-events: none; }
-  .hero__slides { box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(214, 182, 126, 0.18); }
+  .hero::before { content: ''; position: absolute; right: -10vw; top: 10vh; width: 60vw; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(247, 161, 187, 0.28), transparent 65%); pointer-events: none; }
+  .hero__slides { box-shadow: 0 40px 80px -40px rgba(90, 50, 90, 0.45); }
   .hero__title .line-mask { padding-bottom: 0.06em; }
   .hero__title [data-hero-line] { display: inline-block; }
   .hero__foot { display: grid; gap: 22px; margin-top: 22px; }
@@ -94,8 +94,7 @@ import { heroSlides, categories } from '../data/site';
   }
 
   /* marigold ticker */
-  .ticker { background: linear-gradient(90deg, #0c0807, #1c1410 50%, #0c0807); overflow: hidden; padding-block: 16px; border-block: 1px solid rgba(214, 182, 126, 0.28); }
-  .ticker__group { background: var(--gold); background-size: 100% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .ticker { background: var(--grad); color: #2a2131; overflow: hidden; padding-block: 16px; }
   .ticker__track { display: flex; width: max-content; animation: ticker 32s linear infinite; }
   .ticker__group { display: flex; flex: none; }
   .ticker__item { display: inline-flex; align-items: center; gap: 28px; padding-right: 28px; font-family: var(--serif); font-size: clamp(1.6rem, 3.4vw, 2.8rem); line-height: 1.1; white-space: nowrap; }

@@ -14,6 +14,7 @@ const links = [
 const flicks = ['couples-03', 'newborn-01', 'celebrations-01', 'maternity-01', 'weddings-05', 'portraits-01'];
 ---
 <div class="loader" aria-hidden="true">
+  <div class="loader__bg" data-loader-bg></div>
   <div class="loader__frame" data-loader-frame>
     {flicks.map((s, i) => <div class="loader__shot" data-loader-shot><Img slot={s} fit="cover" alt="" eager={i < 2} sizes="240px" /></div>)}
   </div>
@@ -52,17 +53,18 @@ const flicks = ['couples-03', 'newborn-01', 'celebrations-01', 'maternity-01', '
 
 <style is:global>
   /* loader */
-  .loader { position: fixed; inset: 0; z-index: 200; background: var(--ink); color: var(--paper); display: none; }
+  .loader { position: fixed; inset: 0; z-index: 200; color: var(--ink); display: none; }
+  .loader__bg { position: absolute; inset: 0; background: var(--mesh-a); }
   .js .loader { display: block; }
   .loader__frame { position: absolute; left: 50%; top: 50%; width: min(42vw, 220px); aspect-ratio: 4 / 5; transform: translate(-50%, -50%); overflow: hidden; border-radius: 4px; }
   .loader__shot { position: absolute; inset: 0; opacity: 0; }
   .loader__shot:first-child { opacity: 1; }
   .loader__shot .img { width: 100%; height: 100%; object-fit: cover; }
-  .loader__brand { position: absolute; left: var(--gutter); top: max(22px, env(safe-area-inset-top)); width: 110px; color: var(--paper); }
+  .loader__brand { position: absolute; left: var(--gutter); top: max(22px, env(safe-area-inset-top)); width: 110px; color: var(--ink); }
   .loader__logo.logo path { stroke-width: 9; }
   .loader__count { position: absolute; right: var(--gutter); bottom: max(26px, env(safe-area-inset-bottom)); font-family: var(--serif); font-size: clamp(5rem, 16vw, 13rem); line-height: 0.8; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
   .loader__count sup { font-size: 0.3em; vertical-align: top; color: var(--accent); margin-left: 0.05em; }
-  .loader__bar { position: absolute; left: var(--gutter); bottom: max(30px, env(safe-area-inset-bottom)); width: min(40vw, 260px); height: 2px; background: var(--line-d); }
+  .loader__bar { position: absolute; left: var(--gutter); bottom: max(30px, env(safe-area-inset-bottom)); width: min(40vw, 260px); height: 2px; background: var(--line); }
   .loader__bar i { position: absolute; inset: 0; background: var(--gold); transform: scaleX(0); transform-origin: left; }
 
   /* logo */
@@ -74,13 +76,12 @@ const flicks = ['couples-03', 'newborn-01', 'celebrations-01', 'maternity-01', '
   /* nav */
   .nav {
     position: fixed; z-index: 100; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; gap: 20px;
-    padding: 14px var(--gutter); padding-top: max(14px, env(safe-area-inset-top)); color: var(--paper);
+    padding: 14px var(--gutter); padding-top: max(14px, env(safe-area-inset-top)); color: var(--ink);
     transition: transform 0.6s var(--ease), color 0.4s, background-color 0.4s;
   }
   .nav.is-hidden { transform: translateY(-110%); }
-  .nav.is-solid { background: rgba(13, 12, 11, 0.92); }
+  .nav.is-solid { background: rgba(255, 249, 246, 0.9); box-shadow: 0 1px 0 var(--line); }
   .nav-light .nav { color: var(--ink); }
-  .nav-light .nav.is-solid { background: rgba(244, 241, 236, 0.94); box-shadow: 0 1px 0 var(--line); }
   .nav__logo { width: 92px; display: block; }
   .nav__links { display: none; gap: 36px; }
   .nav__link { display: inline-block; overflow: hidden; height: 1.4em; line-height: 1.4; font-size: 14px; font-weight: 500; }
@@ -95,7 +96,7 @@ const flicks = ['couples-03', 'newborn-01', 'celebrations-01', 'maternity-01', '
   .nav__burger i:last-child { top: 24px; }
   .menu-open .nav__burger i:first-child { transform: translateY(3px) rotate(45deg); }
   .menu-open .nav__burger i:last-child { transform: translateY(-3px) rotate(-45deg); }
-  .menu-open .nav { color: var(--paper); background: transparent !important; box-shadow: none !important; }
+  .menu-open .nav { background: transparent !important; box-shadow: none !important; }
   @media (min-width: 1024px) {
     .nav__links { display: flex; }
     .nav__cta { display: inline-flex; }
@@ -106,10 +107,10 @@ const flicks = ['couples-03', 'newborn-01', 'celebrations-01', 'maternity-01', '
   /* menu */
   .menu { position: fixed; inset: 0; z-index: 95; visibility: hidden; pointer-events: none; }
   .menu.is-open { visibility: visible; pointer-events: auto; }
-  .menu__bg { position: absolute; inset: 0; background: var(--bg-dark); background-color: var(--ink); transform: scaleY(0); transform-origin: top; }
-  .menu__body { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 110px var(--gutter) max(30px, env(safe-area-inset-bottom)); color: var(--paper); }
+  .menu__bg { position: absolute; inset: 0; background: var(--mesh-d); background-color: #fbf3fa; transform: scaleY(0); transform-origin: top; }
+  .menu__body { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 110px var(--gutter) max(30px, env(safe-area-inset-bottom)); color: var(--ink); }
   .menu__list { list-style: none; margin: 0; padding: 0; }
-  .menu__list li { overflow: hidden; border-bottom: 1px solid var(--line-d); }
+  .menu__list li { overflow: hidden; border-bottom: 1px solid var(--line); }
   .menu__link { display: flex; align-items: baseline; gap: 16px; padding: 8px 0; }
   .menu__n { font-size: 12px; color: var(--accent); font-weight: 600; }
   .menu__word { display: block; font-family: var(--serif); font-size: clamp(3.4rem, 16vw, 6rem); line-height: 1.02; letter-spacing: -0.02em; }
