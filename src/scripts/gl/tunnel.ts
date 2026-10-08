@@ -73,7 +73,7 @@ export function createTunnel(canvas: HTMLCanvasElement, photos: TunnelPhoto[], f
 
   const scene = new Scene();
   const camera = new PerspectiveCamera(50, 1, 0.05, 120);
-  const SPACING = mobile ? 4.2 : 3.6;
+  const SPACING = mobile ? 3.6 : 3.0;
   const START = mobile ? -4.2 : -3.8;
   const geo = new PlaneGeometry(1, 1);
 
@@ -111,8 +111,8 @@ export function createTunnel(canvas: HTMLCanvasElement, photos: TunnelPhoto[], f
     const { mesh, mat } = makePlane(ph);
     const z = START - i * SPACING;
     const ang = i * 2.39996 + 0.6; // golden angle → evenly scattered around the path
-    const rad = (mobile ? 1.05 : 2.15) + (i % 3) * (mobile ? 0.22 : 0.45);
-    const h = (mobile ? 1.15 : 1.65) + (i % 3) * (mobile ? 0.2 : 0.32);
+    const rad = (mobile ? 1.1 : 2.4) + (i % 3) * (mobile ? 0.25 : 0.5);
+    const h = (mobile ? 1.3 : 2.0) + (i % 3) * (mobile ? 0.25 : 0.45);
     mesh.scale.set((h * ph.w) / ph.h, h, 1);
     mesh.position.set(Math.cos(ang) * rad * (mobile ? 1 : 1.35), Math.sin(ang) * rad * (mobile ? 1.3 : 0.72), z);
     mesh.renderOrder = z; // farther photos draw first
@@ -183,7 +183,8 @@ export function createTunnel(canvas: HTMLCanvasElement, photos: TunnelPhoto[], f
     smooth += (progress - smooth) * 0.08;
     sx += (mx - sx) * 0.05;
     sy += (my - sy) * 0.05;
-    const ease = smooth < 0.5 ? 4 * smooth ** 3 : 1 - Math.pow(-2 * smooth + 2, 3) / 2;
+    const k = Math.min(1, smooth / 0.86); // arrive a little early, then hold on the final photo
+    const ease = k < 0.5 ? 4 * k ** 3 : 1 - Math.pow(-2 * k + 2, 3) / 2;
     const camZ = MathUtils.lerp(0, camEnd, ease) + intro * 7;
     const settle = 1 - ease;
     camera.position.set(sx * 0.55 * settle, sy * 0.35 * settle, camZ);
@@ -192,7 +193,7 @@ export function createTunnel(canvas: HTMLCanvasElement, photos: TunnelPhoto[], f
 
     for (const p of [...planes, finP]) {
       const d = p.z - camZ; // negative = ahead of the camera
-      const far = 1 - MathUtils.smoothstep(-d, 20, 34);
+      const far = 1 - MathUtils.smoothstep(-d, 26, 48);
       const near = p === finP ? 1 : MathUtils.smoothstep(-d, 0.35, 2.4);
       p.mat.uniforms.uAlpha.value = far * near;
       p.mat.uniforms.uGlow.value = MathUtils.smoothstep(-d, 14, 3) * (p === finP ? 0 : 1);
@@ -201,7 +202,7 @@ export function createTunnel(canvas: HTMLCanvasElement, photos: TunnelPhoto[], f
     }
     emat.uniforms.uTime.value = time;
     emat.uniforms.uCamZ.value = camZ;
-    points.visible = smooth < 0.97;
+    points.visible = k < 0.98;
     renderer.render(scene, camera);
   };
 

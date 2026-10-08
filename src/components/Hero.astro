@@ -109,5 +109,5 @@ const finalPhoto = { src: fin.srcset ? fin.srcset.split(',').pop()!.trim().split
     .hero__intro { font-size: 16px; }
   }
   @media (min-width: 1024px) { .hero__title { font-size: clamp(5rem, min(12.5vw, 20svh), 15rem); } }
-  .no-motion .hero__caption, html:not(.js) .hero__caption { opacity: 1; visibility: visible; position: relative; padding-block: 40px; }
+  .no-motion .hero__caption, html:not(.js) .hero__caption { display: none; }
 </style>

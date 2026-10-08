@@ -61,8 +61,8 @@ const frag = /* glsl */ `
     float thr = uProgress * 1.3 - 0.12;
     float shown = 1.0 - smoothstep(thr - 0.035, thr, t);
     float edge = smoothstep(thr - 0.11, thr - 0.03, t) * (1.0 - smoothstep(thr - 0.01, thr + 0.03, t));
-    vec3 ember = mix(vec3(1.0, 0.22, 0.32), vec3(1.0, 0.78, 0.45), smoothstep(0.2, 1.0, edge));
-    col = col * shown + ember * edge * 1.6;
+    vec3 ember = mix(vec3(0.75, 0.04, 0.16), vec3(1.0, 0.42, 0.26), smoothstep(0.35, 1.0, edge));
+    col = col * shown + ember * edge * 1.25;
 
     // warm lamp glow under the cursor
     float md = distance(vUv * uRes, uMouse * uRes) / max(uRes.x, uRes.y);
