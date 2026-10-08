@@ -21,9 +21,9 @@ for (let i = 0; i < max; i++) for (const g of groups) if (g.photos[i]) items.pus
 
   <div class="gallery__grid wrap" data-gallery>
     {items.map(({ cat, catName, p }, i) => (
-      <figure class:list={['gitem', `gitem--${p.orientation}`]} data-cat={cat} data-gitem>
+      <figure class:list={['gitem', `gitem--${p.orientation}`]} data-cat={cat} data-gitem data-slot={p.slot}>
         <button class="gitem__btn" data-lightbox={i} data-cursor="View" aria-label={`Open ${p.caption}`}>
-          <span class="gitem__media" data-reveal-img>
+          <span class="gitem__media" data-reveal-img data-gl>
             <Img photo={p} sizes="(min-width: 1200px) 24vw, (min-width: 768px) 45vw, 50vw" />
           </span>
         </button>
@@ -53,7 +53,7 @@ for (let i = 0; i < max; i++) for (const g of groups) if (g.photos[i]) items.pus
 
 <style is:global>
   .gallery { position: relative; padding-bottom: clamp(80px, 12vw, 180px); }
-  .gallery__bar { position: sticky; top: var(--navh, 72px); z-index: 40; padding-block: 12px; margin-bottom: clamp(20px, 4vw, 48px); transition: top 0.7s var(--ease); }
+  .gallery__bar { position: sticky; top: var(--navh, 72px); z-index: 65; padding-block: 12px; margin-bottom: clamp(20px, 4vw, 48px); transition: top 0.7s var(--ease); }
   .nav-hidden .gallery__bar { top: 0; }
   .gallery__bar { background: color-mix(in srgb, var(--ivory) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
   .gallery__filters { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
@@ -91,17 +91,19 @@ for (let i = 0; i < max; i++) for (const g of groups) if (g.photos[i]) items.pus
   /* lightbox */
   .lightbox { position: fixed; inset: 0; z-index: 150; display: grid; grid-template-rows: auto 1fr; visibility: hidden; pointer-events: none; }
   .lightbox.is-open { visibility: visible; pointer-events: auto; }
-  .lightbox__bg { position: absolute; inset: 0; background: var(--ivory); opacity: 0; }
+  .lightbox__bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, #2b0911, #0b0405 70%); opacity: 0; }
+  .lightbox { color: var(--cream); }
+  .lightbox__frame img { view-transition-name: lb-photo; box-shadow: 0 40px 100px -30px rgba(255, 40, 70, 0.35); }
   .lightbox__top { position: relative; display: flex; justify-content: space-between; align-items: center; padding-block: max(18px, env(safe-area-inset-top)) 0; height: 64px; }
-  .lightbox__close { display: inline-flex; gap: 10px; align-items: center; color: var(--red); padding: 10px 0; }
-  .lightbox__count { color: var(--ink-2); }
+  .lightbox__close { display: inline-flex; gap: 10px; align-items: center; color: #ff4d66; padding: 10px 0; }
+  .lightbox__count { color: rgba(246, 233, 218, 0.7); }
   .lightbox__figure { position: relative; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 8px var(--gutter) 90px; min-height: 0; }
   .lightbox__frame { min-height: 0; display: flex; justify-content: center; overflow: hidden; border-radius: 3px; }
   .lightbox__frame img { max-width: 100%; max-height: calc(100svh - 190px); width: auto; height: auto; object-fit: contain; }
   .lightbox__cap { display: flex; gap: 16px; align-items: baseline; }
   .lightbox__cap .serif { font-style: italic; font-size: 20px; }
-  .lightbox__cap .label { color: var(--ink-3); font-size: 10px; }
-  .lightbox__nav { position: absolute; bottom: max(22px, env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line); display: grid; place-items: center; color: var(--ink); transition: background 0.4s, color 0.4s; }
+  .lightbox__cap .label { color: rgba(246, 233, 218, 0.55); font-size: 10px; }
+  .lightbox__nav { position: absolute; bottom: max(22px, env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line-dark); display: grid; place-items: center; color: var(--cream); transition: background 0.4s, color 0.4s; }
   .lightbox__nav svg { width: 22px; }
   .lightbox__nav:hover { background: var(--red); color: var(--ivory); box-shadow: none; }
   .lightbox__nav--prev { left: calc(50% - 68px); }

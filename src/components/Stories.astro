@@ -1,100 +1,87 @@
 ---
+/** Featured stories — full-screen cards that stack over each other as you scroll */
 import Img from './Img.astro';
 import Arrow from './icons/Arrow.astro';
 import { stories } from '../data/site';
 ---
-<section class="stories" id="stories" aria-labelledby="stories-title" data-stories>
-  <div class="stories__pin" data-stories-pin>
-    <div class="stories__track" data-stories-track>
-      <header class="stories__intro">
-        <p class="eyebrow"><span class="eyebrow__n">iii.</span>Featured stories</p>
-        <h2 id="stories-title" class="display stories__title" data-split>Whole days,<br /><em>told whole.</em></h2>
-        <p class="stories__lede">
-          A wedding isn't one photograph. It's the 5am oil bath, the nervous uncle, the sadya, the drive home in silence.
-          Here are a few days we were trusted with.
-        </p>
-        <span class="stories__hint label" aria-hidden="true">Scroll <Arrow /></span>
-      </header>
+<section class="stories is-dark" id="stories" data-theme="dark" aria-labelledby="stories-title">
+  <div class="lamp" data-lamp></div>
+  <header class="stories__intro wrap">
+    <p class="eyebrow"><span class="eyebrow__n">iv.</span><span data-scramble>Featured stories</span></p>
+    <h2 id="stories-title" class="display stories__title" data-split>Whole days,<br /><em>told whole.</em></h2>
+    <p class="stories__lede">
+      A wedding isn't one photograph. It's the 5am oil bath, the nervous uncle, the sadya, the drive home in silence.
+      Here are a few days we were trusted with.
+    </p>
+  </header>
 
-      {stories.map((s, i) => (
-        <article class="story" data-story>
-          <div class="story__media">
-            <div class="story__cover" data-story-cover>
-              <div class="story__cover-in" data-story-parallax>
-                <Img slot={`${s.slot}-cover`} fit="cover" sizes="(min-width: 1024px) 60vw, 100vw" />
-              </div>
-            </div>
-            <div class="story__detail" data-story-detail>
-              <Img slot={`${s.slot}-detail`} fit="cover" sizes="(min-width: 1024px) 18vw, 40vw" />
-            </div>
+  <div class="stack" data-stack>
+    {stories.map((s, i) => (
+      <article class="scard" data-scard style={`--i:${i}`}>
+        <div class="scard__inner" data-scard-inner>
+          <div class="scard__bg" data-scard-bg>
+            <Img slot={`${s.slot}-cover`} fit="cover" sizes="100vw" />
           </div>
-          <div class="story__text">
-            <p class="story__num label"><span class="serif">No. 0{i + 1}</span> — {s.type}</p>
-            <h3 class="story__names display">
+          <div class="scard__shade"></div>
+          <span class="scard__num" aria-hidden="true">0{i + 1}</span>
+          <div class="scard__detail" data-scard-detail>
+            <Img slot={`${s.slot}-detail`} fit="cover" sizes="(min-width: 1024px) 20vw, 36vw" />
+          </div>
+          <div class="scard__text wrap">
+            <p class="scard__type label"><span class="serif">No. 0{i + 1}</span> — {s.type}</p>
+            <h3 class="scard__names">
               {s.couple.length > 1 ? (<>{s.couple[0]} <em>&amp;</em> {s.couple[1]}</>) : s.couple[0]}
             </h3>
-            <p class="story__place label">{s.place} <span class="red">✦</span> {s.date}</p>
-            <p class="story__excerpt">{s.excerpt}</p>
-            <a href="#enquire" class="arrow-link story__cta" data-enquire-type={i === 3 ? 'Newborn' : 'Wedding'}><span>Plan a day like this</span><Arrow /></a>
+            <p class="scard__place label">{s.place} <span class="scard__star">✦</span> {s.date}</p>
+            <p class="scard__excerpt">{s.excerpt}</p>
+            <a href="#enquire" class="arrow-link scard__cta" data-enquire-type={i === 3 ? 'Newborn' : 'Wedding'}><span>Plan a day like this</span><Arrow /></a>
           </div>
-        </article>
-      ))}
-    </div>
-    <div class="stories__progress" aria-hidden="true"><i data-stories-progress></i></div>
+        </div>
+      </article>
+    ))}
   </div>
 </section>
 
 <style is:global>
-  .stories { position: relative; background: var(--ivory-2); }
-  .stories__track { display: grid; gap: clamp(80px, 14vw, 140px); padding: clamp(96px, 16vw, 160px) var(--gutter); }
-  .stories__intro { display: grid; gap: 26px; align-content: start; }
-  .stories__title { font-size: clamp(3rem, 11vw, 8.4rem); }
-  .stories__lede { margin: 0; max-width: 40ch; color: var(--ink-2); font-size: 15px; }
-  .stories__hint { display: none; align-items: center; gap: 14px; color: var(--red); }
-  .stories__hint svg { width: 36px; }
-  .stories__progress { display: none; }
-
-  .story { display: grid; gap: 34px; }
-  .story__media { position: relative; padding-bottom: 18%; }
-  .story__cover { position: relative; aspect-ratio: 3 / 2; overflow: hidden; border-radius: 3px; }
-  .story__cover-in { position: absolute; inset: -8%; }
-  .story__cover-in .img { width: 100%; height: 100%; object-fit: cover; }
-  .story__detail {
-    position: absolute; right: 6%; bottom: 0; width: 34%; aspect-ratio: 4 / 5; overflow: hidden;
-    border-radius: 999px 999px 3px 3px; outline: 8px solid var(--ivory-2);
-  }
-  .story__detail .img { width: 100%; height: 100%; object-fit: cover; }
-  .story:nth-child(odd) .story__detail { right: auto; left: 6%; }
-  .story__text { display: grid; gap: 14px; }
-  .story__num { margin: 0; color: var(--ink-2); }
-  .story__num .serif { font-style: italic; color: var(--red); letter-spacing: 0; text-transform: none; font-size: 15px; }
-  .story__names { font-size: clamp(2.8rem, 12vw, 6.2rem); }
-  .story__names em { font-size: 0.8em; }
-  .story__place { margin: 0; color: var(--ink-2); }
-  .story__excerpt { margin: 0; max-width: 46ch; color: var(--ink-2); font-size: 15px; }
-  .story__cta { color: var(--red); margin-top: 8px; }
-
+  .stories { padding-top: clamp(96px, 14vw, 180px); }
+  .stories__intro { display: grid; gap: 26px; padding-bottom: clamp(48px, 8vw, 100px); }
+  .stories__title { font-size: clamp(3.2rem, 11vw, 9rem); }
+  .stories__lede { margin: 0; max-width: 42ch; color: rgba(246, 233, 218, 0.7); font-size: 15px; }
   @media (min-width: 1024px) {
-    .story { grid-template-columns: 1.35fr 1fr; align-items: center; gap: 4vw; }
-    .story__text { padding-left: 4vw; }
-    .story__names { font-size: clamp(3.6rem, 6vw, 7rem); }
-    .story__detail, .story:nth-child(odd) .story__detail { width: 30%; left: auto; right: -8%; bottom: -8%; }
-    .story__media { padding-bottom: 0; }
+    .stories__intro { grid-template-columns: 1.4fr 1fr; align-items: end; }
+    .stories__intro .eyebrow { grid-column: 1 / -1; }
   }
-  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-    .js .stories__pin { height: 100vh; overflow: hidden; position: relative; }
-    .js .stories__track { display: flex; flex-wrap: nowrap; align-items: center; gap: 9vw; height: 100%; width: max-content; padding: 0 var(--gutter); }
-    .js .stories__intro { width: 34vw; }
-    .js .stories__title { font-size: clamp(4rem, 7vw, 8rem); }
-    .js .stories__hint { display: inline-flex; }
-    .js .story { width: 76vw; grid-template-columns: 1.35fr 1fr; align-items: center; gap: 4vw; }
-    .js .story__media { padding-bottom: 0; }
-    .js .story__cover { aspect-ratio: auto; height: 64vh; }
-    .js .story__detail { width: 34%; right: -12%; bottom: -10%; }
-    .js .story:nth-child(odd) .story__detail { left: auto; right: -12%; }
-    .js .story__text { padding-left: 4vw; }
-    .js .story__names { font-size: clamp(3.6rem, 6vw, 7rem); }
-    .js .stories__progress { display: block; position: absolute; left: var(--gutter); right: var(--gutter); bottom: 5vh; height: 1px; background: var(--line); }
-    .js .stories__progress i { position: absolute; inset: 0; background: var(--red); transform: scaleX(0); transform-origin: left; }
+
+  .stack { position: relative; }
+  .scard { position: sticky; top: 0; height: 100svh; padding: clamp(10px, 1.6vw, 22px); }
+  .scard__inner {
+    position: relative; height: 100%; border-radius: clamp(10px, 1.4vw, 20px); overflow: hidden; background: #140709;
+    box-shadow: 0 -30px 80px -20px rgba(0, 0, 0, 0.7); transform-origin: 50% 0%; will-change: transform, filter;
   }
+  .scard__bg { position: absolute; inset: -6% 0; }
+  .scard__bg .img { width: 100%; height: 100%; object-fit: cover; }
+  .scard__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13, 5, 6, 0.1) 0%, rgba(13, 5, 6, 0.15) 40%, rgba(20, 3, 8, 0.88) 100%), linear-gradient(90deg, rgba(13, 5, 6, 0.55), transparent 60%); }
+  .scard__num {
+    position: absolute; right: var(--gutter); top: clamp(70px, 9vh, 110px); font-family: var(--serif); font-style: italic; line-height: 0.8;
+    font-size: clamp(6rem, 22vw, 20rem); color: transparent; -webkit-text-stroke: 1px rgba(255, 77, 102, 0.55); letter-spacing: -0.05em;
+  }
+  .scard__detail {
+    position: absolute; right: var(--gutter); bottom: clamp(220px, 34vh, 340px); width: clamp(110px, 18vw, 260px); aspect-ratio: 4 / 5;
+    border-radius: 999px 999px 6px 6px; overflow: hidden; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.7); outline: 1px solid rgba(255, 77, 102, 0.4); outline-offset: 6px;
+  }
+  .scard__detail .img { width: 100%; height: 100%; object-fit: cover; }
+  .scard__text { position: absolute; left: 0; right: 0; bottom: clamp(24px, 6vh, 64px); display: grid; gap: 12px; color: var(--cream); }
+  .scard__type { margin: 0; color: rgba(246, 233, 218, 0.75); }
+  .scard__type .serif { font-style: italic; color: #ff4d66; letter-spacing: 0; text-transform: none; font-size: 15px; }
+  .scard__names { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(3rem, 11vw, 9rem); line-height: 0.9; letter-spacing: -0.04em; max-width: 12ch; }
+  .scard__names em { font-style: italic; color: #ff3d5a; text-shadow: 0 0 40px rgba(255, 40, 80, 0.5); font-size: 0.8em; }
+  .scard__place { margin: 0; color: rgba(246, 233, 218, 0.75); }
+  .scard__star { color: #ff4d66; }
+  .scard__excerpt { margin: 0; max-width: 46ch; color: rgba(246, 233, 218, 0.8); font-size: 15px; }
+  .scard__cta { color: #ff6b80; margin-top: 4px; }
+  @media (max-width: 767px) {
+    .scard__excerpt { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px; }
+    .scard__detail { bottom: auto; top: clamp(80px, 12vh, 120px); left: var(--gutter); right: auto; }
+  }
+  .no-motion .scard { position: relative; height: 92svh; }
 </style>

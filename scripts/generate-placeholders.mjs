@@ -24,6 +24,10 @@ const BG = {
   sand: ['#FFF9F0', '#F6EAD8'],
   rose: ['#FFF8F6', '#FAE4E1'],
   dusk: ['#FFF3F1', '#F4D0CC'],
+  // cinematic dark grounds
+  night: ['#22090F', '#080304'],
+  wine: ['#430A18', '#100406'],
+  ember: ['#2E0710', '#0A0304'],
 };
 
 /* ------------------------------------------------------------------ utils */
@@ -602,36 +606,54 @@ function jasmineScatter(w, h, n) {
 }
 
 /* ------------------------------------------------------------- framing */
-function svgDoc({ name, w, h, bg = 'ivory', title, scene, disc, frame = true }) {
+function svgDoc({ name, w, h, bg = 'ivory', title, scene, disc, frame = true, leak }) {
   const W = 1200, H = Math.round((1200 * h) / w);
   const [b1, b2] = BG[bg];
+  const dark = ['night', 'wine', 'ember'].includes(bg);
+  const INK = dark ? '#F6E7D7' : RED; // line colour
+  const ACC = dark ? '#FF4D66' : RED; // accent fills & flames
   const label = name.toUpperCase().replace(/-/g, ' ');
   title = title.replace(/&/g, '&amp;');
   const pad = W * 0.045;
   let body = '';
+  if (dark) {
+    // light leaks: warm red bloom from a corner + soft vignette
+    const [lx, ly] = leak ?? [0.15, 0.1];
+    body += `<ellipse cx="${r(W * lx)}" cy="${r(H * ly)}" rx="${r(W * 0.75)}" ry="${r(H * 0.55)}" fill="url(#leak)"/>`;
+  }
   if (disc) body += `<circle cx="${r(W * disc[0])}" cy="${r(H * disc[1])}" r="${r(W * disc[2])}" fill="url(#disc)"/>`;
   body += scene(W, H);
+  if (dark) body += `<rect width="${W}" height="${H}" fill="url(#vig)"/>`;
   // stagger draw-in animation
   let i = 0;
   body = body.replace(/class="l( t)?"/g, (m) => `${m} style="animation-delay:${Math.min(1.6, 0.15 + i++ * 0.035).toFixed(2)}s"`);
   const fr = frame
-    ? `<rect x="${r(pad)}" y="${r(pad)}" width="${r(W - pad * 2)}" height="${r(H - pad * 2)}" fill="none" stroke="${RED}" stroke-opacity=".45" stroke-width="1" vector-effect="non-scaling-stroke"/>` +
-      `<g fill="${RED}" font-family="Georgia, 'Times New Roman', serif">` +
+    ? `<rect x="${r(pad)}" y="${r(pad)}" width="${r(W - pad * 2)}" height="${r(H - pad * 2)}" fill="none" stroke="${INK}" stroke-opacity="${dark ? 0.22 : 0.45}" stroke-width="1" vector-effect="non-scaling-stroke"/>` +
+      `<g fill="${INK}" font-family="Georgia, 'Times New Roman', serif">` +
       `<text x="${r(pad + W * 0.02)}" y="${r(H - pad - W * 0.022)}" font-size="${r(W * 0.026)}" font-style="italic">${title}</text>` +
-      `<text x="${r(W - pad - W * 0.02)}" y="${r(H - pad - W * 0.022)}" font-size="${r(W * 0.014)}" letter-spacing="${r(W * 0.004)}" text-anchor="end" opacity=".8" font-family="Helvetica, Arial, sans-serif">${label}</text>` +
+      `<text x="${r(W - pad - W * 0.02)}" y="${r(H - pad - W * 0.022)}" font-size="${r(W * 0.014)}" letter-spacing="${r(W * 0.004)}" text-anchor="end" opacity=".7" font-family="Helvetica, Arial, sans-serif">${label}</text>` +
       `</g>`
     : '';
+  const discStops = dark
+    ? '<stop offset="0" stop-color="#C8183A" stop-opacity=".55"/><stop offset=".55" stop-color="#8E0F28" stop-opacity=".25"/><stop offset="1" stop-color="#5A0716" stop-opacity="0"/>'
+    : '<stop offset="0" stop-color="#F6C4C2" stop-opacity=".7"/><stop offset=".7" stop-color="#F8D8D5" stop-opacity=".4"/><stop offset="1" stop-color="#F8D8D5" stop-opacity="0"/>';
+  const glowStops = dark
+    ? '<stop offset="0" stop-color="#FFB070" stop-opacity=".95"/><stop offset=".3" stop-color="#FF5A3C" stop-opacity=".45"/><stop offset="1" stop-color="#B0122F" stop-opacity="0"/>'
+    : '<stop offset="0" stop-color="#FFB38F" stop-opacity=".8"/><stop offset=".45" stop-color="#FFD2B8" stop-opacity=".4"/><stop offset="1" stop-color="#FFE9DC" stop-opacity="0"/>';
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
 <title>${title} — placeholder (${name})</title>
 <defs>
 <linearGradient id="bg" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="${b1}"/><stop offset="1" stop-color="${b2}"/></linearGradient>
-<radialGradient id="disc"><stop offset="0" stop-color="#F6C4C2" stop-opacity=".7"/><stop offset=".7" stop-color="#F8D8D5" stop-opacity=".4"/><stop offset="1" stop-color="#F8D8D5" stop-opacity="0"/></radialGradient>
-<radialGradient id="glow"><stop offset="0" stop-color="#FFB38F" stop-opacity=".8"/><stop offset=".45" stop-color="#FFD2B8" stop-opacity=".4"/><stop offset="1" stop-color="#FFE9DC" stop-opacity="0"/></radialGradient>
+<radialGradient id="disc">${discStops}</radialGradient>
+<radialGradient id="glow">${glowStops}</radialGradient>
+<radialGradient id="leak"><stop offset="0" stop-color="#FF3B4E" stop-opacity=".42"/><stop offset=".45" stop-color="#B0122F" stop-opacity=".18"/><stop offset="1" stop-color="#B0122F" stop-opacity="0"/></radialGradient>
+<radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
 <style>
-.l{fill:none;stroke:${RED};stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:draw 2.8s cubic-bezier(.65,0,.25,1) both}
-.t{stroke-width:1.15;stroke-opacity:.9}
-.f{fill:${RED}}
-.tx{fill:${RED};font-family:Helvetica,Arial,sans-serif}
+.l{fill:none;stroke:${INK};stroke-width:${dark ? 1.6 : 1.75};stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:draw 2.8s cubic-bezier(.65,0,.25,1) both}
+.t{stroke-width:1.15;stroke-opacity:${dark ? 0.7 : 0.9}}
+.f{fill:${ACC}}
+.tx{fill:${INK};font-family:Helvetica,Arial,sans-serif}
+.fl .l{stroke:${dark ? '#FFC38A' : RED}}
 .fl{transform-box:fill-box;transform-origin:50% 100%;animation:flick 2.4s ease-in-out infinite alternate}
 @keyframes draw{from{stroke-dasharray:1;stroke-dashoffset:1}to{stroke-dasharray:1;stroke-dashoffset:0}}
 @keyframes flick{0%{transform:scale(1,1)}35%{transform:scale(.94,1.08)}70%{transform:scale(1.04,.95)}100%{transform:scale(.97,1.05)}}
@@ -652,37 +674,37 @@ const all = (...fns) => (W, H) => fns.map((f) => f(W, H)).join('');
 
 const placeholders = [
   // HERO
-  { name: 'hero-01-temple-wedding', w: 3, h: 2, bg: 'blush', title: 'The temple mandapam, Guruvayur', disc: [0.5, 0.42, 0.42],
+  { name: 'hero-01-temple-wedding', w: 3, h: 2, bg: 'night', title: 'The temple mandapam, Guruvayur', disc: [0.5, 0.42, 0.42],
     scene: all(S(0.5, 0.48, 0.86, mandapam()), S(0.5, 0.57, 0.57, couple()), S(0.5, 0.16, 1, birds(5, 300, 60))) },
-  { name: 'hero-02-bride-jasmine', w: 2, h: 3, bg: 'rose', title: 'Mullappoo', disc: [0.5, 0.36, 0.5],
+  { name: 'hero-02-bride-jasmine', w: 2, h: 3, bg: 'wine', title: 'Mullappoo', disc: [0.5, 0.36, 0.5],
     scene: S(0.5, 0.4, 1.35, brideBack()) },
-  { name: 'hero-03-nilavilakku', w: 4, h: 5, bg: 'sand', title: 'The first flame', disc: [0.5, 0.3, 0.38],
+  { name: 'hero-03-nilavilakku', w: 4, h: 5, bg: 'night', title: 'The first flame', disc: [0.5, 0.3, 0.38],
     scene: all(S(0.5, 0.52, 1.25, lamp()), S(0.5, 0.86, 1, jasmineScatter(700, 60, 9))) },
-  { name: 'hero-04-couple', w: 1, h: 1, bg: 'dusk', title: 'Foreheads, touching', disc: [0.5, 0.45, 0.4],
+  { name: 'hero-04-couple', w: 1, h: 1, bg: 'ember', title: 'Foreheads, touching', disc: [0.5, 0.45, 0.4],
     scene: S(0.5, 0.42, 1.55, couple()) },
 
   // GALLERY — WEDDINGS
   { name: 'weddings-01-garland-exchange', w: 4, h: 5, bg: 'blush', title: 'The garland exchange', disc: [0.5, 0.36, 0.42],
     scene: S(0.5, 0.38, 1.6, couple()) },
-  { name: 'weddings-02-nilavilakku', w: 2, h: 3, bg: 'sand', title: 'Nilavilakku', disc: [0.5, 0.3, 0.45],
+  { name: 'weddings-02-nilavilakku', w: 2, h: 3, bg: 'night', title: 'Nilavilakku', disc: [0.5, 0.3, 0.45],
     scene: all(S(0.5, 0.5, 1.45, lamp()), S(0.5, 0.88, 1, jasmineScatter(800, 80, 12))) },
   { name: 'weddings-03-nirapara', w: 1, h: 1, bg: 'ivory', title: 'Nirapara & nilavilakku', disc: [0.42, 0.38, 0.36],
     scene: all(S(0.4, 0.62, 1.15, nirapara()), S(0.74, 0.55, 0.9, lamp())) },
-  { name: 'weddings-04-mandapam', w: 3, h: 2, bg: 'rose', title: 'Before the muhurtham', disc: [0.5, 0.4, 0.35],
+  { name: 'weddings-04-mandapam', w: 3, h: 2, bg: 'wine', title: 'Before the muhurtham', disc: [0.5, 0.4, 0.35],
     scene: S(0.5, 0.52, 1.05, mandapam()) },
   { name: 'weddings-05-bride-jasmine', w: 2, h: 3, bg: 'blush', title: 'Jasmine, braided in', disc: [0.5, 0.3, 0.48],
     scene: S(0.5, 0.38, 1.4, brideBack()) },
   { name: 'weddings-06-rings', w: 4, h: 3, bg: 'ivory', title: 'Two rings, one promise', disc: [0.5, 0.5, 0.3],
     scene: all(S(0.5, 0.5, 1.4, rings()), S(0.5, 0.5, 1, jasmineScatter(1000, 600, 10))) },
-  { name: 'weddings-07-uruli', w: 3, h: 2, bg: 'sand', title: 'Uruli of petals', disc: [0.5, 0.48, 0.32],
+  { name: 'weddings-07-uruli', w: 3, h: 2, bg: 'ember', title: 'Uruli of petals', disc: [0.5, 0.48, 0.32],
     scene: S(0.5, 0.52, 1.6, uruli()) },
 
   // COUPLES
   { name: 'couples-01-foreheads', w: 4, h: 5, bg: 'dusk', title: 'Quiet, after the vows', disc: [0.5, 0.4, 0.42],
     scene: S(0.5, 0.42, 1.75, couple({ garlands: false })) },
-  { name: 'couples-02-backwaters', w: 3, h: 2, bg: 'blush', title: 'Kumarakom backwaters', disc: [0.5, 0.38, 0.2],
+  { name: 'couples-02-backwaters', w: 3, h: 2, bg: 'night', title: 'Kumarakom backwaters', disc: [0.5, 0.38, 0.2],
     scene: all(S(0.5, 0.62, 1.1, boat()), S(0.5, 0.7, 1, ripples(1100, 0, 6)), S(0.12, 0.66, 0.9, palm(1, 440)), S(0.9, 0.68, 0.8, palm(-1, 400)), S(0.62, 0.22, 1, birds(6, 300, 80))) },
-  { name: 'couples-03-monsoon', w: 2, h: 3, bg: 'rose', title: 'Monsoon, shared', disc: [0.5, 0.3, 0.4],
+  { name: 'couples-03-monsoon', w: 2, h: 3, bg: 'wine', title: 'Monsoon, shared', disc: [0.5, 0.3, 0.4],
     scene: all(S(0.5, 0.5, 1, rain(1100, 1700, 90)), S(0.5, 0.32, 1.4, umbrella()), S(0.5, 0.62, 0.85, couple({ garlands: false }))) },
   { name: 'couples-04-palms-sunset', w: 4, h: 3, bg: 'dusk', title: 'Varkala, golden hour', disc: [0.56, 0.48, 0.26],
     scene: all(S(0.24, 0.86, 1.25, palm(1, 480)), S(0.84, 0.86, 1, palm(-1, 420)), S(0.5, 0.8, 1, ripples(1050, 0, 3)), S(0.5, 0.2, 1, birds(5, 260, 60))) },
@@ -690,21 +712,21 @@ const placeholders = [
     scene: all(S(0.5, 0.5, 2.6, heart(1)), S(0.5, 0.5, 1, jasmineScatter(900, 900, 14))) },
 
   // NEWBORN
-  { name: 'newborn-01-moon', w: 4, h: 5, bg: 'rose', title: 'Moon-soft', disc: [0.5, 0.42, 0.42],
+  { name: 'newborn-01-moon', w: 4, h: 5, bg: 'night', title: 'Moon-soft', disc: [0.5, 0.42, 0.42],
     scene: all(S(0.42, 0.44, 1.35, crescent(260)), S(0.52, 0.66, 1.15, swaddle()), S(0.5, 0.5, 1, sparkle(320, -420, 22) + sparkle(-360, -300, 14) + sparkle(380, 80, 12) + sparkle(-300, 420, 16))) },
   { name: 'newborn-02-tiny-feet', w: 1, h: 1, bg: 'blush', title: 'Ten tiny toes', disc: [0.5, 0.5, 0.34],
     scene: all(S(0.42, 0.66, 1.6, `<g transform="rotate(-12)">${foot()}</g>`), S(0.6, 0.62, 1.6, `<g transform="rotate(14)">${foot(true)}</g>`), S(0.5, 0.22, 1, heart(0.6))) },
   { name: 'newborn-03-thottil', w: 2, h: 3, bg: 'sand', title: 'The thottil', disc: [0.5, 0.56, 0.4],
     scene: S(0.5, 0.54, 1.8, thottil()) },
-  { name: 'newborn-04-first-sleep', w: 3, h: 2, bg: 'ivory', title: 'First sleep', disc: [0.5, 0.5, 0.26],
+  { name: 'newborn-04-first-sleep', w: 3, h: 2, bg: 'ember', title: 'First sleep', disc: [0.5, 0.5, 0.26],
     scene: all(S(0.48, 0.56, 1.7, swaddle()), S(0.5, 0.5, 1, sparkle(-420, -180, 18) + sparkle(400, -220, 12) + sparkle(460, 160, 16))) },
 
   // PORTRAITS
-  { name: 'portraits-01-bride-back', w: 2, h: 3, bg: 'dusk', title: 'Portrait in jasmine', disc: [0.5, 0.3, 0.46],
+  { name: 'portraits-01-bride-back', w: 2, h: 3, bg: 'wine', title: 'Portrait in jasmine', disc: [0.5, 0.3, 0.46],
     scene: S(0.5, 0.36, 1.5, brideBack()) },
   { name: 'portraits-02-jhumka', w: 4, h: 5, bg: 'rose', title: 'Jhumka & light', disc: [0.56, 0.4, 0.4],
     scene: S(0.54, 0.42, 2.6, profile('bride')) },
-  { name: 'portraits-03-camera', w: 3, h: 2, bg: 'sand', title: 'The ybrain camera', disc: [0.5, 0.46, 0.3],
+  { name: 'portraits-03-camera', w: 3, h: 2, bg: 'night', title: 'The ybrain camera', disc: [0.5, 0.46, 0.3],
     scene: S(0.5, 0.5, 1.8, camera()) },
   { name: 'portraits-04-groom', w: 4, h: 5, bg: 'ivory', title: 'The groom, waiting', disc: [0.46, 0.4, 0.4],
     scene: (W, H) => `<g transform="translate(${W * 0.46} ${H * 0.42}) scale(${-2.6 * (W / 1200)} ${2.6 * (W / 1200)})">${profile('groom')}${G(30, 160, 1, varamala(170, 80, 11))}</g>` },
@@ -712,29 +734,29 @@ const placeholders = [
   // EVENTS
   { name: 'events-01-chenda', w: 2, h: 3, bg: 'blush', title: 'Chenda melam', disc: [0.5, 0.42, 0.42],
     scene: S(0.5, 0.56, 1.75, chenda()) },
-  { name: 'events-02-festoon', w: 3, h: 2, bg: 'dusk', title: 'Reception lights', disc: [0.5, 0.75, 0.28],
+  { name: 'events-02-festoon', w: 3, h: 2, bg: 'night', title: 'Reception lights', disc: [0.5, 0.75, 0.28],
     scene: all(S(0.5, 0, 1, festoon(1400, 60, 130, 14) + festoon(1400, 260, 120, 12) + festoon(1400, 480, 90, 16))) },
-  { name: 'events-03-diyas', w: 16, h: 9, bg: 'sand', title: 'A thousand small flames', disc: [0.5, 0.6, 0.2],
+  { name: 'events-03-diyas', w: 16, h: 9, bg: 'ember', title: 'A thousand small flames', disc: [0.5, 0.6, 0.2],
     scene: (W, H) => [0.12, 0.25, 0.38, 0.5, 0.62, 0.75, 0.88].map((x, i) => G(W * x, H * (0.62 + Math.sin(i * 0.9) * 0.06), (W / 1200) * (0.95 + (i % 2) * 0.25), diya())).join('') + G(W / 2, H * 0.74, W / 1200, ripples(1050, 0, 2)) },
   { name: 'events-04-rangoli', w: 1, h: 1, bg: 'ivory', title: 'Rangoli at the door', disc: [0.5, 0.5, 0.4],
     scene: S(0.5, 0.5, 1.55, mandala(260)) },
 
   // FEATURED STORIES
-  { name: 'story-01-cover', w: 3, h: 2, bg: 'rose', title: 'Anjali & Rahul — Guruvayur', disc: [0.5, 0.4, 0.4],
+  { name: 'story-01-cover', w: 3, h: 2, bg: 'night', title: 'Anjali & Rahul — Guruvayur', disc: [0.5, 0.4, 0.4],
     scene: all(S(0.5, 0.48, 0.84, mandapam()), S(0.5, 0.57, 0.55, couple())) },
   { name: 'story-01-detail', w: 4, h: 5, bg: 'blush', title: 'The thali', disc: [0.5, 0.42, 0.36],
     scene: all(S(0.5, 0.36, 1.2, varamala(560, 280, 22)), S(0.5, 0.75, 1, jasmineScatter(800, 160, 8))) },
-  { name: 'story-02-cover', w: 3, h: 2, bg: 'dusk', title: 'Meera & Joseph — Kumarakom', disc: [0.7, 0.36, 0.18],
+  { name: 'story-02-cover', w: 3, h: 2, bg: 'wine', title: 'Meera & Joseph — Kumarakom', disc: [0.7, 0.36, 0.18],
     scene: all(S(0.42, 0.64, 1.05, boat()), S(0.5, 0.72, 1, ripples(1150, 0, 5)), S(0.86, 0.7, 0.95, palm(-1, 460)), S(0.3, 0.2, 1, birds(7, 340, 90))) },
-  { name: 'story-02-detail', w: 4, h: 5, bg: 'ivory', title: 'Rings at the altar', disc: [0.5, 0.44, 0.36],
+  { name: 'story-02-detail', w: 4, h: 5, bg: 'wine', title: 'Rings at the altar', disc: [0.5, 0.44, 0.36],
     scene: S(0.5, 0.46, 1.8, rings()) },
-  { name: 'story-03-cover', w: 3, h: 2, bg: 'blush', title: 'Fathima & Aslam — Kozhikode', disc: [0.5, 0.8, 0.3],
+  { name: 'story-03-cover', w: 3, h: 2, bg: 'night', title: 'Fathima & Aslam — Kozhikode', disc: [0.5, 0.8, 0.3],
     scene: all(S(0.5, 0, 1, festoon(1400, 40, 120, 12) + festoon(1400, 230, 130, 15)), S(0.5, 0.78, 1, [-320, -160, 0, 160, 320].map((x) => G(x, 0, 0.9, diya())).join(''))) },
   { name: 'story-03-detail', w: 4, h: 5, bg: 'rose', title: 'Mehendi night', disc: [0.5, 0.46, 0.4],
     scene: S(0.5, 0.46, 1.5, mandala(250)) },
-  { name: 'story-04-cover', w: 3, h: 2, bg: 'sand', title: 'Baby Ishaan — first thirty days', disc: [0.5, 0.5, 0.3],
+  { name: 'story-04-cover', w: 3, h: 2, bg: 'ember', title: 'Baby Ishaan — first thirty days', disc: [0.5, 0.5, 0.3],
     scene: all(S(0.5, 0.58, 1.05, thottil()), S(0.5, 0.5, 1, sparkle(-420, -200, 16) + sparkle(400, -160, 12))) },
-  { name: 'story-04-detail', w: 4, h: 5, bg: 'blush', title: 'Little feet', disc: [0.5, 0.48, 0.36],
+  { name: 'story-04-detail', w: 4, h: 5, bg: 'night', title: 'Little feet', disc: [0.5, 0.48, 0.36],
     scene: all(S(0.4, 0.68, 1.7, `<g transform="rotate(-10)">${foot()}</g>`), S(0.62, 0.64, 1.7, `<g transform="rotate(12)">${foot(true)}</g>`)) },
 
   // STUDIO
@@ -742,7 +764,7 @@ const placeholders = [
     scene: all(S(0.32, 0.5, 1.15, lamp()), S(0.68, 0.72, 0.85, camera()), S(0.5, 0.88, 1, ground(900, 0))) },
   { name: 'studio-02-the-studio', w: 3, h: 2, bg: 'ivory', title: 'The new studio', disc: [0.5, 0.4, 0.3],
     scene: S(0.56, 0.42, 0.92, studio()) },
-  { name: 'studio-03-photographer', w: 2, h: 3, bg: 'rose', title: 'Behind the lens', disc: [0.5, 0.34, 0.42],
+  { name: 'studio-03-photographer', w: 2, h: 3, bg: 'wine', title: 'Behind the lens', disc: [0.5, 0.34, 0.42],
     scene: all(S(0.5, 0.5, 1.7, tripodCamera()), S(0.5, 0.86, 1, ground(800, 0))) },
 ];
 

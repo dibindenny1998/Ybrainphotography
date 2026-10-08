@@ -1,14 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500" width="1200" height="1500">
 <title>Rings at the altar — placeholder (story-02-detail)</title>
 <defs>
-<linearGradient id="bg" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#FFFBF4"/><stop offset="1" stop-color="#F8EFE2"/></linearGradient>
-<radialGradient id="disc"><stop offset="0" stop-color="#F6C4C2" stop-opacity=".7"/><stop offset=".7" stop-color="#F8D8D5" stop-opacity=".4"/><stop offset="1" stop-color="#F8D8D5" stop-opacity="0"/></radialGradient>
-<radialGradient id="glow"><stop offset="0" stop-color="#FFB38F" stop-opacity=".8"/><stop offset=".45" stop-color="#FFD2B8" stop-opacity=".4"/><stop offset="1" stop-color="#FFE9DC" stop-opacity="0"/></radialGradient>
+<linearGradient id="bg" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#430A18"/><stop offset="1" stop-color="#100406"/></linearGradient>
+<radialGradient id="disc"><stop offset="0" stop-color="#C8183A" stop-opacity=".55"/><stop offset=".55" stop-color="#8E0F28" stop-opacity=".25"/><stop offset="1" stop-color="#5A0716" stop-opacity="0"/></radialGradient>
+<radialGradient id="glow"><stop offset="0" stop-color="#FFB070" stop-opacity=".95"/><stop offset=".3" stop-color="#FF5A3C" stop-opacity=".45"/><stop offset="1" stop-color="#B0122F" stop-opacity="0"/></radialGradient>
+<radialGradient id="leak"><stop offset="0" stop-color="#FF3B4E" stop-opacity=".42"/><stop offset=".45" stop-color="#B0122F" stop-opacity=".18"/><stop offset="1" stop-color="#B0122F" stop-opacity="0"/></radialGradient>
+<radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
 <style>
-.l{fill:none;stroke:#B0122F;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:draw 2.8s cubic-bezier(.65,0,.25,1) both}
-.t{stroke-width:1.15;stroke-opacity:.9}
-.f{fill:#B0122F}
-.tx{fill:#B0122F;font-family:Helvetica,Arial,sans-serif}
+.l{fill:none;stroke:#F6E7D7;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:draw 2.8s cubic-bezier(.65,0,.25,1) both}
+.t{stroke-width:1.15;stroke-opacity:0.7}
+.f{fill:#FF4D66}
+.tx{fill:#F6E7D7;font-family:Helvetica,Arial,sans-serif}
+.fl .l{stroke:#FFC38A}
 .fl{transform-box:fill-box;transform-origin:50% 100%;animation:flick 2.4s ease-in-out infinite alternate}
 @keyframes draw{from{stroke-dasharray:1;stroke-dashoffset:1}to{stroke-dasharray:1;stroke-dashoffset:0}}
 @keyframes flick{0%{transform:scale(1,1)}35%{transform:scale(.94,1.08)}70%{transform:scale(1.04,.95)}100%{transform:scale(.97,1.05)}}
@@ -16,6 +19,6 @@
 </style>
 </defs>
 <rect width="1200" height="1500" fill="url(#bg)"/>
-<circle cx="600" cy="660" r="432" fill="url(#disc)"/><g transform="translate(600 690) scale(1.8)"><circle class="l" style="animation-delay:0.15s" pathLength="1" cx="-50" cy="20" r="80"/><circle class="l t" style="animation-delay:0.18s" pathLength="1" cx="-50" cy="20" r="68"/><circle class="l" style="animation-delay:0.22s" pathLength="1" cx="50" cy="-10" r="80"/><circle class="l t" style="animation-delay:0.26s" pathLength="1" cx="50" cy="-10" r="68"/><path class="l" style="animation-delay:0.29s" pathLength="1" d="M34,-90 L50,-112 L66,-90 L50,-80 Z M34,-90 L66,-90 M42,-90 L50,-80 L58,-90 M42,-90 L50,-112 L58,-90"/><path class="l" style="animation-delay:0.33s" pathLength="1" d="M96,-140 Q97.68,-127.68 110,-126 Q97.68,-124.32 96,-112 Q94.32,-124.32 82,-126 Q94.32,-127.68 96,-140 Z"/><path class="l" style="animation-delay:0.36s" pathLength="1" d="M-120,-69 Q-118.92,-61.08 -111,-60 Q-118.92,-58.92 -120,-51 Q-121.08,-58.92 -129,-60 Q-121.08,-61.08 -120,-69 Z"/></g>
-<rect x="54" y="54" width="1092" height="1392" fill="none" stroke="#B0122F" stroke-opacity=".45" stroke-width="1" vector-effect="non-scaling-stroke"/><g fill="#B0122F" font-family="Georgia, 'Times New Roman', serif"><text x="78" y="1419.6" font-size="31.2" font-style="italic">Rings at the altar</text><text x="1122" y="1419.6" font-size="16.8" letter-spacing="4.8" text-anchor="end" opacity=".8" font-family="Helvetica, Arial, sans-serif">STORY 02 DETAIL</text></g>
+<ellipse cx="180" cy="150" rx="900" ry="825" fill="url(#leak)"/><circle cx="600" cy="660" r="432" fill="url(#disc)"/><g transform="translate(600 690) scale(1.8)"><circle class="l" style="animation-delay:0.15s" pathLength="1" cx="-50" cy="20" r="80"/><circle class="l t" style="animation-delay:0.18s" pathLength="1" cx="-50" cy="20" r="68"/><circle class="l" style="animation-delay:0.22s" pathLength="1" cx="50" cy="-10" r="80"/><circle class="l t" style="animation-delay:0.26s" pathLength="1" cx="50" cy="-10" r="68"/><path class="l" style="animation-delay:0.29s" pathLength="1" d="M34,-90 L50,-112 L66,-90 L50,-80 Z M34,-90 L66,-90 M42,-90 L50,-80 L58,-90 M42,-90 L50,-112 L58,-90"/><path class="l" style="animation-delay:0.33s" pathLength="1" d="M96,-140 Q97.68,-127.68 110,-126 Q97.68,-124.32 96,-112 Q94.32,-124.32 82,-126 Q94.32,-127.68 96,-140 Z"/><path class="l" style="animation-delay:0.36s" pathLength="1" d="M-120,-69 Q-118.92,-61.08 -111,-60 Q-118.92,-58.92 -120,-51 Q-121.08,-58.92 -129,-60 Q-121.08,-61.08 -120,-69 Z"/></g><rect width="1200" height="1500" fill="url(#vig)"/>
+<rect x="54" y="54" width="1092" height="1392" fill="none" stroke="#F6E7D7" stroke-opacity="0.22" stroke-width="1" vector-effect="non-scaling-stroke"/><g fill="#F6E7D7" font-family="Georgia, 'Times New Roman', serif"><text x="78" y="1419.6" font-size="31.2" font-style="italic">Rings at the altar</text><text x="1122" y="1419.6" font-size="16.8" letter-spacing="4.8" text-anchor="end" opacity=".7" font-family="Helvetica, Arial, sans-serif">STORY 02 DETAIL</text></g>
 </svg>

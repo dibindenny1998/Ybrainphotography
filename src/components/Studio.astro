@@ -4,14 +4,14 @@ import { site, process } from '../data/site';
 ---
 <section class="studio section" id="studio" aria-labelledby="studio-title">
   <div class="wrap studio__head">
-    <p class="eyebrow"><span class="eyebrow__n">iv.</span>The studio</p>
+    <p class="eyebrow"><span class="eyebrow__n">v.</span><span data-scramble>The studio</span></p>
     <h2 id="studio-title" class="display studio__title" data-split>A new studio,<br /><em>lamp-lit</em> &amp; ready<br />for you.</h2>
   </div>
 
   <div class="studio__collage wrap">
-    <div class="studio__a" data-speed="0.92"><div class="studio__clip" data-clip-reveal><Img slot="studio-02" fit="cover" sizes="(min-width: 1024px) 55vw, 100vw" /></div></div>
-    <div class="studio__b" data-speed="1.12"><div class="studio__clip" data-clip-reveal><Img slot="studio-03" fit="cover" sizes="(min-width: 1024px) 22vw, 45vw" /></div></div>
-    <div class="studio__c" data-speed="1.04"><div class="studio__clip" data-clip-reveal><Img slot="studio-01" fit="cover" sizes="(min-width: 1024px) 24vw, 45vw" /></div></div>
+    <div class="studio__a" data-speed="0.92"><div class="studio__clip" data-clip-reveal data-gl><Img slot="studio-02" fit="cover" sizes="(min-width: 1024px) 55vw, 100vw" /></div></div>
+    <div class="studio__b" data-speed="1.12"><div class="studio__clip" data-clip-reveal data-gl><Img slot="studio-03" fit="cover" sizes="(min-width: 1024px) 22vw, 45vw" /></div></div>
+    <div class="studio__c" data-speed="1.04"><div class="studio__clip" data-clip-reveal data-gl><Img slot="studio-01" fit="cover" sizes="(min-width: 1024px) 24vw, 45vw" /></div></div>
     <p class="studio__stamp" aria-hidden="true" data-spin>
       <svg viewBox="0 0 200 200"><defs><path id="stamp-c" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" /></defs><text><textPath href="#stamp-c" textLength="486" lengthAdjust="spacing">NOW OPEN ✦ YBRAIN STUDIO ✦ KERALA ✦ EST. 2026 ✦</textPath></text></svg>
       <span class="serif">2026</span>
@@ -56,7 +56,7 @@ import { site, process } from '../data/site';
   .studio__b { grid-column: 1 / 7; aspect-ratio: 2 / 3; margin-top: -14%; z-index: 1; }
   .studio__b .studio__clip { border-radius: 999px 999px 3px 3px; outline: 6px solid var(--ivory); }
   .studio__c { grid-column: 7 / -1; aspect-ratio: 4 / 5; margin-top: 18%; }
-  .studio__stamp { position: absolute; right: calc(var(--gutter) + 2%); top: -40px; width: 112px; height: 112px; margin: 0; display: grid; place-items: center; color: var(--red); z-index: 2; }
+  .studio__stamp { position: absolute; right: calc(var(--gutter) + 2%); top: -40px; width: 112px; height: 112px; margin: 0; display: grid; place-items: center; color: var(--red); z-index: 66; }
   .studio__stamp svg { position: absolute; inset: 0; overflow: visible; }
   .studio__stamp text { font-family: var(--sans); font-size: 13px; letter-spacing: 1px; fill: currentColor; font-weight: 500; }
   .studio__stamp .serif { font-style: italic; font-size: 22px; }

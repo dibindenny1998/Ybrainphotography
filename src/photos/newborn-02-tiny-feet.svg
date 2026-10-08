@@ -4,11 +4,14 @@
 <linearGradient id="bg" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#FFF6F3"/><stop offset="1" stop-color="#F8DCD7"/></linearGradient>
 <radialGradient id="disc"><stop offset="0" stop-color="#F6C4C2" stop-opacity=".7"/><stop offset=".7" stop-color="#F8D8D5" stop-opacity=".4"/><stop offset="1" stop-color="#F8D8D5" stop-opacity="0"/></radialGradient>
 <radialGradient id="glow"><stop offset="0" stop-color="#FFB38F" stop-opacity=".8"/><stop offset=".45" stop-color="#FFD2B8" stop-opacity=".4"/><stop offset="1" stop-color="#FFE9DC" stop-opacity="0"/></radialGradient>
+<radialGradient id="leak"><stop offset="0" stop-color="#FF3B4E" stop-opacity=".42"/><stop offset=".45" stop-color="#B0122F" stop-opacity=".18"/><stop offset="1" stop-color="#B0122F" stop-opacity="0"/></radialGradient>
+<radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
 <style>
 .l{fill:none;stroke:#B0122F;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:draw 2.8s cubic-bezier(.65,0,.25,1) both}
-.t{stroke-width:1.15;stroke-opacity:.9}
+.t{stroke-width:1.15;stroke-opacity:0.9}
 .f{fill:#B0122F}
 .tx{fill:#B0122F;font-family:Helvetica,Arial,sans-serif}
+.fl .l{stroke:#B0122F}
 .fl{transform-box:fill-box;transform-origin:50% 100%;animation:flick 2.4s ease-in-out infinite alternate}
 @keyframes draw{from{stroke-dasharray:1;stroke-dashoffset:1}to{stroke-dasharray:1;stroke-dashoffset:0}}
 @keyframes flick{0%{transform:scale(1,1)}35%{transform:scale(.94,1.08)}70%{transform:scale(1.04,.95)}100%{transform:scale(.97,1.05)}}
@@ -17,5 +20,5 @@
 </defs>
 <rect width="1200" height="1200" fill="url(#bg)"/>
 <circle cx="600" cy="600" r="408" fill="url(#disc)"/><g transform="translate(504 792) scale(1.6)"><g transform="rotate(-12)"><path class="l" style="animation-delay:0.15s" pathLength="1" d="M0,0 C-34,0 -44,-60 -36,-110 C-30,-150 30,-158 36,-118 C42,-80 32,-30 26,-12 C20,0 10,0 0,0 Z"/><circle class="l" style="animation-delay:0.18s" pathLength="1" cx="-24" cy="-160" r="13"/><circle class="l" style="animation-delay:0.22s" pathLength="1" cx="2" cy="-172" r="10"/><circle class="l" style="animation-delay:0.26s" pathLength="1" cx="22" cy="-168" r="8"/><circle class="l" style="animation-delay:0.29s" pathLength="1" cx="36" cy="-156" r="7"/><circle class="l" style="animation-delay:0.33s" pathLength="1" cx="44" cy="-140" r="6"/><path class="l t" style="animation-delay:0.36s" pathLength="1" d="M-20,-40 C-6,-30 10,-32 20,-44"/></g></g><g transform="translate(720 744) scale(1.6)"><g transform="rotate(14)"><g transform="scale(-1 1)"><path class="l" style="animation-delay:0.40s" pathLength="1" d="M0,0 C-34,0 -44,-60 -36,-110 C-30,-150 30,-158 36,-118 C42,-80 32,-30 26,-12 C20,0 10,0 0,0 Z"/><circle class="l" style="animation-delay:0.43s" pathLength="1" cx="-24" cy="-160" r="13"/><circle class="l" style="animation-delay:0.47s" pathLength="1" cx="2" cy="-172" r="10"/><circle class="l" style="animation-delay:0.50s" pathLength="1" cx="22" cy="-168" r="8"/><circle class="l" style="animation-delay:0.54s" pathLength="1" cx="36" cy="-156" r="7"/><circle class="l" style="animation-delay:0.57s" pathLength="1" cx="44" cy="-140" r="6"/><path class="l t" style="animation-delay:0.61s" pathLength="1" d="M-20,-40 C-6,-30 10,-32 20,-44"/></g></g></g><g transform="translate(600 264) scale(1)"><path class="l" style="animation-delay:0.64s" pathLength="1" d="M0,18 C-36,-6 -24,-36 0,-18 C24,-36 36,-6 0,18 Z"/></g>
-<rect x="54" y="54" width="1092" height="1092" fill="none" stroke="#B0122F" stroke-opacity=".45" stroke-width="1" vector-effect="non-scaling-stroke"/><g fill="#B0122F" font-family="Georgia, 'Times New Roman', serif"><text x="78" y="1119.6" font-size="31.2" font-style="italic">Ten tiny toes</text><text x="1122" y="1119.6" font-size="16.8" letter-spacing="4.8" text-anchor="end" opacity=".8" font-family="Helvetica, Arial, sans-serif">NEWBORN 02 TINY FEET</text></g>
+<rect x="54" y="54" width="1092" height="1092" fill="none" stroke="#B0122F" stroke-opacity="0.45" stroke-width="1" vector-effect="non-scaling-stroke"/><g fill="#B0122F" font-family="Georgia, 'Times New Roman', serif"><text x="78" y="1119.6" font-size="31.2" font-style="italic">Ten tiny toes</text><text x="1122" y="1119.6" font-size="16.8" letter-spacing="4.8" text-anchor="end" opacity=".7" font-family="Helvetica, Arial, sans-serif">NEWBORN 02 TINY FEET</text></g>
 </svg>
