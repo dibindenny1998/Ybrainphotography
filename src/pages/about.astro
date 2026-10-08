@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Img from '../components/Img.astro';
 import Cta from '../components/Cta.astro';
-import { process } from '../data/site';
+import { process, founder } from '../data/site';
 ---
 <Base title="About" description="About Ybrain Photography — how we work, and what to expect from a session.">
   <section class="phead lit">
@@ -14,7 +14,21 @@ import { process } from '../data/site';
         <p class="lede" data-r style="--d:.2s">Ybrain is a small photography studio in Kerala. We photograph weddings, couples, maternity, newborns and portraits — and we care far more about how a photograph feels than how it is posed.</p>
         <p class="lede" data-r style="--d:.25s">Most of our work is simple: good light, a little guidance, and enough patience to wait for the real moment. The result is photographs that still look like you in twenty years.</p>
       </div>
-      <div class="ab__img frame" data-ri><Img slot="portraits-03" fit="cover" eager sizes="(min-width: 1024px) 36vw, 92vw" /></div>
+      <figure class="ab__fig">
+        <div class="ab__img frame" data-ri><Img slot={founder.photo} fit="cover" eager alt={`${founder.name}, ${founder.role.toLowerCase()} at Ybrain Photography`} sizes="(min-width: 1024px) 36vw, 92vw" /></div>
+        <figcaption class="cap" data-r><span>{founder.name}</span><span>{founder.role}</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="fo space lit-2">
+    <div class="wrap fo__in">
+      <span class="kicker" data-r>Meet the founder</span>
+      <h2 class="fo__name" data-split>{founder.first} <em>{founder.last}</em></h2>
+      <div class="fo__text">
+        {founder.long.map((t) => <p class="lede" data-r>{t}</p>)}
+        <a href="/contact/" class="btn" data-r data-mag>Say hello</a>
+      </div>
     </div>
   </section>
 
@@ -47,8 +61,10 @@ import { process } from '../data/site';
 <style>
   .ab { display: grid; gap: 60px; align-items: end; }
   .ab__text { display: grid; gap: 28px; justify-items: start; }
+  .ab__fig { margin: 0; }
   .ab__img { aspect-ratio: 4 / 5; }
-  @media (min-width: 1024px) { .ab { grid-template-columns: 1.1fr 0.9fr; gap: 8vw; } .ab__img { max-width: 520px; justify-self: end; width: 100%; } }
+  .ab__img .img { object-position: 50% 25%; }
+  @media (min-width: 1024px) { .ab { grid-template-columns: 1.1fr 0.9fr; gap: 8vw; } .ab__img { } .ab__fig { max-width: 520px; justify-self: end; width: 100%; } }
   .pr { display: grid; gap: 60px; }
   .pr__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 54px 5vw; }
   .pr__item { display: grid; gap: 12px; padding-top: 26px; border-top: 1px solid var(--line); }
@@ -56,5 +72,11 @@ import { process } from '../data/site';
   .pr__n { font-size: 11px; letter-spacing: 0.24em; color: var(--text-3); }
   @media (min-width: 900px) { .pr__list { grid-template-columns: 1fr 1fr; } }
   @media (min-width: 1200px) { .pr { grid-template-columns: 0.7fr 1.3fr; gap: 7vw; } }
+  .fo__in { display: grid; gap: 30px; }
+  .fo__name { margin: 0; font-family: var(--serif); font-weight: 300; font-size: clamp(3.4rem, 11vw, 11rem); line-height: 0.92; letter-spacing: -0.04em; }
+  .fo__name em { font-style: italic; color: var(--rose); }
+  .fo__text { display: grid; gap: 24px; justify-items: start; max-width: 60ch; }
+  .fo__text .lede { max-width: none; }
+  @media (min-width: 1024px) { .fo__text { margin-left: auto; width: 50%; } }
   .ab2 .frame { aspect-ratio: 16 / 9; }
 </style>

@@ -2,36 +2,98 @@
 import Base from '../layouts/Base.astro';
 import WhatsApp from '../components/icons/WhatsApp.astro';
 import Arrow from '../components/icons/Arrow.astro';
-import { site, categories } from '../data/site';
-const types = [...categories.map((c) => c.name.replace(/s$/, '')), 'Studio'];
+import { site } from '../data/site';
+const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hello Ybrain, I would like to know more about a photo session.')}`;
+// what the visitor taps → how it reads in the WhatsApp message
+const kinds = [
+  ['Wedding', 'a wedding shoot'],
+  ['Couple / pre-wedding', 'a couple shoot'],
+  ['Maternity', 'a maternity shoot'],
+  ['Newborn & baby', 'a newborn shoot'],
+  ['Portrait', 'a portrait session'],
+  ['Celebration', 'a celebration shoot'],
+  ['Studio session', 'a studio session'],
+  ['Not sure yet', 'a photo session'],
+];
+const hours = site.studio.hours.map(([d, t]) => `${d}: ${t}`).join(' · ');
 ---
 <Base title="Contact" description={`Book a session with Ybrain Photography. Call or WhatsApp ${site.phoneDisplay}.`}>
   <section class="phead lit ct">
     <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="wrap ct__in">
-      <div class="ct__head">
-        <span class="kicker" data-r>Contact</span>
-        <h1 class="h1" data-r style="--d:.1s">Tell us about <em>your</em> story.</h1>
-        <p class="lede" data-r style="--d:.2s">Send a few details and WhatsApp will open with your message ready. We usually reply the same day.</p>
-        <dl class="ct__direct" data-r style="--d:.3s">
-          <div><dt class="kicker">Call / WhatsApp</dt><dd><a href={`tel:+91${site.phone}`}>{site.phoneDisplay}</a></dd></div>
-          <div><dt class="kicker">Studio</dt><dd>{site.studio.address.join(', ')} · <a href={site.studio.mapUrl} target="_blank" rel="noopener" class="ct__u">Directions</a></dd></div>
-          <div><dt class="kicker">Instagram</dt><dd><a href={site.instagram} target="_blank" rel="noopener">{site.instagramHandle}</a></dd></div>
-        </dl>
+    <div class="wrap">
+      <span class="kicker" data-r>Contact</span>
+      <h1 class="h1" data-r style="--d:.1s">Let’s <em>talk.</em></h1>
+      <p class="lede" data-r style="--d:.2s">Pick whichever is easiest for you. We usually reply the same day.</p>
+
+      <div class="ways">
+        <a href={wa} target="_blank" rel="noopener" class="way way--f" data-r data-tilt>
+          <span class="way__n">01</span>
+          <span class="way__ic"><WhatsApp /></span>
+          <span class="way__t">WhatsApp us</span>
+          <span class="way__d">The quickest way. Ask anything, or send your date.</span>
+          <span class="way__go">Open chat <Arrow /></span>
+        </a>
+        <a href={`tel:+91${site.phone}`} class="way" data-r data-tilt>
+          <span class="way__n">02</span>
+          <span class="way__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z" /></svg></span>
+          <span class="way__t">Call us</span>
+          <span class="way__d">{site.phoneDisplay}<br />{hours}</span>
+          <span class="way__go">Call now <Arrow /></span>
+        </a>
+        <a href={site.studio.mapUrl} target="_blank" rel="noopener" class="way" data-r data-tilt>
+          <span class="way__n">03</span>
+          <span class="way__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z" /><circle cx="12" cy="9" r="2.5" /></svg></span>
+          <span class="way__t">Visit the studio</span>
+          <span class="way__d">{site.studio.address.join(', ')}. Message us first so we’re free to show you around.</span>
+          <span class="way__go">Get directions <Arrow /></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bk space-s">
+    <div class="wrap bk__in">
+      <div class="bk__head">
+        <span class="kicker" data-r>Not sure what to write?</span>
+        <h2 class="h2">We’ll write the <em>message</em> for you.</h2>
+        <ol class="bk__steps" data-r>
+          <li><b>1</b> Answer the questions</li>
+          <li><b>2</b> Tap “Send on WhatsApp”</li>
+          <li><b>3</b> WhatsApp opens with your message — just press send</li>
+        </ol>
+        <div class="chat" data-r aria-live="polite">
+          <div class="chat__top"><span class="chat__av">Y</span><span><b>Ybrain Photography</b><small>Your message preview</small></span></div>
+          <div class="chat__body"><p class="chat__b" data-wa-preview></p></div>
+        </div>
       </div>
 
-      <form class="fm" data-wa-form data-wa={site.whatsapp} novalidate data-r style="--d:.2s">
-        <label class="fm__f"><span class="kicker">Your name</span><input name="name" autocomplete="name" required /></label>
-        <label class="fm__f"><span class="kicker">Session</span>
-          <select name="type">{types.map((t) => <option>{t}</option>)}</select>
-        </label>
-        <div class="fm__row">
-          <label class="fm__f"><span class="kicker">Date (if known)</span><input name="date" type="date" /></label>
-          <label class="fm__f"><span class="kicker">Place</span><input name="place" placeholder="Studio, city or venue" /></label>
-        </div>
-        <label class="fm__f"><span class="kicker">Anything else</span><textarea name="message" rows="4" placeholder="Tell us a little about you and what you have in mind"></textarea></label>
-        <div class="fm__foot">
+      <form class="fm" data-wa-form data-wa={site.whatsapp} novalidate>
+        <fieldset class="fm__q" data-r>
+          <legend><span class="fm__n">1</span> What’s your name?</legend>
+          <input name="name" autocomplete="name" placeholder="Your name" required />
+        </fieldset>
+        <fieldset class="fm__q" data-r>
+          <legend><span class="fm__n">2</span> What would you like to shoot?</legend>
+          <div class="chips">
+            {kinds.map(([label, phrase], i) => (
+              <label class="chip"><input type="radio" name="type" value={phrase} checked={i === kinds.length - 1} /><span>{label}</span></label>
+            ))}
+          </div>
+        </fieldset>
+        <fieldset class="fm__q" data-r>
+          <legend><span class="fm__n">3</span> When and where? <i>(optional)</i></legend>
+          <div class="fm__row">
+            <input name="date" type="date" aria-label="Date" />
+            <input name="place" placeholder="Studio, city or venue" aria-label="Place" />
+          </div>
+        </fieldset>
+        <fieldset class="fm__q" data-r>
+          <legend><span class="fm__n">4</span> Anything else? <i>(optional)</i></legend>
+          <textarea name="message" rows="3" placeholder="A few words about you and what you have in mind"></textarea>
+        </fieldset>
+        <div class="fm__foot" data-r>
           <button class="btn" type="submit"><WhatsApp /> Send on WhatsApp</button>
+          <p class="fm__note">Nothing is sent until you press send inside WhatsApp.</p>
           <p class="fm__err" role="alert" data-form-err></p>
         </div>
       </form>
@@ -40,25 +102,60 @@ const types = [...categories.map((c) => c.name.replace(/s$/, '')), 'Studio'];
 </Base>
 
 <style>
-  .ct { padding-bottom: clamp(110px, 14vw, 200px); }
-  .ct__in { display: grid; gap: 70px; }
-  .ct__head { display: grid; gap: 28px; justify-items: start; align-content: start; }
-  .ct__direct { margin: 20px 0 0; display: grid; gap: 22px; }
-  .ct__direct dd { margin: 6px 0 0; font-size: 16px; }
-  .ct__u { border-bottom: 1px solid var(--bronze); }
-  .fm { display: grid; gap: 34px; align-content: start; }
-  .fm__row { display: grid; gap: 34px; }
-  .fm__f { display: grid; gap: 10px; }
-  .fm input, .fm select, .fm textarea {
-    width: 100%; font: 300 1.35rem/1.4 var(--serif); color: var(--umber); background: transparent; border: 0; border-bottom: 1px solid var(--line);
-    padding: 6px 0 12px; border-radius: 0; outline: none; -webkit-appearance: none; appearance: none; transition: border-color 0.4s;
+  .ct { padding-bottom: clamp(70px, 9vw, 120px); }
+  .ct .lede { margin-top: 24px; }
+  .ways { display: grid; gap: 16px; margin-top: clamp(40px, 6vw, 70px); }
+  .way { position: relative; display: grid; gap: 10px; align-content: start; padding: 30px 28px; border-radius: 12px; background: rgba(255, 255, 255, 0.75); box-shadow: 0 0 0 1px var(--line); transition: box-shadow 0.5s; transform-style: preserve-3d; }
+  .way:hover { box-shadow: 0 0 0 1px rgba(196, 86, 106, 0.45), 0 30px 60px -30px rgba(120, 60, 50, 0.4); }
+  .way--f { background: var(--grad); box-shadow: 0 24px 50px -28px rgba(196, 86, 106, 0.7); }
+  .way__n { position: absolute; top: 26px; right: 28px; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; color: var(--rose); }
+  .way--f .way__n { color: var(--umber); opacity: 0.6; }
+  .way__ic { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #fff; margin-bottom: 8px; color: var(--rose); }
+  .way__ic svg { width: 22px; height: 22px; }
+  .way__t { font-family: var(--serif); font-weight: 300; font-size: clamp(1.8rem, 2.6vw, 2.4rem); line-height: 1.1; letter-spacing: -0.02em; }
+  .way__d { font-size: 14px; line-height: 1.6; color: var(--text-2); }
+  .way--f .way__d { color: #4d3936; }
+  .way__go { display: inline-flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+  .way__go :global(svg) { width: 22px; transition: transform 0.5s var(--ease); }
+  .way:hover .way__go :global(svg) { transform: translateX(6px); }
+  @media (min-width: 900px) { .ways { grid-template-columns: repeat(3, 1fr); gap: 2vw; } }
+
+  .bk__in { display: grid; gap: 60px; }
+  .bk__head { display: grid; gap: 26px; align-content: start; }
+  .bk__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; font-size: 15px; color: var(--text-2); }
+  .bk__steps b { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-right: 10px; border-radius: 50%; background: var(--grad); color: var(--umber); font-size: 12px; }
+  .chat { max-width: 420px; border-radius: 16px; overflow: hidden; background: #efe6dd; box-shadow: 0 30px 60px -34px rgba(90, 40, 40, 0.5); }
+  .chat__top { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #2e2224; color: #fff; }
+  .chat__top b { display: block; font-size: 14px; font-weight: 600; line-height: 1.2; }
+  .chat__top small { font-size: 11px; opacity: 0.65; }
+  .chat__av { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--grad); color: var(--umber); font-family: var(--serif); font-size: 17px; }
+  .chat__body { padding: 20px 16px 22px; display: flex; justify-content: flex-end; }
+  .chat__b { margin: 0; max-width: 88%; padding: 10px 14px; border-radius: 12px 2px 12px 12px; background: #fde2d6; font-size: 14px; line-height: 1.55; white-space: pre-line; color: #2e2224; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08); }
+
+  .fm { display: grid; gap: 40px; align-content: start; }
+  .fm__q { border: 0; margin: 0; padding: 0; display: grid; gap: 16px; min-width: 0; }
+  .fm__q legend { padding: 0; margin-bottom: 16px; font-family: var(--serif); font-weight: 300; font-size: clamp(1.4rem, 2vw, 1.75rem); line-height: 1.2; }
+  .fm__q legend i { font-family: var(--sans); font-style: normal; font-size: 12px; color: var(--text-3); }
+  .fm__n { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-right: 10px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--rose); color: var(--rose); font-family: var(--sans); font-size: 12px; font-weight: 600; vertical-align: 4px; }
+  .fm__row { display: grid; gap: 16px; }
+  .fm input:not([type='radio']), .fm textarea {
+    width: 100%; font: 400 16px/1.4 var(--sans); color: var(--umber); background: #fff; border: 0; box-shadow: inset 0 0 0 1px var(--line);
+    padding: 15px 18px; border-radius: 10px; outline: none; -webkit-appearance: none; appearance: none; transition: box-shadow 0.3s;
   }
-  .fm select { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%239a7b56'/%3E%3C/svg%3E") right 4px center no-repeat; }
+  .fm input:focus, .fm textarea:focus { box-shadow: inset 0 0 0 1.5px var(--rose); }
   .fm textarea { resize: vertical; }
-  .fm input:focus, .fm select:focus, .fm textarea:focus { border-color: var(--bronze); }
   .fm ::placeholder { color: var(--text-3); }
-  .fm__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; margin-top: 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip { position: relative; cursor: pointer; }
+  .chip input { position: absolute; opacity: 0; pointer-events: none; }
+  .chip span { display: inline-block; padding: 11px 18px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font-size: 14px; transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s var(--ease); }
+  .chip:hover span { box-shadow: inset 0 0 0 1px var(--umber); }
+  .chip input:checked + span { background: var(--grad); box-shadow: 0 10px 22px -14px rgba(196, 86, 106, 0.8); font-weight: 600; }
+  .chip input:focus-visible + span { outline: 1.5px solid var(--rose); outline-offset: 3px; }
+  .fm__foot { display: grid; gap: 12px; justify-items: start; }
+  .fm__note { margin: 0; font-size: 13px; color: var(--text-3); }
   .fm__err { margin: 0; color: #a0453f; font-size: 14px; }
+  .fm__err:empty { display: none; }
   @media (min-width: 700px) { .fm__row { grid-template-columns: 1fr 1fr; } }
-  @media (min-width: 1024px) { .ct__in { grid-template-columns: 0.95fr 1.05fr; gap: 8vw; } }
+  @media (min-width: 1024px) { .bk__in { grid-template-columns: 0.9fr 1.1fr; gap: 8vw; } .bk__head { position: sticky; top: 110px; } }
 </style>

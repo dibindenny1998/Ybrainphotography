@@ -152,3 +152,17 @@ export const faqs = [
   { q: 'Is the studio safe for newborns?', a: 'The newborn room is kept warm, quiet and clean. Sessions follow your baby’s pace — feeds and naps come first — and we never force a pose.' },
   { q: 'Can we visit the studio before booking?', a: 'Of course. Message us to fix a time; we are happy to show you the space and sample albums.' },
 ];
+
+/** The founder — ⚠️ TODO: check the wording; the photo is src/photos/founder-01-*.jpg */
+export const founder = {
+  name: 'Yadhu Krishnan',
+  first: 'Yadhu',
+  last: 'Krishnan',
+  role: 'Founder & photographer',
+  photo: 'founder-01',
+  short: 'Ybrain was started by Yadhu Krishnan with one simple idea: photographs should feel like the people in them — not like a pose someone was told to hold.',
+  long: [
+    'Ybrain was started by Yadhu Krishnan with one simple idea: photographs should feel like the people in them — not like a pose someone was told to hold.',
+    'From wedding mornings to a newborn’s first week, Yadhu keeps every session calm and unhurried, with gentle guidance and plenty of room for the real moments. Since 3 October 2026, that work has a home of its own — the Ybrain studio.',
+  ],
+};

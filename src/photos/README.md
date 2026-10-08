@@ -23,3 +23,5 @@ The build makes fast WebP versions for every screen size automatically.
 The current photos were cropped from Instagram screenshots as temporary stand-ins. Swap in
 the original full-resolution files for the sharpest result (especially `newborn-03…08`
 and `maternity-02…07`, which came from small grid tiles).
+
+- `founder-01-*.jpg` — the founder portrait (home page + About). Replace with a full-resolution version any time.

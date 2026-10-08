@@ -253,6 +253,88 @@ function homeExtras() {
   });
 }
 
+/* ── home: scattered prints gather into a stack, then the founder's print steps forward */
+function founderGather() {
+  const sec = $('[data-gather]');
+  if (!sec) return;
+  const pin = $('[data-gather-pin]', sec)!;
+  const prints = $$('[data-gp]', sec);
+  const main = $('[data-gp-main]', sec)!;
+  const lead = $('[data-gather-lead]', sec)!;
+  const txt = $$('[data-gt]', sec);
+  if (reduce) { $('[data-gather-stage]', sec)?.remove(); lead.remove(); return; }
+  // where each print lies on the "table" (fractions of the screen) + its tilt
+  const narrow = innerWidth < 700;
+  const spots = narrow
+    ? [[-0.32, -0.36, -12], [0.3, -0.34, 9], [-0.45, -0.23, 7], [0.45, 0.25, -8], [0.02, -0.44, 5], [0.02, 0.44, -6], [-0.3, 0.36, 11], [0.3, 0.37, -10]]
+    : [[-0.37, -0.3, -12], [0.36, -0.33, 9], [-0.42, 0.06, 7], [0.41, 0.02, -8], [-0.12, -0.41, 5], [0.12, 0.4, -6], [-0.3, 0.37, 11], [0.3, 0.36, -10]];
+  const jit = prints.map(() => [gsap.utils.random(-14, 14), gsap.utils.random(-10, 10), gsap.utils.random(-9, 9)]);
+  const W = () => pin.clientWidth, H = () => pin.clientHeight;
+  // offset from the founder photo's final place to the centre of the screen, and its size as a print
+  const geo = () => {
+    const p = pin.getBoundingClientRect(), s = main.parentElement!.getBoundingClientRect();
+    return { dx: p.left + p.width / 2 - (s.left + s.width / 2), dy: p.top + p.height / 2 - (s.top + s.height / 2), sc: prints[0].offsetWidth / s.width };
+  };
+  const mid = (prints.length - 1) / 2;
+  const spread = () => Math.min(W() * 0.08, 100);
+  gsap.set(lead, { xPercent: -50, yPercent: -50 });
+  const tl = gsap.timeline({
+    defaults: { ease: 'power2.inOut' },
+    scrollTrigger: { trigger: pin, start: 'top top', end: '+=230%', pin: true, scrub: 1, invalidateOnRefresh: true, anticipatePin: 1 },
+  });
+  // 1 · the prints slide together into one stack, the line lifts away
+  prints.forEach((p, i) => {
+    const [fx, fy, r] = spots[i % spots.length];
+    tl.fromTo(p, { x: () => fx * W(), y: () => fy * H(), rotate: r }, { x: jit[i][0], y: jit[i][1], rotate: jit[i][2], duration: 1 }, i * 0.04);
+  });
+  tl.to(lead, { y: -70, autoAlpha: 0, duration: 0.35, ease: 'power2.in' }, 0.12);
+  // 2 · the founder's print drops onto the stack
+  tl.fromTo(main, { x: () => geo().dx, y: () => geo().dy - H(), scale: () => geo().sc, rotate: -16 }, { y: () => geo().dy, rotate: -4, duration: 0.7, ease: 'power3.out' }, 1.05);
+  // 3 · the stack fans out behind it…
+  prints.forEach((p, i) => tl.to(p, { x: () => (i - mid) * spread(), y: Math.abs(i - mid) * 14, rotate: (i - mid) * 5, duration: 0.6 }, 1.75));
+  // 4 · …the founder steps forward into place, the rest of the prints fall away
+  tl.to(main, { x: 0, y: 0, scale: 1, rotate: 0, duration: 1, ease: 'power3.inOut' }, 2.35)
+    .to(prints, { y: () => H() * 0.95, rotate: () => gsap.utils.random(-30, 30), autoAlpha: 0, duration: 0.8, stagger: 0.04, ease: 'power2.in' }, 2.45)
+    .fromTo(txt, { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.1, ease: 'power2.out' }, 2.95)
+    .to({}, { duration: 0.5 });
+}
+
+/* ── portfolio: the header deck fans out, photos are dealt onto the page, filters reshuffle */
+function portfolio() {
+  const deck = $('[data-pf-deck]');
+  if (deck && !reduce) {
+    const fan = $('[data-pf-fan]', deck)!;
+    const cards = $$('[data-pf-card]', deck);
+    const mid = (cards.length - 1) / 2;
+    const sp = () => Math.min(innerWidth * 0.13, 80);
+    gsap.set(cards, { transform: 'none' });
+    let ready = false;
+    gsap.timeline({ delay: 0.2, onComplete: () => { ready = true; } })
+      .fromTo(cards, { y: () => innerHeight, x: 0, rotate: () => gsap.utils.random(-40, 40), autoAlpha: 0 },
+        { y: () => gsap.utils.random(-8, 8), rotate: () => gsap.utils.random(-7, 7), autoAlpha: 1, duration: 1.1, stagger: 0.1, ease: E })
+      .to(cards, { x: (i) => (i - mid) * sp(), y: (i) => Math.abs(i - mid) * 12, rotate: (i) => (i - mid) * 7, duration: 1.1, ease: 'expo.inOut' }, '-=0.3');
+    // hover: the fan opens wider; scroll: it drifts up and tilts
+    if (fine) {
+      deck.addEventListener('mouseenter', () => ready && gsap.to(cards, { x: (i) => (i - mid) * sp() * 1.6, y: (i) => Math.abs(i - mid) * 20 - 10, rotate: (i) => (i - mid) * 11, duration: 0.9, ease: E, overwrite: 'auto' }));
+      deck.addEventListener('mouseleave', () => ready && gsap.to(cards, { x: (i) => (i - mid) * sp(), y: (i) => Math.abs(i - mid) * 12, rotate: (i) => (i - mid) * 7, duration: 0.9, ease: E, overwrite: 'auto' }));
+    }
+    gsap.to(fan, { y: -90, rotate: -5, ease: 'none', scrollTrigger: { trigger: deck, start: 'top 40%', end: 'bottom top', scrub: true } });
+  }
+
+  const items = $$('[data-item]');
+  if (!items.length) return;
+  if (reduce) { gsap.set(items, { opacity: 1 }); return; }
+  const deal = (els: Element[]) => {
+    const fresh = els.filter((e) => !e.hasAttribute('data-dealt') && !(e as HTMLElement).hidden);
+    fresh.forEach((e) => e.setAttribute('data-dealt', ''));
+    if (!fresh.length) return;
+    gsap.fromTo(fresh, { y: 130, rotate: () => gsap.utils.random(-8, 8), scale: 0.9, opacity: 0 },
+      { y: 0, rotate: 0, scale: 1, opacity: 1, duration: 1.4, ease: E, stagger: 0.1, clearProps: 'transform' });
+    fresh.forEach((e) => { const im = $('img', e); if (im) gsap.fromTo(im, { scale: 1.3 }, { scale: 1, duration: 2, ease: E, clearProps: 'transform' }); });
+  };
+  ScrollTrigger.batch(items, { start: 'top 95%', onEnter: deal });
+}
+
 /* ── header, menu, cursor, magnetic */
 function chrome() {
   const hdr = $('[data-hdr]');
@@ -295,25 +377,25 @@ function chrome() {
   });
 }
 
-/* ── portfolio filter */
+/* ── portfolio filter: photos glide into their new places */
 function filter() {
   const items = $$('[data-item]');
   if (!items.length) return;
-  const grid = items[0].parentElement!;
-  const set = (id: string, btn?: HTMLElement) => {
+  const set = (id: string, animate = true) => {
     $$('[data-filter]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.filter === id)));
-    const show = items.filter((it) => id === 'all' || it.dataset.cat === id);
-    gsap.to(grid, { opacity: 0, y: 20, duration: reduce ? 0 : 0.35, ease: 'power2.in', onComplete: () => {
-      items.forEach((it) => { it.hidden = !show.includes(it); gsap.set(it, { opacity: 1, y: 0 }); gsap.set($$('[data-ri]', it), { clipPath: 'none' }); });
-      ScrollTrigger.refresh();
-      gsap.to(grid, { opacity: 1, y: 0, duration: reduce ? 0 : 0.9, ease: E });
-      if (!reduce) gsap.from(show.slice(0, 9), { y: 50, opacity: 0, duration: 1.1, stagger: 0.06, ease: E });
-    } });
+    const state = Flip.getState(items, { props: 'opacity' });
+    items.forEach((it) => (it.hidden = !(id === 'all' || it.dataset.cat === id)));
     history.replaceState(null, '', id === 'all' ? location.pathname : `#${id}`);
-    void btn;
+    if (reduce || !animate) { gsap.set(items, { opacity: 1 }); ScrollTrigger.refresh(); return; }
+    Flip.from(state, {
+      duration: 0.9, ease: 'expo.inOut', absolute: true, stagger: 0.012, scale: false,
+      onEnter: (els) => gsap.fromTo(els, { opacity: 0, scale: 0.8, y: 60 }, { opacity: 1, scale: 1, y: 0, duration: 1, ease: E, stagger: 0.04, delay: 0.1 }),
+      onLeave: (els) => gsap.to(els, { opacity: 0, scale: 0.8, duration: 0.45, ease: 'power2.in' }),
+      onComplete: () => { const shown = items.filter((i) => !i.hidden); shown.forEach((i) => i.setAttribute('data-dealt', '')); gsap.set(shown, { opacity: 1, clearProps: 'transform' }); ScrollTrigger.refresh(); },
+    });
   };
-  $$('[data-filter]').forEach((b) => b.addEventListener('click', () => set(b.dataset.filter!, b)));
-  if (location.hash) { const id = location.hash.slice(1); if ($(`[data-filter="${id}"]`)) set(id); }
+  $$('[data-filter]').forEach((b) => b.addEventListener('click', () => set(b.dataset.filter!)));
+  if (location.hash) { const id = location.hash.slice(1); if ($(`[data-filter="${id}"]`)) set(id, false); }
 }
 
 /* ── lightbox */
@@ -359,24 +441,35 @@ function lightbox() {
   lb.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); });
 }
 
-/* ── contact form → WhatsApp */
+/* ── contact form → WhatsApp (with a live preview of the message) */
 function form() {
   const f = $<HTMLFormElement>('[data-wa-form]');
-  f?.addEventListener('submit', (e) => {
-    e.preventDefault();
+  if (!f) return;
+  const preview = $('[data-wa-preview]');
+  const text = () => {
     const d = new FormData(f);
     const name = String(d.get('name') || '').trim();
-    const err = $('[data-form-err]', f)!;
-    if (!name) { err.textContent = 'Please add your name.'; f.querySelector<HTMLInputElement>('[name="name"]')?.focus(); return; }
-    err.textContent = '';
     const date = String(d.get('date') || '');
+    const place = String(d.get('place') || '').trim();
+    const msg = String(d.get('message') || '').trim();
     const nice = date ? new Date(date + 'T00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
-    const lines = [
-      `Hello Ybrain, I'm ${name}.`,
-      `I'd like to book a ${String(d.get('type')).toLowerCase()} session${nice ? ` around ${nice}` : ''}${d.get('place') ? ` (${d.get('place')})` : ''}.`,
-      d.get('message') ? `\n${d.get('message')}` : '',
-    ].filter(Boolean);
-    window.open(`https://wa.me/${f.dataset.wa}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+    return [
+      `Hello Ybrain, I'm ${name || '…'}.`,
+      `I'd like to book ${d.get('type') || 'a photo session'}${nice ? ` around ${nice}` : ''}${place ? ` (${place})` : ''}.`,
+      msg ? `\n${msg}` : '',
+    ].filter(Boolean).join('\n');
+  };
+  const upd = () => { if (preview) preview.textContent = text(); };
+  f.addEventListener('input', upd);
+  f.addEventListener('change', upd);
+  upd();
+  f.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const err = $('[data-form-err]', f)!;
+    const name = f.querySelector<HTMLInputElement>('[name="name"]')!;
+    if (!name.value.trim()) { err.textContent = 'Please add your name first.'; name.focus(); return; }
+    err.textContent = '';
+    window.open(`https://wa.me/${f.dataset.wa}?text=${encodeURIComponent(text())}`, '_blank', 'noopener');
   });
 }
 
@@ -389,8 +482,10 @@ async function boot() {
   chrome();
   const startPanels = heroPanels();
   homeExtras();
+  founderGather();
   reveals();
   filter();
+  portfolio();
   lightbox();
   form();
   await intro;

@@ -4,32 +4,43 @@ import Img from '../components/Img.astro';
 import Lightbox from '../components/Lightbox.astro';
 import Cta from '../components/Cta.astro';
 import { categories } from '../data/site';
-import { category } from '../lib/photos';
+import { category, photo } from '../lib/photos';
 const groups = await Promise.all(categories.map(async (c) => ({ ...c, photos: await category(c.id) })));
 // interleave categories so "All" reads as a curated edit
 const items: { cat: string; catName: string; p: (typeof groups)[number]['photos'][number] }[] = [];
 const max = Math.max(...groups.map((g) => g.photos.length));
 for (let i = 0; i < max; i++) for (const g of groups) if (g.photos[i]) items.push({ cat: g.id, catName: g.name, p: g.photos[i] });
+// the fanned deck of prints in the header
+const deck = await Promise.all(['maternity-02', 'couples-02', 'weddings-05', 'newborn-07', 'portraits-01'].map((s) => photo(s)));
 ---
 <Base title="Portfolio" description="Selected photographs by Ybrain Photography — weddings, couples, maternity, newborn, portraits and celebrations.">
-  <section class="phead lit">
+  <section class="phead lit pfh">
     <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="wrap">
-      <span class="kicker" data-r>Portfolio</span>
-      <h1 class="h1" data-r style="--d:.1s">Selected <em>work.</em></h1>
-      <p class="lede" data-r style="--d:.2s">A few favourite frames from recent sessions. Tap any photograph to see it larger.</p>
+    <div class="wrap pfh__in">
+      <div class="pfh__text">
+        <span class="kicker" data-r>Portfolio · {items.length} photographs</span>
+        <h1 class="h1" data-r style="--d:.1s">Selected <em>work.</em></h1>
+        <p class="lede" data-r style="--d:.2s">A few favourite frames from recent sessions. Pick a category, and tap any photograph to see it larger.</p>
+      </div>
+      <div class="pfh__deck" aria-hidden="true" data-pf-deck>
+        <div class="pfh__fan" data-pf-fan>
+          {deck.map((p, i) => (
+            <div class="pfh__c" data-pf-card style={`--k:${i - (deck.length - 1) / 2};--a:${Math.abs(i - (deck.length - 1) / 2)}`}><Img photo={p} fit="cover" alt="" eager sizes="220px" /></div>
+          ))}
+        </div>
+      </div>
     </div>
   </section>
 
   <section class="pf">
     <div class="wrap">
       <div class="pf__filters" role="group" aria-label="Filter by category" data-r>
-        <button data-filter="all" aria-pressed="true">All</button>
-        {groups.map((g) => <button data-filter={g.id} aria-pressed="false">{g.name}</button>)}
+        <button data-filter="all" aria-pressed="true">All <sup>{items.length}</sup></button>
+        {groups.map((g) => <button data-filter={g.id} aria-pressed="false">{g.name} <sup>{g.photos.length}</sup></button>)}
       </div>
-      <div class="pf__grid">
-        {items.map(({ cat, catName, p }, i) => (
-          <a href={p.src} class="pf__item" data-item data-cat={cat} data-r style={`--d:${(i % 3) * 0.08}s`} data-lb-item data-caption={`${p.caption} — ${catName}`}>
+      <div class="pf__grid" data-pf-grid>
+        {items.map(({ cat, catName, p }) => (
+          <a href={p.src} class="pf__item" data-item data-cat={cat} data-lb-item data-cursor="View" data-caption={`${p.caption} — ${catName}`}>
             <div class="frame"><Img photo={p} sizes="(min-width: 1100px) 30vw, (min-width: 700px) 45vw, 92vw" /></div>
             <div class="cap"><span>{p.caption}</span><span>{catName}</span></div>
           </a>
@@ -43,15 +54,30 @@ for (let i = 0; i < max; i++) for (const g of groups) if (g.photos[i]) items.pus
 </Base>
 
 <style>
+  .pfh__in { display: grid; gap: 40px; }
+  .pfh__text { display: grid; gap: 0; }
+  .pfh__deck { position: relative; height: clamp(230px, 34vw, 400px); }
+  .pfh__fan { position: absolute; inset: 0; }
+  .pfh__c { --cw: clamp(120px, 15vw, 210px); position: absolute; left: 50%; top: 50%; width: var(--cw); aspect-ratio: 4 / 5; margin: calc(var(--cw) * -0.625) 0 0 calc(var(--cw) * -0.5); overflow: hidden; border: 5px solid #fff; border-radius: 5px; background: #fff; box-shadow: 0 30px 60px -28px rgba(110, 40, 50, 0.5);
+    transform: translate(calc(var(--k) * min(13vw, 80px)), calc(var(--a) * 12px)) rotate(calc(var(--k) * 7deg)); }
+  .pfh__c:nth-child(1), .pfh__c:nth-child(5) { z-index: 1; } .pfh__c:nth-child(2), .pfh__c:nth-child(4) { z-index: 2; } .pfh__c:nth-child(3) { z-index: 3; }
+  .pfh__c .img { width: 100%; height: 100%; object-fit: cover; }
+  @media (min-width: 1024px) { .pfh__in { grid-template-columns: 1fr 1fr; align-items: end; } .pfh__deck { height: 420px; } }
+
   .pf { padding-bottom: clamp(110px, 14vw, 200px); }
-  .pf__filters { display: flex; flex-wrap: wrap; gap: 10px 30px; padding-block: 26px; margin-bottom: clamp(40px, 6vw, 80px); border-block: 1px solid var(--line); }
-  .pf__filters button { font-size: 11px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-3); padding: 4px 0; transition: color 0.4s; }
-  .pf__filters button:hover, .pf__filters button[aria-pressed='true'] { color: var(--umber); }
-  .pf__filters button[aria-pressed='true'] { box-shadow: inset 0 -1px 0 var(--bronze); }
+  .pf__filters { display: flex; flex-wrap: wrap; gap: 10px; padding-block: 26px; margin-bottom: clamp(40px, 6vw, 80px); border-block: 1px solid var(--line); }
+  .pf__filters button { position: relative; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-2); padding: 11px 18px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line); transition: color 0.4s, box-shadow 0.4s, background-color 0.4s; }
+  .pf__filters button sup { font-size: 9px; letter-spacing: 0.05em; color: var(--rose); margin-left: 2px; }
+  .pf__filters button:hover { color: var(--umber); box-shadow: inset 0 0 0 1px var(--umber); }
+  .pf__filters button[aria-pressed='true'] { color: var(--umber); background: var(--grad); box-shadow: 0 12px 26px -16px rgba(196, 86, 106, 0.7); }
+  .pf__filters button[aria-pressed='true'] sup { color: var(--umber); }
   .pf__grid { columns: 1; column-gap: clamp(28px, 4vw, 64px); }
-  .pf__item { display: block; break-inside: avoid; margin-bottom: clamp(48px, 6vw, 90px); }
+  .pf__item { display: block; break-inside: avoid; padding-bottom: clamp(48px, 6vw, 90px); }
   .pf__item[hidden] { display: none; }
-  .pf__item .frame { background: var(--linen); }
+  .pf__item .frame { background: var(--linen); box-shadow: 0 0 0 0 rgba(110, 40, 50, 0); transition: box-shadow 0.8s var(--ease); }
+  .pf__item:hover .frame { box-shadow: 0 34px 60px -34px rgba(110, 40, 50, 0.55); }
+  :global(.js) .pf__item { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) { :global(.js) .pf__item { opacity: 1; } }
   @media (min-width: 700px) { .pf__grid { columns: 2; } }
   @media (min-width: 1100px) { .pf__grid { columns: 3; } }
 </style>

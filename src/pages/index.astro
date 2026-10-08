@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import Img from '../components/Img.astro';
 import Arrow from '../components/icons/Arrow.astro';
 import Cta from '../components/Cta.astro';
-import { site, selected, stories, testimonials, categories, shoots, packages } from '../data/site';
+import { site, selected, stories, testimonials, categories, shoots, packages, founder } from '../data/site';
 import { photo } from '../lib/photos';
 const panelSlots = [
   ['portraits-02', 'couples-04', 'weddings-05'],
@@ -15,6 +15,7 @@ const panels = await Promise.all(panelSlots.map((set) => Promise.all(set.map((s)
 const deck = [panels[0][0], panels[1][0], panels[2][0], ...(await Promise.all(['couples-03', 'newborn-01', 'celebrations-01', 'weddings-02'].map((s) => photo(s))))];
 const shootsP = await Promise.all(shoots.map(async (x) => ({ ...x, p: await photo(x.cover) })));
 const rollP = await Promise.all(['couples-01', 'newborn-05', 'portraits-03', 'weddings-01', 'maternity-05', 'couples-06', 'celebrations-04', 'newborn-08', 'portraits-02'].map((s) => photo(s)));
+const gatherP = await Promise.all(['maternity-04', 'weddings-03', 'newborn-03', 'couples-05', 'portraits-01', 'celebrations-02', 'newborn-05', 'weddings-04'].map((s) => photo(s)));
 const statement = 'We photograph people, not poses — the *glance* nobody planned, the *laugh* in the middle of a ritual, and the *light* that lasts only a minute.';
 const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.includes('*') }));
 ---
@@ -94,6 +95,29 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
             <div class="cap" data-r><span>No. 0{i + 1} — {s.title}</span><span>{s.kind}</span></div>
           </a>
         ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- THE FOUNDER: scattered prints gather into a stack, then the founder's print steps forward -->
+  <section class="fd" data-gather>
+    <div class="fd__pin" data-gather-pin>
+      <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+      <p class="fd__lead" data-gather-lead aria-hidden="true">Every photograph has <em>someone</em> behind it.</p>
+      <div class="fd__stage" aria-hidden="true" data-gather-stage>
+        {gatherP.map((p) => <div class="fd__p" data-gp><Img photo={p} fit="cover" alt="" sizes="220px" /></div>)}
+      </div>
+      <div class="wrap fd__in">
+        <div class="fd__slot">
+          <div class="fd__main" data-gp-main><Img slot={founder.photo} fit="cover" alt={`${founder.name}, ${founder.role.toLowerCase()} at Ybrain Photography`} sizes="(min-width: 1024px) 30vw, 60vw" /></div>
+        </div>
+        <div class="fd__text">
+          <span class="kicker" data-gt>The founder</span>
+          <h2 class="fd__name" data-gt>{founder.first} <em>{founder.last}</em></h2>
+          <p class="fd__role" data-gt>{founder.role}</p>
+          <p class="lede fd__lede" data-gt>{founder.short}</p>
+          <a href="/about/" class="link" data-gt>About Ybrain <Arrow /></a>
+        </div>
       </div>
     </div>
   </section>
@@ -253,6 +277,34 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
     .sel__item--3 { grid-column: 3 / 9; margin-top: 8vw; }
     .sel__item--3 .frame { aspect-ratio: 4 / 3.6; }
   }
+
+  /* founder moment */
+  .fd__pin { position: relative; height: 100svh; min-height: 600px; overflow: hidden; background: linear-gradient(160deg, #ffe6d5 0%, #fbcdbf 52%, #f3b6c1 100%); }
+  .fd__pin .blobs i { opacity: 0.55; }
+  .fd__lead, .fd__stage { display: none; }
+  .fd__in { position: relative; z-index: 2; height: 100%; display: grid; align-content: center; justify-items: center; gap: 26px; text-align: center; }
+  .fd__slot { width: min(52vw, 250px); }
+  .fd__main { aspect-ratio: 4 / 5; overflow: hidden; border: 6px solid #fff; border-radius: 6px; background: #fff; box-shadow: 0 40px 80px -36px rgba(110, 40, 50, 0.55); will-change: transform; }
+  .fd__main .img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+  .fd__text { display: grid; gap: 12px; justify-items: center; max-width: 46ch; }
+  .fd__name { margin: 0; font-family: var(--serif); font-weight: 300; font-size: clamp(2.6rem, 6vw, 6rem); line-height: 1; letter-spacing: -0.03em; }
+  .fd__name em { font-style: italic; color: var(--rose); }
+  .fd__role { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase; color: var(--umber); opacity: 0.7; }
+  .fd__lede { color: #5b4643; font-size: 15px; }
+  .fd .kicker { color: #8a5d58; }
+  @media (max-width: 699px) { .fd__lede { font-size: 14px; line-height: 1.6; } }
+  @media (min-width: 1024px) {
+    .fd__in { grid-template-columns: 0.9fr 1.1fr; justify-items: start; text-align: left; gap: 7vw; align-items: center; }
+    .fd__slot { width: min(30vw, 440px); justify-self: end; }
+    .fd__text { justify-items: start; gap: 18px; }
+    .fd__lede { font-size: 1.1rem; }
+  }
+  :global(.js) .fd__stage { display: block; position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  :global(.js) .fd__lead { display: block; position: absolute; z-index: 3; left: 50%; top: 50%; width: min(88vw, 15ch); margin: 0; transform: translate(-50%, -50%); text-align: center; font-family: var(--serif); font-weight: 300; font-size: clamp(2.3rem, 5.6vw, 5.4rem); line-height: 1.04; letter-spacing: -0.025em; pointer-events: none; }
+  .fd__lead em { font-style: italic; color: var(--rose); }
+  .fd__p { position: absolute; left: 50%; top: 50%; width: var(--cw); aspect-ratio: 4 / 5; margin: calc(var(--cw) * -0.625) 0 0 calc(var(--cw) * -0.5); overflow: hidden; border: 5px solid #fff; border-radius: 5px; background: #fff; box-shadow: 0 30px 60px -28px rgba(110, 40, 50, 0.5); will-change: transform; }
+  .fd { --cw: clamp(110px, 14vw, 210px); }
+  .fd__p .img { width: 100%; height: 100%; object-fit: cover; }
 
   .shoots__head { display: grid; gap: 24px; margin-bottom: clamp(40px, 6vw, 80px); }
   .shoots__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
