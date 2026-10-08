@@ -2,11 +2,9 @@
 import '../styles/global.css';
 import { site, nav } from '../data/site';
 import WhatsApp from '../components/icons/WhatsApp.astro';
-import Img from '../components/Img.astro';
 
-interface Props { title?: string; description?: string; tone?: 'light' | 'dark'; intro?: boolean }
-const { title, description = site.description, tone = 'light', intro = false } = Astro.props;
-const flicks = ['couples-03', 'newborn-01', 'celebrations-01', 'maternity-01', 'weddings-05', 'portraits-02'];
+interface Props { title?: string; description?: string; tone?: 'light' | 'dark'; heroDark?: boolean }
+const { title, description = site.description, tone = 'light', heroDark = false } = Astro.props;
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — Weddings, maternity, newborn & portraits`;
 const path = Astro.url.pathname;
 const canonical = new URL(path, Astro.site);
@@ -24,7 +22,7 @@ const ld = {
 const year = new Date().getFullYear();
 ---
 <!doctype html>
-<html lang="en" data-tone={tone}>
+<html lang="en" data-tone={tone} data-hero={heroDark ? 'dark' : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -44,16 +42,6 @@ const year = new Date().getFullYear();
     <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
-    {intro && (
-      <div class="ld" aria-hidden="true" data-ld>
-        <div class="ld__bg" data-ld-bg><div class="blobs"><i></i><i></i><i></i></div></div>
-        <div class="ld__frame" data-ld-frame>
-          {flicks.map((f, i) => <div class="ld__shot" data-ld-shot><Img slot={f} fit="cover" alt="" eager={i < 2} sizes="260px" /></div>)}
-        </div>
-        <div class="ld__mark" data-ld-ui><span class="mark__name">YBRAIN</span><span class="mark__sub">Photography</span></div>
-        <div class="ld__num" data-ld-ui><span data-ld-num>0</span><sup>%</sup></div>
-      </div>
-    )}
     <div class="cur" aria-hidden="true" data-cur></div>
     <header class="hdr" data-hdr>
       <div class="hdr__in wrap">
@@ -119,7 +107,7 @@ const year = new Date().getFullYear();
       .hdr.is-scrolled .hdr__in { height: 70px; }
       .hdr__in { transition: height 0.6s var(--ease); }
       .hdr.is-hidden { transform: translateY(-100%); }
-      [data-tone='dark'] .hdr:not(.is-scrolled) { color: var(--night-text); }
+      [data-tone='dark'] .hdr:not(.is-scrolled), [data-hero='dark'] .hdr:not(.is-scrolled) { color: var(--night-text); }
       .mark { display: grid; line-height: 1; gap: 7px; }
       .mark__name { font-family: var(--serif); font-size: 19px; font-weight: 400; letter-spacing: 0.46em; margin-right: -0.46em; }
       .mark__sub { font-size: 8.5px; font-weight: 500; letter-spacing: 0.52em; text-transform: uppercase; opacity: 0.7; }
@@ -139,15 +127,6 @@ const year = new Date().getFullYear();
 
       .ftr { padding-top: clamp(70px, 9vw, 120px); background: var(--light-2); background-color: var(--paper); color: var(--umber); }
       .ftr__word { display: block; margin-top: clamp(50px, 7vw, 100px); font-family: var(--serif); font-style: italic; font-weight: 300; font-size: clamp(5rem, 26vw, 26rem); line-height: 0.85; letter-spacing: -0.035em; background: var(--grad-ink); -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: 0.06em; }
-      .ld { position: fixed; inset: 0; z-index: 200; }
-      .ld__bg { position: absolute; inset: 0; background: var(--light); background-color: var(--paper); overflow: hidden; }
-      .ld__frame { position: absolute; left: 50%; top: 50%; width: min(44vw, 240px); aspect-ratio: 4 / 5; transform: translate(-50%, -50%); overflow: hidden; border-radius: 4px; box-shadow: 0 30px 60px -30px rgba(90, 50, 90, 0.5); }
-      .ld__shot { position: absolute; inset: 0; opacity: 0; }
-      .ld__shot:first-child { opacity: 1; }
-      .ld__shot .img { width: 100%; height: 100%; object-fit: cover; }
-      .ld__mark { position: absolute; left: var(--gutter); top: 30px; display: grid; gap: 7px; line-height: 1; }
-      .ld__num { position: absolute; right: var(--gutter); bottom: max(26px, env(safe-area-inset-bottom)); font-family: var(--serif); font-weight: 300; font-size: clamp(5rem, 15vw, 12rem); line-height: 0.8; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
-      .ld__num sup { font-size: 0.28em; vertical-align: top; background: var(--grad-ink); -webkit-background-clip: text; background-clip: text; color: transparent; }
       .ftr__top { display: grid; gap: 44px; }
       .ftr__brand { display: grid; gap: 8px; max-width: 34ch; align-content: start; }
       .ftr__brand p { margin: 18px 0 0; font-size: 14px; }

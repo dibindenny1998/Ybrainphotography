@@ -3,45 +3,64 @@ import Base from '../layouts/Base.astro';
 import Img from '../components/Img.astro';
 import Arrow from '../components/icons/Arrow.astro';
 import Cta from '../components/Cta.astro';
-import { site, heroPhotos, selected, stories, testimonials, categories } from '../data/site';
+import { site, selected, stories, testimonials, categories } from '../data/site';
 import { photo } from '../lib/photos';
-const slides = await Promise.all(heroPhotos.map((s) => photo(s)));
+const panelSlots = [
+  ['portraits-02', 'couples-04', 'weddings-05'],
+  ['couples-02', 'newborn-02', 'portraits-03'],
+  ['weddings-01', 'couples-07', 'couples-01'],
+];
+const panels = await Promise.all(panelSlots.map((set) => Promise.all(set.map((s) => photo(s)))));
+// the opening deck: the three panel covers first, then four more prints
+const deck = [panels[0][0], panels[1][0], panels[2][0], ...(await Promise.all(['couples-03', 'newborn-01', 'celebrations-01', 'weddings-02'].map((s) => photo(s))))];
 const feature = stories[1];
 const statement = 'We photograph people, not poses — the *glance* nobody planned, the *laugh* in the middle of a ritual, and the *light* that lasts only a minute.';
 const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.includes('*') }));
 ---
-<Base intro>
-  <!-- HERO -->
-  <section class="hero lit">
-    <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="wrap hero__in">
-      <div class="hero__text">
-        <span class="kicker" data-hero-fade>Photography · Kerala · Studio now open</span>
-        <h1 class="h1 hero__title" data-hero-title>
-          <span class="hl"><span>Photographs</span></span>
-          <span class="hl"><span>that feel</span></span>
-          <span class="hl"><span>like <em>you.</em></span></span>
-        </h1>
-        <p class="lede" data-hero-fade>Weddings, couples, maternity, newborn and portraits. Unhurried, honest, and full of light.</p>
-        <div class="hero__acts" data-hero-fade>
-          <a href="/portfolio/" class="btn" data-mag>View portfolio</a>
-          <a href="/studio/" class="link">Visit the studio <Arrow /></a>
-        </div>
-      </div>
-      <figure class="hero__fig" data-cursor="View" data-hero-fig>
-        <a href="/portfolio/" class="hero__frame frame" data-hero-frame aria-label="Open the portfolio">
-          {slides.map((p, i) => (
-            <div class:list={['hero__slide', { 'is-on': i === 0 }]} data-slide data-cap={p.caption}>
-              <Img photo={p} fit="cover" eager={i === 0} sizes="(min-width: 1024px) 36vw, 90vw" />
+<Base heroDark>
+  <!-- HERO: three full-height photo panels (one on phones) -->
+  <section class="hero" data-hero>
+    <div class="hero__panels" data-panels>
+      {panels.map((set, pi) => (
+        <div class="hp" data-panel data-speed-p={['-12', '10', '-6'][pi]}>
+          {set.map((p, i) => (
+            <div class:list={['hp__s', { 'is-on': i === 0 }]} data-ps data-cap={p.caption}>
+              <Img photo={p} fit="cover" eager={i === 0} sizes="(min-width: 700px) 34vw, 100vw" />
             </div>
           ))}
-        </a>
-        <figcaption class="hero__cap" data-hero-fade>
-          <span class="hero__n"><span data-slide-n>01</span> / 0{slides.length}</span>
-          <span class="hero__c" data-slide-cap>{slides[0].caption}</span>
-        </figcaption>
-        <div class="hero__bar" data-hero-fade><i data-slide-bar></i></div>
-      </figure>
+        </div>
+      ))}
+    </div>
+    <div class="hero__shade"></div>
+    <div class="hero__ui wrap">
+      <span class="kicker hero__k" data-hero-fade>Photography · Kerala · Studio now open</span>
+      <h1 class="hero__title" data-hero-title>
+        <span class="hl"><span>Photographs</span></span>
+        <span class="hl"><span>that feel like <em>you.</em></span></span>
+      </h1>
+      <div class="hero__acts" data-hero-fade>
+        <a href="/portfolio/" class="btn" data-mag>View portfolio</a>
+        <a href="/studio/" class="link hero__l">Visit the studio <Arrow /></a>
+      </div>
+    </div>
+    <div class="hero__foot wrap" data-hero-fade>
+      <span class="hero__scroll">Scroll</span>
+      <div class="hero__bar"><i data-hero-bar></i></div>
+      <span class="hero__cap" data-hero-cap>{panels[0][0].caption}</span>
+    </div>
+
+    <!-- opening sequence -->
+    <div class="opening" data-intro aria-hidden="true">
+      <div class="opening__bg" data-intro-bg><div class="blobs"><i></i><i></i><i></i></div></div>
+      <div class="opening__deck" data-deck>
+        {deck.map((p, i) => (
+          <div class="card" data-card style={`z-index:${10 - i}`}>
+            <Img photo={p} fit="cover" eager alt="" sizes={i < 3 ? '(min-width: 700px) 34vw, 100vw' : '240px'} />
+          </div>
+        ))}
+      </div>
+      <div class="opening__mark" data-intro-ui><span class="mark__name">YBRAIN</span><span class="mark__sub">Photography</span></div>
+      <div class="opening__num" data-intro-ui><span data-intro-num>0</span><sup>%</sup></div>
     </div>
   </section>
 
@@ -121,28 +140,43 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
 </Base>
 
 <style>
-  .hero { padding-top: clamp(120px, 15vw, 170px); padding-bottom: clamp(60px, 7vw, 100px); overflow: hidden; }
-  .hero__in { display: grid; gap: 54px; align-items: center; }
-  .hero__text { display: grid; gap: 30px; justify-items: start; }
-  .hero__title { font-size: clamp(3.4rem, 9vw, 8.6rem); line-height: 0.96; }
-  .hl { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.06em; }
-  .hl > span { display: inline-block; }
-  .hero__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 20px 32px; }
-  .hero__fig { margin: 0; }
-  .hero__frame { display: block; aspect-ratio: 4 / 5; border-radius: 6px; box-shadow: 0 40px 80px -40px rgba(90, 50, 90, 0.45); }
-  .hero__slide { position: absolute; inset: 0; clip-path: inset(100% 0 0 0); }
-  .hero__slide.is-on { clip-path: inset(0 0 0 0); }
-  .hero__cap { display: flex; justify-content: space-between; gap: 16px; padding-top: 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-3); }
-  .hero__n { color: var(--umber); }
-  .hero__c { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 16px; letter-spacing: 0; text-transform: none; color: var(--text-2); }
-  .hero__bar { height: 2px; background: var(--line); margin-top: 10px; overflow: hidden; border-radius: 2px; }
-  .hero__bar i { display: block; height: 100%; background: var(--grad); transform: scaleX(0); transform-origin: left; }
-  @media (max-width: 767px) { .hero__fig { order: -1; } .hero__frame { aspect-ratio: 4 / 4.4; } }
-  @media (min-width: 1024px) {
-    .hero { min-height: 100svh; display: flex; align-items: center; }
-    .hero__in { grid-template-columns: 1.2fr 0.8fr; gap: 7vw; }
-    .hero__fig { max-width: 540px; justify-self: end; width: 100%; }
+  .hero { position: relative; height: 100svh; min-height: 560px; overflow: hidden; background: var(--night); color: var(--night-text); }
+  .hero__panels { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr; gap: 0; }
+  .hp { position: relative; overflow: hidden; }
+  .hp:nth-child(n + 2) { display: none; }
+  .hp__s { position: absolute; inset: -6% 0; clip-path: inset(100% 0 0 0); }
+  .hp__s.is-on { clip-path: inset(0 0 0 0); }
+  .hp__s .img { width: 100%; height: 100%; object-fit: cover; }
+  @media (min-width: 700px) {
+    .hero__panels { grid-template-columns: repeat(3, 1fr); gap: 6px; background: var(--night); }
+    .hp:nth-child(n + 2) { display: block; }
   }
+  .hero__shade { position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(29, 22, 34, 0.5) 0%, rgba(29, 22, 34, 0) 24%, rgba(29, 22, 34, 0.15) 45%, rgba(29, 22, 34, 0.86) 100%), linear-gradient(90deg, rgba(29, 22, 34, 0.45) 0%, rgba(29, 22, 34, 0) 60%); }
+  .hero__ui { position: absolute; left: 0; right: 0; bottom: clamp(90px, 15vh, 150px); display: grid; gap: 26px; justify-items: start; z-index: 2; }
+  .hero__k { color: rgba(246, 238, 243, 0.85); }
+  .hero__title { margin: 0; font-family: var(--serif); font-weight: 300; font-size: clamp(3.3rem, 10vw, 10.5rem); line-height: 0.95; letter-spacing: -0.035em; text-shadow: 0 10px 50px rgba(20, 10, 25, 0.35); }
+  .hero__title em { font-style: italic; background: linear-gradient(105deg, #ffc8ad, #f7a8c3 55%, #cdb9ff); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 0.06em; }
+  .hl { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.08em; }
+  .hl > span { display: inline-block; }
+  .hero__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 30px; }
+  .hero__l { color: var(--night-text); }
+  .hero__foot { position: absolute; left: 0; right: 0; bottom: max(26px, env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 22px; z-index: 2; font-size: 10.5px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(246, 238, 243, 0.8); }
+  .hero__bar { flex: 1; height: 1.5px; background: rgba(246, 238, 243, 0.2); overflow: hidden; }
+  .hero__bar i { display: block; height: 100%; background: var(--grad); transform: scaleX(0); transform-origin: left; }
+  .hero__cap { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 15px; letter-spacing: 0; text-transform: none; }
+
+  /* opening sequence */
+  .opening { display: none; }
+  :global(.js) .opening { display: block; position: fixed; inset: 0; z-index: 200; }
+  .opening__bg { position: absolute; inset: 0; background: var(--light); background-color: var(--paper); overflow: hidden; }
+  .opening__deck { position: absolute; inset: 0; }
+  .card { position: absolute; left: 50%; top: 50%; width: min(46vw, 230px); aspect-ratio: 4 / 5; margin: calc(min(46vw, 230px) * -0.625) 0 0 calc(min(46vw, 230px) * -0.5); overflow: hidden; border-radius: 5px; box-shadow: 0 30px 60px -28px rgba(70, 30, 70, 0.55); border: 5px solid #fff; background: #fff; }
+  .card .img { width: 100%; height: 100%; object-fit: cover; }
+  .opening__mark { position: absolute; left: var(--gutter); top: 30px; display: grid; gap: 7px; line-height: 1; color: var(--umber); }
+  .opening__num { position: absolute; right: var(--gutter); bottom: max(22px, env(safe-area-inset-bottom)); font-family: var(--serif); font-weight: 300; font-size: clamp(4.5rem, 13vw, 11rem); line-height: 0.8; letter-spacing: -0.04em; color: var(--umber); font-variant-numeric: tabular-nums; }
+  .opening__num sup { font-size: 0.28em; vertical-align: top; background: var(--grad-ink); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  :global(.no-intro) .opening { display: none !important; }
 
   .intro__text { margin: 0 auto; max-width: 22ch; text-align: center; font-family: var(--serif); font-weight: 300; font-size: clamp(2rem, 4.2vw, 4rem); line-height: 1.15; letter-spacing: -0.015em; }
   .w--em { font-style: italic; background: var(--grad-ink); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 0.04em; }

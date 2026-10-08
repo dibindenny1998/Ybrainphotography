@@ -27,73 +27,124 @@ if (fine && !reduce) {
 }
 const lock = (on: boolean) => { if (lenis) on ? lenis.stop() : lenis.start(); document.body.style.overflow = on ? 'hidden' : ''; };
 
-/* ── preloader → hero */
-function preloader(): Promise<void> {
+/* ── home: the 5-second opening — prints fly in, fan out, then become the hero */
+function heroOpening(): Promise<void> {
   return new Promise((resolve) => {
-    const ld = $('[data-ld]');
-    if (!ld) return resolve();
+    const intro = $('[data-intro]');
+    const hero = $('[data-hero]');
+    if (!intro || !hero) return resolve();
+    if (reduce) { intro.remove(); return resolve(); }
     let seen = false;
     try { seen = !!sessionStorage.getItem('yb-seen'); sessionStorage.setItem('yb-seen', '1'); } catch { /* ignore */ }
-    if (reduce || seen) { ld.remove(); return resolve(); }
     lock(true);
-    const shots = $$('[data-ld-shot]', ld);
-    const frame = $('[data-ld-frame]', ld)!;
-    const num = $('[data-ld-num]', ld)!;
-    const step = 0.2;
-    const c = { v: 0 };
-    const tl = gsap.timeline({ onComplete: () => ld.remove() });
-    tl.from(frame, { yPercent: 30, autoAlpha: 0, scale: 0.9, duration: 0.9, ease: E }, 0)
-      .from('[data-ld-ui]', { autoAlpha: 0, y: 20, duration: 0.8, stagger: 0.1, ease: E }, 0.1);
-    shots.forEach((s, i) => tl.set(shots, { autoAlpha: 0 }, 0.3 + i * step).set(s, { autoAlpha: 1 }, 0.3 + i * step));
-    const end = 0.3 + shots.length * step;
-    tl.to(c, { v: 100, duration: end, ease: 'power1.inOut', onUpdate: () => (num.textContent = String(Math.round(c.v))) }, 0);
+    window.scrollTo(0, 0);
+    const cards = $$('[data-card]', intro);
+    const panels = $$('[data-panel]').filter((p) => p.offsetWidth > 0);
+    const num = $('[data-intro-num]', intro)!;
+    const vw = innerWidth, vh = innerHeight;
+    const cw = cards[0].offsetWidth;
+    const count = { v: 0 };
+    gsap.set('[data-panels]', { autoAlpha: 0 });
+
+    const tl = gsap.timeline({
+      defaults: { ease: 'expo.out' },
+      onComplete: () => { intro.remove(); },
+    });
+    if (seen) tl.timeScale(1.7);
+
+    // 1 · prints fly in from every side and land as a loose stack
+    cards.forEach((c, i) => {
+      const ang = (i / cards.length) * Math.PI * 2 + 0.6;
+      tl.fromTo(c,
+        { x: Math.cos(ang) * vw * 0.75, y: Math.sin(ang) * vh * 0.75, rotate: gsap.utils.random(-50, 50), scale: 0.7, autoAlpha: 0 },
+        { x: gsap.utils.random(-14, 14), y: gsap.utils.random(-10, 10), rotate: gsap.utils.random(-9, 9), scale: 1, autoAlpha: 1, duration: 1.2 },
+        0.15 + i * 0.12);
+    });
+    tl.from('[data-intro-ui]', { autoAlpha: 0, y: 20, duration: 1, stagger: 0.1 }, 0.1)
+      .to(count, { v: 100, duration: 2.5, ease: 'power1.inOut', onUpdate: () => (num.textContent = String(Math.round(count.v))) }, 0);
+
+    // 2 · the stack fans out into a spread
+    const spread = Math.min(vw * 0.13, 150);
+    const mid = (cards.length - 1) / 2;
+    cards.forEach((c, i) => {
+      const k = i <= 2 ? [0, -1, 1][i] : (i % 2 ? -2 : 2) + (i > 4 ? (i % 2 ? -1 : 1) : 0);
+      tl.to(c, { x: k * spread, y: Math.abs(k) * 18, rotate: k * 5, duration: 1, ease: 'expo.inOut' }, 1.75);
+    });
+    void mid;
+
+    // 3 · three prints (one on phones) grow into the full-height panels; the rest fly away
     tl.add(() => {
-      const target = $('[data-hero-frame]');
-      gsap.to('[data-ld-ui]', { autoAlpha: 0, y: -20, duration: 0.5, stagger: 0.05 });
-      if (target) Flip.fit(frame, target, { duration: 1.2, ease: 'expo.inOut', absolute: true });
-      gsap.to('[data-ld-bg]', { autoAlpha: 0, duration: 0.7, delay: 0.6 });
-    }, end + 0.1)
-      .add(() => { lock(false); resolve(); }, end + 0.7)
-      .to(frame, { autoAlpha: 0, duration: 0.3 }, end + 1.35);
+      gsap.to('[data-intro-ui]', { autoAlpha: 0, y: -20, duration: 0.5, stagger: 0.05 });
+      gsap.to('[data-intro-bg]', { autoAlpha: 0, duration: 0.8, delay: 0.25 });
+      cards.forEach((c, i) => {
+        const target = panels[i];
+        if (target) {
+          gsap.to(c, { borderWidth: 0, borderRadius: 0, duration: 0.9, ease: 'expo.inOut' });
+          Flip.fit(c, target, { duration: 1.25, ease: 'expo.inOut', absolute: true, rotate: 0 } as any);
+          gsap.to(c, { rotate: 0, duration: 1.25, ease: 'expo.inOut' });
+        } else {
+          gsap.to(c, { y: vh * 1.1, rotate: gsap.utils.random(-40, 40), autoAlpha: 0, duration: 1.1, ease: 'expo.in', delay: i * 0.03 });
+        }
+      });
+    }, 2.85);
+
+    // 4 · hand over to the real hero, headline rises
+    tl.add(() => {
+      gsap.set('[data-panels]', { autoAlpha: 1 });
+      lock(false);
+      resolve();
+    }, 4.15)
+      .to(intro, { autoAlpha: 0, duration: 0.35, ease: 'none' }, 4.2);
+
+    // impatient visitors: any scroll / tap speeds it up
+    const hurry = () => tl.timeScale(4);
+    ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach((ev) => window.addEventListener(ev, hurry, { once: true, passive: true }));
   });
 }
 
-/* ── hero */
 function heroIntro() {
   const title = $('[data-hero-title]');
   if (!title || reduce) return;
   gsap.timeline({ defaults: { ease: E } })
-    .from('.hl > span', { yPercent: 110, rotate: 3, transformOrigin: '0 100%', duration: 1.5, stagger: 0.12 }, 0)
-    .from('[data-hero-fade]', { y: 26, autoAlpha: 0, duration: 1.2, stagger: 0.1 }, 0.35)
-    .from('.hdr', { yPercent: -100, autoAlpha: 0, duration: 1.1, clearProps: 'all' }, 0.2);
+    .fromTo('.hl > span', { yPercent: 115 }, { yPercent: 0, duration: 1.5, stagger: 0.14 }, 0)
+    .from('[data-hero-fade]', { y: 26, autoAlpha: 0, duration: 1.2, stagger: 0.1 }, 0.4)
+    .from('.hdr', { yPercent: -100, autoAlpha: 0, duration: 1.1, clearProps: 'all' }, 0.2)
+    .from('.hero__shade', { autoAlpha: 0, duration: 1.2, ease: 'power2.out' }, 0);
 }
 
-function heroSlides() {
-  const slides = $$('[data-slide]');
-  if (slides.length < 2) return;
-  const n = $('[data-slide-n]'), cap = $('[data-slide-cap]'), bar = $('[data-slide-bar]');
-  const HOLD = 4.6;
-  let i = 0, visible = true;
-  const prog = gsap.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: HOLD, ease: 'none', paused: true, onComplete: () => next() });
-  const next = () => {
-    const cur = slides[i];
-    i = (i + 1) % slides.length;
-    const nx = slides[i];
-    if (n) n.textContent = String(i + 1).padStart(2, '0');
-    if (cap) gsap.fromTo(cap, { yPercent: 100, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.8, ease: E, onStart: () => (cap.textContent = nx.dataset.cap || '') });
-    gsap.set(nx, { zIndex: 2 }); gsap.set(cur, { zIndex: 1 });
-    gsap.timeline({ onComplete: () => { cur.classList.remove('is-on'); gsap.set(cur, { clipPath: 'inset(100% 0% 0% 0%)', zIndex: 0 }); nx.classList.add('is-on'); } })
-      .fromTo(nx, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.2, ease: 'expo.inOut' })
-      .fromTo($('img', nx), { scale: 1.2 }, { scale: 1, duration: 2, ease: E }, 0.1);
+/* panels change photo one after another (staggered wipe) */
+function heroPanels(): () => void {
+  const panels = $$('[data-panel]');
+  if (!panels.length) return () => {};
+  const bar = $('[data-hero-bar]'), cap = $('[data-hero-cap]');
+  const HOLD = 4.8;
+  let step = 0, visible = true;
+  const advance = () => {
+    step++;
+    const shown = panels.filter((p) => p.offsetWidth > 0);
+    shown.forEach((p, pi) => {
+      const s = $$('[data-ps]', p);
+      const cur = s.find((x) => x.classList.contains('is-on'))!;
+      const nx = s[step % s.length];
+      gsap.set(nx, { zIndex: 2 }); gsap.set(cur, { zIndex: 1 });
+      gsap.timeline({ delay: pi * 0.18, onComplete: () => { cur.classList.remove('is-on'); gsap.set(cur, { clipPath: 'inset(100% 0% 0% 0%)', zIndex: 0 }); nx.classList.add('is-on'); } })
+        .fromTo(nx, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'expo.inOut' })
+        .fromTo($('img', nx), { scale: 1.18 }, { scale: 1, duration: 2.2, ease: E }, 0.1);
+      if (pi === 0 && cap) gsap.fromTo(cap, { yPercent: 100, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.8, ease: E, onStart: () => (cap.textContent = nx.dataset.cap || '') });
+    });
     prog.restart();
     if (!visible || document.hidden) prog.pause();
   };
-  if (reduce) return;
-  new IntersectionObserver(([e]) => { visible = e.isIntersecting; visible && !document.hidden ? prog.play() : prog.pause(); }).observe(slides[0].parentElement!);
-  document.addEventListener('visibilitychange', () => (document.hidden ? prog.pause() : visible && prog.play()));
-  prog.play();
-  gsap.to('[data-hero-frame] .img', { yPercent: 7, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-  gsap.to('[data-hero-title]', { yPercent: -14, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+  const prog = gsap.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: HOLD, ease: 'none', paused: true, onComplete: advance });
+  if (reduce) return () => {};
+  let started = false;
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; started && visible && !document.hidden ? prog.play() : prog.pause(); }).observe($('[data-hero]')!);
+  document.addEventListener('visibilitychange', () => (document.hidden ? prog.pause() : started && visible && prog.play()));
+  // scroll: panels drift at different speeds, headline lifts away
+  const st = { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true };
+  panels.forEach((p) => gsap.to(p, { yPercent: parseFloat(p.dataset.speedP || '0'), ease: 'none', scrollTrigger: st }));
+  gsap.to('.hero__ui', { yPercent: -30, autoAlpha: 0, ease: 'none', scrollTrigger: { ...st, end: '70% top' } });
+  return () => { started = true; if (visible) prog.play(); };
 }
 
 /* ── scroll reveals */
@@ -264,17 +315,17 @@ function form() {
 /* ── boot */
 async function boot() {
   const hasHero = !!$('[data-hero-title]');
-  if (hasHero && !reduce) gsap.set('.hl > span', { yPercent: 110 });
-  const intro = preloader();
+  if (hasHero && !reduce) gsap.set('.hl > span', { yPercent: 115 });
+  const intro = heroOpening();
   await Promise.race([document.fonts?.ready, new Promise((r) => setTimeout(r, 1200))]);
   chrome();
-  heroSlides();
+  const startPanels = heroPanels();
   reveals();
   filter();
   lightbox();
   form();
   await intro;
-  if (hasHero && !reduce) { gsap.set('.hl > span', { clearProps: 'transform' }); heroIntro(); }
+  if (hasHero && !reduce) { heroIntro(); gsap.delayedCall(1.2, startPanels); }
   ScrollTrigger.refresh();
 }
 boot();
