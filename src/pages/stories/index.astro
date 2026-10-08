@@ -9,38 +9,52 @@ import { stories } from '../../data/site';
   <section class="phead lit">
     <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="wrap">
-      <span class="kicker" data-r>Stories</span>
+      <span class="kicker" data-r>Stories · {String(stories.length).padStart(2, '0')}</span>
       <h1 class="h1" data-r style="--d:.1s">Whole days, <em>kept whole.</em></h1>
-      <p class="lede" data-r style="--d:.2s">A single photograph is a moment. A story is the morning, the nerves, the laughter and the quiet after.</p>
+      <p class="lede" data-r style="--d:.2s">A single photograph is a moment. A story is the morning, the nerves, the laughter and the quiet after. Scroll through them.</p>
     </div>
   </section>
 
-  <section class="sl">
-    <div class="wrap">
-      {stories.map((s, i) => (
-        <a href={`/stories/${s.slug}/`} class:list={['sl__row', { 'sl__row--r': i % 2 }]}>
-          <div class="sl__img frame" data-ri><Img slot={s.cover} fit="cover" sizes="(min-width: 1024px) 50vw, 92vw" /></div>
-          <div class="sl__text">
-            <span class="kicker" data-r>No. 0{i + 1} · {s.kind} · {s.place}</span>
-            <h2 class="h2" data-r style="--d:.08s">{s.title}</h2>
-            <p class="lede" data-r style="--d:.16s">{s.intro}</p>
-            <span class="link" data-r style="--d:.24s">Read the story <Arrow /></span>
+  <!-- stacking cards: each story slides up over the last -->
+  <section class="sk" data-stack>
+    {stories.map((s, i) => (
+      <div class="sk__item" style={`--i:${i}`} data-stack-item>
+        <a href={`/stories/${s.slug}/`} class="sk__card" data-stack-card data-cursor="Read">
+          <div class="sk__img" data-stack-img><Img slot={s.cover} fit="cover" eager={i === 0} sizes="100vw" /></div>
+          <div class="sk__shade"></div>
+          <span class="sk__n">No. 0{i + 1} <i>/ 0{stories.length}</i></span>
+          <div class="sk__txt">
+            <span class="sk__k">{s.kind} · {s.place}</span>
+            <h2 class="sk__t" data-stack-title>{s.title}</h2>
+            <p class="sk__intro">{s.intro}</p>
+            <span class="sk__go">Read the story <Arrow /></span>
           </div>
+          <div class="sk__dim" data-stack-dim></div>
         </a>
-      ))}
-    </div>
+      </div>
+    ))}
   </section>
   <Cta />
 </Base>
 
 <style>
-  .sl { padding-bottom: clamp(60px, 8vw, 120px); }
-  .sl__row { display: grid; gap: 34px; margin-bottom: clamp(100px, 14vw, 200px); align-items: center; }
-  .sl__img { aspect-ratio: 4 / 3.3; }
-  .sl__text { display: grid; gap: 22px; justify-items: start; }
-  @media (min-width: 1024px) {
-    .sl__row { grid-template-columns: 1.25fr 0.75fr; gap: 7vw; }
-    .sl__row--r { grid-template-columns: 0.75fr 1.25fr; }
-    .sl__row--r .sl__img { order: 2; }
-  }
+  .sk { position: relative; padding: 0 var(--gutter) clamp(80px, 10vw, 140px); max-width: calc(var(--max) + var(--gutter) * 2); margin-inline: auto; }
+  .sk__item { position: sticky; top: calc(84px + var(--i) * 14px); height: calc(100svh - 120px); min-height: 460px; margin-bottom: 7vh; }
+  .sk__item:last-child { margin-bottom: 0; }
+  .sk__card { position: relative; display: block; height: 100%; border-radius: 18px; overflow: hidden; color: #fff; background: var(--night); box-shadow: 0 -20px 60px -30px rgba(60, 25, 25, 0.45); transform-origin: 50% 0%; will-change: transform; }
+  .sk__img { position: absolute; inset: 0; }
+  .sk__img .img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.6s var(--ease); }
+  .sk__card:hover .sk__img .img { transform: scale(1.04); }
+  .sk__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(30, 18, 18, 0.15) 0%, rgba(30, 18, 18, 0) 35%, rgba(30, 18, 18, 0.35) 62%, rgba(30, 18, 18, 0.85) 100%); }
+  .sk__dim { position: absolute; inset: 0; background: #1d1414; opacity: 0; pointer-events: none; }
+  .sk__txt { position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: 12px; justify-items: start; padding: clamp(24px, 4vw, 56px); }
+  .sk__n { position: absolute; z-index: 1; top: clamp(20px, 3vw, 40px); right: clamp(24px, 4vw, 56px); font-family: var(--serif); font-size: clamp(1.3rem, 2vw, 1.8rem); font-weight: 300; }
+  .sk__n i { font-style: normal; opacity: 0.55; }
+  .sk__k { font-size: 11px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); }
+  .sk__t { margin: 0; font-family: var(--serif); font-weight: 300; font-size: clamp(3rem, 9vw, 8.5rem); line-height: 0.95; letter-spacing: -0.035em; }
+  .sk__intro { margin: 0; max-width: 40ch; font-size: clamp(14px, 1.2vw, 17px); color: rgba(255, 255, 255, 0.88); }
+  .sk__go { display: inline-flex; align-items: center; gap: 12px; margin-top: 8px; padding: 14px 22px; border-radius: 999px; background: var(--grad); color: var(--umber); font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+  .sk__go :global(svg) { width: 20px; transition: transform 0.5s var(--ease); }
+  .sk__card:hover .sk__go :global(svg) { transform: translateX(5px); }
+  @media (min-width: 1024px) { .sk__txt { grid-template-columns: 1fr auto; align-items: end; column-gap: 6vw; } .sk__k, .sk__t { grid-column: 1 / -1; } .sk__go { justify-self: end; } }
 </style>

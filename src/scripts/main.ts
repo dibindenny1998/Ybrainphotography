@@ -392,6 +392,30 @@ function photoRoll() {
   });
 }
 
+/* ── stories list: cards stack on top of each other; the one underneath shrinks and dims */
+function storyStack() {
+  const items = $$('[data-stack-item]');
+  if (!items.length) return;
+  items.forEach((item, i) => {
+    const card = $('[data-stack-card]', item)!, img = $('[data-stack-img] img', item), dim = $('[data-stack-dim]', item)!;
+    const title = $('[data-stack-title]', item)!;
+    // title rises letter by letter when the card arrives
+    const split = SplitText.create(title, { type: 'chars,words', mask: 'chars' });
+    gsap.from(split.chars, { yPercent: 110, duration: 1.1, stagger: 0.03, ease: E, scrollTrigger: { trigger: item, start: 'top 65%', once: true } });
+    gsap.from($$('.sk__k, .sk__intro, .sk__go, .sk__n', item), { y: 24, autoAlpha: 0, duration: 1, stagger: 0.08, ease: E, scrollTrigger: { trigger: item, start: 'top 60%', once: true } });
+    if (still) return;
+    // the photo settles as the card slides up
+    if (img) gsap.fromTo(img, { scale: 1.25, yPercent: -4 }, { scale: 1, yPercent: 0, ease: 'none', scrollTrigger: { trigger: item, start: 'top bottom', end: 'top top', scrub: true } });
+    // when the next card slides over, this one shrinks back and darkens
+    const next = items[i + 1];
+    if (next) {
+      const st = { trigger: next, start: 'top bottom', end: () => `top ${parseFloat(getComputedStyle(next).top) || 0}px`, scrub: true, invalidateOnRefresh: true };
+      gsap.to(card, { scale: 0.9, ease: 'none', scrollTrigger: st });
+      gsap.to(dim, { opacity: 0.55, ease: 'none', scrollTrigger: st });
+    }
+  });
+}
+
 /* ── header, menu, cursor, magnetic */
 function chrome() {
   const hdr = $('[data-hdr]');
@@ -541,6 +565,7 @@ async function boot() {
   const startPanels = heroPanels();
   homeExtras();
   photoRoll();
+  storyStack();
   founderGather();
   reveals();
   filter();
