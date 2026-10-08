@@ -92,6 +92,7 @@ const year = new Date().getFullYear();
         <div class="ftr__bot">
           <span>© {year} {site.name}</span>
           <span>Your story, our lens.</span>
+          <a href="https://branddit.in" target="_blank" rel="noopener" class="ftr__credit">Crafted with <span class="ftr__heart" aria-label="love">♥</span> by <b>Branddit</b></a>
         </div>
       </div>
     </footer>
@@ -132,6 +133,11 @@ const year = new Date().getFullYear();
       .ftr__brand p { margin: 18px 0 0; font-size: 14px; }
       .ftr__col p { margin: 14px 0 0; font-size: 14px; line-height: 1.95; }
       .ftr__a { transition: color 0.4s; }
+      .ftr__credit { transition: color 0.4s; }
+      .ftr__credit b { font-weight: 600; color: var(--umber); border-bottom: 1px solid var(--rose); }
+      .ftr__credit:hover, .ftr__credit:hover b { color: var(--rose); }
+      .ftr__heart { display: inline-block; color: var(--rose); animation: beat 1.6s ease-in-out infinite; }
+      @keyframes beat { 0%, 60%, 100% { transform: scale(1); } 30% { transform: scale(1.25); } }
       .ftr__a:hover { color: var(--bronze); }
       .ftr__bot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 10px; padding-block: 28px max(28px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line); font-size: 12px; color: var(--text-3); }
       @media (min-width: 768px) { .ftr__top { grid-template-columns: 1.6fr 1fr 1fr 1fr; } }
