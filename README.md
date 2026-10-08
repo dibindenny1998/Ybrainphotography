@@ -50,7 +50,7 @@ Performance: only GPU-friendly animations (transform, opacity, clip-path), no We
 
 ```
 src/
-  photos/            ← ALL images (placeholders + your photos)
+  photos/            ← ALL photos (see photos/README.md)
   data/site.ts       ← all text & contact details
   components/        ← page sections
   scripts/main.ts    ← every animation & interaction
