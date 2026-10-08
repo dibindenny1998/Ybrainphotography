@@ -17,7 +17,7 @@ import { dirname, join } from 'node:path';
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'photos');
 mkdirSync(OUT, { recursive: true });
 
-const RED = '#9E1B32';
+const RED = '#B0122F';
 const BG = {
   ivory: ['#FFFBF4', '#F8EFE2'],
   blush: ['#FFF6F3', '#F8DCD7'],

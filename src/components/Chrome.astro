@@ -107,8 +107,8 @@ const links = [
   .nav__link:hover span { transform: translateY(-100%); }
   .nav__right { display: flex; align-items: center; gap: 18px; }
   .nav__status { display: none; align-items: center; gap: 10px; color: var(--ink-2); font-size: 10px; }
-  .nav__status i { width: 7px; height: 7px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 0 rgba(158, 27, 50, 0.5); animation: pulse 2s infinite; }
-  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(158, 27, 50, 0); } 100% { box-shadow: 0 0 0 0 rgba(158, 27, 50, 0); } }
+  .nav__status i { width: 7px; height: 7px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 0 rgba(176, 18, 47, 0.5); animation: pulse 2s infinite; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(176, 18, 47, 0); } 100% { box-shadow: 0 0 0 0 rgba(176, 18, 47, 0); } }
   .nav__cta { --h: 44px; display: none; padding: 0 22px; font-size: 11px; }
   .nav__burger { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 4px 0 16px; position: relative; z-index: 2; }
   .nav__burger-lines { position: relative; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); display: grid; place-items: center; transition: background 0.4s; }
@@ -155,7 +155,7 @@ const links = [
   .cursor__dot { position: absolute; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--red); }
   .cursor__ring {
     position: absolute; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%;
-    border: 1px solid rgba(158, 27, 50, 0.5); display: grid; place-items: center;
+    border: 1px solid rgba(176, 18, 47, 0.5); display: grid; place-items: center;
     transition: width 0.5s var(--ease), height 0.5s var(--ease), margin 0.5s var(--ease), background-color 0.4s, border-color 0.4s;
   }
   .cursor__label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ivory); opacity: 0; transition: opacity 0.3s; font-weight: 500; }
@@ -172,7 +172,7 @@ const links = [
   .fab {
     position: fixed; z-index: 80; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
     width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
-    background: var(--velvet); color: #fff8f0; box-shadow: 0 12px 30px -8px rgba(158, 27, 50, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    background: var(--velvet); color: #fff8f0; box-shadow: 0 12px 30px -8px rgba(176, 18, 47, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.18);
     transform: scale(0);
   }
   .no-js .fab, html:not(.js) .fab { transform: none; }

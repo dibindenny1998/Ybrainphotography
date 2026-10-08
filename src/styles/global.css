@@ -11,10 +11,10 @@
   --ink: #1b1010;
   --ink-2: #4e3d3a;
   --ink-3: #85716c;
-  --red: #9e1b32;
-  --red-deep: #6e0f22;
+  --red: #B0122F;
+  --red-deep: #75081c;
   --red-glow: #c42a47;
-  --velvet: radial-gradient(120% 90% at 30% 20%, #b3203c 0%, #9e1b32 45%, #7a1226 100%);
+  --velvet: radial-gradient(120% 90% at 30% 20%, #c62742 0%, #B0122F 45%, #82091f 100%);
   --line: rgba(27, 16, 16, 0.13);
 
   --serif: 'Bodoni Moda Variable', 'Bodoni 72', Didot, Georgia, serif;
@@ -114,7 +114,7 @@ em, .it { font-style: italic; }
   transform: translateY(101%); transition: transform 0.6s var(--ease);
 }
 .btn:hover::before { transform: translateY(0); }
-.btn--red { background: var(--velvet); color: #fff8f0; box-shadow: 0 8px 24px -10px rgba(158, 27, 50, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.14); }
+.btn--red { background: var(--velvet); color: #fff8f0; box-shadow: 0 8px 24px -10px rgba(176, 18, 47, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.14); }
 .btn--red::before { background: var(--ink); }
 .btn--line { box-shadow: inset 0 0 0 1px currentColor; }
 .btn--line::before { background: var(--red); }

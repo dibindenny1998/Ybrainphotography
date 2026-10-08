@@ -5,10 +5,10 @@
 <radialGradient id="disc"><stop offset="0" stop-color="#F6C4C2" stop-opacity=".7"/><stop offset=".7" stop-color="#F8D8D5" stop-opacity=".4"/><stop offset="1" stop-color="#F8D8D5" stop-opacity="0"/></radialGradient>
 <radialGradient id="glow"><stop offset="0" stop-color="#FFB38F" stop-opacity=".8"/><stop offset=".45" stop-color="#FFD2B8" stop-opacity=".4"/><stop offset="1" stop-color="#FFE9DC" stop-opacity="0"/></radialGradient>
 <style>
-.l{fill:none;stroke:#9E1B32;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:draw 2.8s cubic-bezier(.65,0,.25,1) both}
+.l{fill:none;stroke:#B0122F;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:draw 2.8s cubic-bezier(.65,0,.25,1) both}
 .t{stroke-width:1.15;stroke-opacity:.9}
-.f{fill:#9E1B32}
-.tx{fill:#9E1B32;font-family:Helvetica,Arial,sans-serif}
+.f{fill:#B0122F}
+.tx{fill:#B0122F;font-family:Helvetica,Arial,sans-serif}
 .fl{transform-box:fill-box;transform-origin:50% 100%;animation:flick 2.4s ease-in-out infinite alternate}
 @keyframes draw{from{stroke-dasharray:1;stroke-dashoffset:1}to{stroke-dasharray:1;stroke-dashoffset:0}}
 @keyframes flick{0%{transform:scale(1,1)}35%{transform:scale(.94,1.08)}70%{transform:scale(1.04,.95)}100%{transform:scale(.97,1.05)}}
@@ -17,5 +17,5 @@
 </defs>
 <rect width="1200" height="800" fill="url(#bg)"/>
 <circle cx="600" cy="320" r="360" fill="url(#disc)"/><g transform="translate(672 336) scale(0.92)"><path class="l" style="animation-delay:0.15s" pathLength="1" d="M-120,200 L-120,-60 A120,120 0 0,1 120,-60 L120,200 Z"/><path class="l t" style="animation-delay:0.18s" pathLength="1" d="M-100,200 L-100,-60 A100,100 0 0,1 100,-60 L100,200 M0,-160 L0,200 M-100,-20 L100,-20 M-100,80 L100,80"/><path class="l t" style="animation-delay:0.22s" pathLength="1" d="M-140,200 L140,200 M-150,214 L150,214"/><g opacity=".5"><path class="l t" style="animation-delay:0.26s" pathLength="1" d="M-90,-20 L180,420 M-54,-16 L240,420 M-18,-12 L300,420 M18,-8 L360,420 M54,-4 L420,420 M90,0 L480,420 "/></g><g transform="translate(-330 40) scale(1)"><path class="l" style="animation-delay:0.29s" pathLength="1" d="M-70,-120 L70,-120 L100,-40 L70,40 L-70,40 L-100,-40 Z"/><path class="l t" style="animation-delay:0.33s" pathLength="1" d="M-100,-40 L100,-40 M0,-120 L0,40 M-70,-120 L-30,-40 L-70,40 M70,-120 L30,-40 L70,40"/><path class="l" style="animation-delay:0.36s" pathLength="1" d="M0,40 L0,380 M0,380 L-60,440 M0,380 L60,440 M0,380 L0,440"/><path class="l t" style="animation-delay:0.40s" pathLength="1" d="M-14,120 L14,120"/></g><g transform="translate(260 300) scale(1)"><ellipse class="l" style="animation-delay:0.43s" pathLength="1" cx="0" cy="0" rx="70" ry="16"/><path class="l" style="animation-delay:0.47s" pathLength="1" d="M-56,8 L-70,150 M56,8 L70,150 M-20,14 L-26,150 M20,14 L26,150"/><path class="l t" style="animation-delay:0.50s" pathLength="1" d="M-64,90 L64,90"/></g></g>
-<rect x="54" y="54" width="1092" height="692" fill="none" stroke="#9E1B32" stroke-opacity=".45" stroke-width="1" vector-effect="non-scaling-stroke"/><g fill="#9E1B32" font-family="Georgia, 'Times New Roman', serif"><text x="78" y="719.6" font-size="31.2" font-style="italic">The new studio</text><text x="1122" y="719.6" font-size="16.8" letter-spacing="4.8" text-anchor="end" opacity=".8" font-family="Helvetica, Arial, sans-serif">STUDIO 02 THE STUDIO</text></g>
+<rect x="54" y="54" width="1092" height="692" fill="none" stroke="#B0122F" stroke-opacity=".45" stroke-width="1" vector-effect="non-scaling-stroke"/><g fill="#B0122F" font-family="Georgia, 'Times New Roman', serif"><text x="78" y="719.6" font-size="31.2" font-style="italic">The new studio</text><text x="1122" y="719.6" font-size="16.8" letter-spacing="4.8" text-anchor="end" opacity=".8" font-family="Helvetica, Arial, sans-serif">STUDIO 02 THE STUDIO</text></g>
 </svg>
