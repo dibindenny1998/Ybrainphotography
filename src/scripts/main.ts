@@ -185,6 +185,74 @@ function reveals() {
   if (fw) gsap.from(fw, { yPercent: 50, opacity: 0, duration: 1.6, ease: E, scrollTrigger: { trigger: fw, start: 'top 98%', once: true } });
 }
 
+/* ── home: category rows, studio pull-back, story strip, rolling photos, card tilt */
+function homeExtras() {
+  // category rows: a photo follows the cursor
+  const float = $('[data-shoot-float]');
+  const list = $('[data-shoots]');
+  if (float && list && fine && !reduce) {
+    const imgs = $$('[data-shoot-img]', float);
+    const xTo = gsap.quickTo(float, 'x', { duration: 0.55, ease: 'power3' });
+    const yTo = gsap.quickTo(float, 'y', { duration: 0.55, ease: 'power3' });
+    const rTo = gsap.quickTo(float, 'rotate', { duration: 0.8, ease: 'power3' });
+    let lx = 0;
+    list.addEventListener('mousemove', (e) => { xTo(e.clientX + 24); yTo(e.clientY - 160); rTo(gsap.utils.clamp(-10, 10, (e.clientX - lx) * 0.6)); lx = e.clientX; });
+    list.addEventListener('mouseenter', (e) => { gsap.set(float, { x: e.clientX + 24, y: e.clientY - 160 }); gsap.to(float, { opacity: 1, scale: 1, duration: 0.5, ease: E }); });
+    list.addEventListener('mouseleave', () => gsap.to(float, { opacity: 0, scale: 0.6, duration: 0.4, ease: E }));
+    $$('[data-shoot]').forEach((r) => r.addEventListener('mouseenter', () => imgs.forEach((im) => im.classList.toggle('on', im.dataset.shootImg === r.dataset.shoot))));
+  }
+  if (list && !reduce) gsap.from($$('.sh-row', list), { yPercent: 100, opacity: 0, duration: 1.2, stagger: 0.07, ease: E, scrollTrigger: { trigger: list, start: 'top 85%', once: true } });
+  if (reduce) return;
+
+  // studio photo pulls back like a camera
+  $$('[data-zoomout]').forEach((el) => {
+    const img = $('img', el);
+    if (img) gsap.fromTo(img, { scale: 1.35, yPercent: -6 }, { scale: 1, yPercent: 6, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } });
+  });
+
+  // stories strip: pinned and sliding sideways on desktop, swipe on phones
+  const track = $('[data-strip-track]');
+  const bar = $('[data-strip-bar]');
+  if (track && bar) {
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 1024px)', () => {
+      const dist = () => Math.max(0, track.scrollWidth - innerWidth);
+      gsap.to(track, {
+        x: () => -dist(), ease: 'none',
+        scrollTrigger: { trigger: '[data-strip-pin]', start: 'top top', end: () => '+=' + dist(), pin: true, scrub: 0.8, invalidateOnRefresh: true, onUpdate: (st) => gsap.set(bar, { scaleX: st.progress }) },
+      });
+    });
+    mm.add('(max-width: 1023px)', () => {
+      const vp = $('[data-strip-vp]')!;
+      const on = () => gsap.set(bar, { scaleX: vp.scrollLeft / Math.max(1, vp.scrollWidth - vp.clientWidth) });
+      vp.addEventListener('scroll', on, { passive: true });
+      return () => vp.removeEventListener('scroll', on);
+    });
+  }
+
+  // rolling photo strip: drifts on its own, rushes when you scroll fast
+  const roll = $('[data-roll-track]');
+  if (roll) {
+    const t = gsap.to(roll, { xPercent: -50, duration: 40, ease: 'none', repeat: -1 });
+    ScrollTrigger.create({
+      trigger: '[data-roll]', start: 'top bottom', end: 'bottom top',
+      onToggle: (st) => (st.isActive ? t.play() : t.pause()),
+      onUpdate: (st) => { const v = Math.abs(st.getVelocity()); gsap.to(t, { timeScale: 1 + Math.min(v / 250, 6), duration: 0.2, overwrite: true }); gsap.to(t, { timeScale: 1, duration: 1.4, delay: 0.25 }); },
+    });
+  }
+
+  // FAQ: smooth open
+  $$('details.qa').forEach((d) => d.addEventListener('toggle', () => { if (d.open) gsap.from($('.qa__a', d), { height: 0, opacity: 0, duration: 0.6, ease: E, clearProps: 'all' }); }));
+
+  // price cards tilt toward the cursor
+  if (fine) $$('[data-tilt]').forEach((c) => {
+    const rx = gsap.quickTo(c, 'rotationX', { duration: 0.6, ease: 'power3' }), ry = gsap.quickTo(c, 'rotationY', { duration: 0.6, ease: 'power3' });
+    gsap.set(c, { transformPerspective: 900 });
+    c.addEventListener('mousemove', (e) => { const r = c.getBoundingClientRect(); ry(((e.clientX - r.left) / r.width - 0.5) * 10); rx(-((e.clientY - r.top) / r.height - 0.5) * 10); });
+    c.addEventListener('mouseleave', () => { rx(0); ry(0); });
+  });
+}
+
 /* ── header, menu, cursor, magnetic */
 function chrome() {
   const hdr = $('[data-hdr]');
@@ -320,6 +388,7 @@ async function boot() {
   await Promise.race([document.fonts?.ready, new Promise((r) => setTimeout(r, 1200))]);
   chrome();
   const startPanels = heroPanels();
+  homeExtras();
   reveals();
   filter();
   lightbox();

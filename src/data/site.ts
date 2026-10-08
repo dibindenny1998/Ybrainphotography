@@ -33,6 +33,7 @@ export const nav = [
   { href: '/portfolio/', label: 'Portfolio' },
   { href: '/stories/', label: 'Stories' },
   { href: '/studio/', label: 'Studio' },
+  { href: '/pricing/', label: 'Pricing' },
   { href: '/about/', label: 'About' },
   { href: '/contact/', label: 'Contact' },
 ];
@@ -112,3 +113,42 @@ export const process = [
  * Example: { quote: 'They made us feel completely at ease…', name: 'Anjali & Rahul', kind: 'Wedding' }
  */
 export const testimonials: { quote: string; name: string; kind: string }[] = [];
+
+/** Category list on the home page (cover photo + one line each) */
+export const shoots = [
+  { id: 'weddings', name: 'Weddings', cover: 'weddings-02', line: 'The whole day, told honestly.' },
+  { id: 'couples', name: 'Couples', cover: 'couples-02', line: 'Pre-weddings, getaways and city nights.' },
+  { id: 'maternity', name: 'Maternity', cover: 'maternity-04', line: 'Soft, airy sessions for the months of waiting.' },
+  { id: 'newborn', name: 'Newborn', cover: 'newborn-07', line: 'Tiny hands, sleepy faces, slow sessions.' },
+  { id: 'portraits', name: 'Portraits', cover: 'portraits-01', line: 'Colour, character and good light.' },
+  { id: 'celebrations', name: 'Celebrations', cover: 'celebrations-02', line: 'Parties, trips and the joy in between.' },
+];
+
+/**
+ * Starting prices. ⚠️ TODO: replace every "₹XX,XXX" with your real starting price,
+ * and adjust what is included. Set `featured: true` on the one to highlight.
+ */
+export const packages = [
+  {
+    name: 'Studio session', from: '₹XX,XXX', note: 'Maternity · baby · portraits',
+    includes: ['1–2 hours at the Ybrain studio', 'Outfit changes & props', 'Gentle posing guidance', 'XX edited photographs'],
+  },
+  {
+    name: 'Couple & pre-wedding', from: '₹XX,XXX', note: 'On location', featured: true,
+    includes: ['Half day on location', 'Planning call & location ideas', 'XX edited photographs', 'Short highlight reel (optional)'],
+  },
+  {
+    name: 'Wedding day', from: '₹XX,XXX', note: 'Full day coverage',
+    includes: ['Getting ready to send-off', 'Two photographers', 'Online gallery', 'Heirloom album options'],
+  },
+];
+
+/** Frequently asked questions — ⚠️ TODO: check every answer matches how you work */
+export const faqs = [
+  { q: 'How do we book a date?', a: 'Send us a WhatsApp or use the contact form with your date and session type. Once we confirm availability, a booking advance reserves your date.' },
+  { q: 'When will we get our photographs?', a: 'A small preview within about a week, and the full edited gallery a few weeks after the session. Wedding albums take a little longer.' },
+  { q: 'Do you travel outside Kerala?', a: 'Yes — we photograph across India and abroad. Travel and stay are planned with you and quoted separately.' },
+  { q: 'What should we wear?', a: 'Comfortable outfits in colours you love, avoiding big logos. For studio sessions we can share ideas and some outfits or fabrics are available at the studio.' },
+  { q: 'Is the studio safe for newborns?', a: 'The newborn room is kept warm, quiet and clean. Sessions follow your baby’s pace — feeds and naps come first — and we never force a pose.' },
+  { q: 'Can we visit the studio before booking?', a: 'Of course. Message us to fix a time; we are happy to show you the space and sample albums.' },
+];

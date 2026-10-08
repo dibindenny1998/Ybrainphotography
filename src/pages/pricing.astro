@@ -1,0 +1,91 @@
+---
+import Base from '../layouts/Base.astro';
+import Arrow from '../components/icons/Arrow.astro';
+import WhatsApp from '../components/icons/WhatsApp.astro';
+import Cta from '../components/Cta.astro';
+import { site, packages, faqs } from '../data/site';
+const wa = (name: string) => `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(`Hello Ybrain, I'd like to know more about the ${name} package.`)}`;
+---
+<Base title="Pricing & FAQ" description="Starting prices for Ybrain Photography sessions — studio, couple and wedding — and answers to common questions.">
+  <section class="phead lit">
+    <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="wrap">
+      <span class="kicker" data-r>Pricing</span>
+      <h1 class="h1">Sessions, <em>simply</em> priced.</h1>
+      <p class="lede" data-r>Every session is planned around you, so these are starting points. Message us with your date and ideas and we'll send an exact quote.</p>
+    </div>
+  </section>
+
+  <section class="pk">
+    <div class="wrap pk__grid">
+      {packages.map((pk) => (
+        <article class:list={['pk__card', { 'pk__card--f': pk.featured }]} data-r data-tilt>
+          {pk.featured && <span class="pk__badge">Most loved</span>}
+          <span class="pk__note">{pk.note}</span>
+          <h2 class="pk__name">{pk.name}</h2>
+          <p class="pk__from">from <b>{pk.from}</b></p>
+          <ul class="pk__list">{pk.includes.map((x) => <li>{x}</li>)}</ul>
+          <a href={wa(pk.name)} target="_blank" rel="noopener" class:list={['btn', { 'btn--line': !pk.featured }]}><WhatsApp /> Ask about this</a>
+        </article>
+      ))}
+    </div>
+    <p class="wrap pk__fine muted" data-r>Prices are indicative and may vary with date, location and travel. Custom packages are always welcome.</p>
+  </section>
+
+  <section class="faq space lit-2">
+    <div class="wrap faq__in">
+      <div class="faq__head">
+        <span class="kicker" data-r>FAQ</span>
+        <h2 class="h2">Good <em>questions.</em></h2>
+        <p class="lede" data-r>Can't find yours? <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener" class="faq__u">Ask us on WhatsApp</a>.</p>
+      </div>
+      <div class="faq__list">
+        {faqs.map((f, i) => (
+          <details class="qa" data-r open={i === 0}>
+            <summary><span>{f.q}</span><i aria-hidden="true"></i></summary>
+            <div class="qa__a"><p>{f.a}</p></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+  <Cta />
+</Base>
+
+<style>
+  .pk { padding-bottom: clamp(80px, 10vw, 140px); }
+  .pk__grid { display: grid; gap: 20px; align-items: stretch; }
+  .pk__card { position: relative; display: grid; gap: 16px; align-content: start; padding: 40px 32px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px var(--line); transition: box-shadow 0.5s; }
+  .pk__card:hover { box-shadow: 0 0 0 1px rgba(196, 86, 106, 0.35), 0 34px 70px -34px rgba(120, 60, 50, 0.45); }
+  .pk__card--f { background: var(--grad); box-shadow: 0 34px 70px -34px rgba(196, 86, 106, 0.55); }
+  .pk__badge { position: absolute; top: 18px; right: 18px; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; background: var(--umber); color: var(--paper); padding: 6px 12px; border-radius: 999px; }
+  .pk__note { font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-3); }
+  .pk__card--f .pk__note { color: var(--umber); opacity: 0.7; }
+  .pk__name { margin: 0; font-family: var(--serif); font-weight: 300; font-size: clamp(2rem, 2.8vw, 2.7rem); line-height: 1.08; letter-spacing: -0.02em; }
+  .pk__from { margin: 0; font-size: 14px; color: var(--text-2); }
+  .pk__card--f .pk__from { color: var(--umber); }
+  .pk__from b { display: block; font-family: var(--serif); font-weight: 400; font-size: clamp(2.4rem, 3.6vw, 3.4rem); color: var(--umber); letter-spacing: -0.02em; line-height: 1.1; }
+  .pk__list { list-style: none; margin: 6px 0 14px; padding: 18px 0 0; border-top: 1px solid var(--line); display: grid; gap: 10px; font-size: 14px; }
+  .pk__list li { display: flex; gap: 12px; }
+  .pk__list li::before { content: ''; flex: none; width: 6px; height: 6px; margin-top: 9px; border-radius: 50%; background: var(--rose); }
+  .pk__card--f .pk__list { border-color: rgba(46, 34, 36, 0.2); }
+  .pk__card--f .pk__list li::before { background: var(--umber); }
+  .pk__card .btn { justify-self: start; margin-top: auto; }
+  .pk__fine { margin-top: 30px; font-size: 13px; }
+  @media (min-width: 900px) { .pk__grid { grid-template-columns: repeat(3, 1fr); gap: 2vw; } }
+
+  .faq__in { display: grid; gap: 50px; }
+  .faq__head { display: grid; gap: 24px; align-content: start; justify-items: start; }
+  .faq__u { color: var(--rose); border-bottom: 1px solid currentColor; }
+  .faq__list { border-top: 1px solid var(--line); }
+  .qa { border-bottom: 1px solid var(--line); }
+  .qa summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 24px 0; cursor: pointer; font-family: var(--serif); font-weight: 300; font-size: clamp(1.3rem, 2vw, 1.75rem); line-height: 1.3; }
+  .qa summary::-webkit-details-marker { display: none; }
+  .qa summary i { position: relative; flex: none; width: 34px; height: 34px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line); transition: background 0.4s, transform 0.5s var(--ease); }
+  .qa summary i::before, .qa summary i::after { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 1.5px; margin: -0.75px 0 0 -6px; background: currentColor; transition: transform 0.5s var(--ease); }
+  .qa summary i::after { transform: rotate(90deg); }
+  .qa[open] summary i { background: var(--grad); box-shadow: none; transform: rotate(180deg); }
+  .qa[open] summary i::after { transform: rotate(0deg); }
+  .qa__a p { margin: 0 0 26px; max-width: 60ch; color: var(--text-2); }
+  @media (min-width: 1024px) { .faq__in { grid-template-columns: 0.8fr 1.2fr; gap: 7vw; } }
+</style>

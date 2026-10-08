@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import Img from '../components/Img.astro';
 import Arrow from '../components/icons/Arrow.astro';
 import Cta from '../components/Cta.astro';
-import { site, selected, stories, testimonials, categories } from '../data/site';
+import { site, selected, stories, testimonials, categories, shoots, packages } from '../data/site';
 import { photo } from '../lib/photos';
 const panelSlots = [
   ['portraits-02', 'couples-04', 'weddings-05'],
@@ -13,7 +13,8 @@ const panelSlots = [
 const panels = await Promise.all(panelSlots.map((set) => Promise.all(set.map((s) => photo(s)))));
 // the opening deck: the three panel covers first, then four more prints
 const deck = [panels[0][0], panels[1][0], panels[2][0], ...(await Promise.all(['couples-03', 'newborn-01', 'celebrations-01', 'weddings-02'].map((s) => photo(s))))];
-const feature = stories[1];
+const shootsP = await Promise.all(shoots.map(async (x) => ({ ...x, p: await photo(x.cover) })));
+const rollP = await Promise.all(['couples-01', 'newborn-05', 'portraits-03', 'weddings-01', 'maternity-05', 'couples-06', 'celebrations-04', 'newborn-08', 'portraits-02'].map((s) => photo(s)));
 const statement = 'We photograph people, not poses — the *glance* nobody planned, the *laugh* in the middle of a ritual, and the *light* that lasts only a minute.';
 const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.includes('*') }));
 ---
@@ -97,7 +98,33 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
     </div>
   </section>
 
-  <!-- STUDIO -->
+  <!-- WHAT WE SHOOT: rows fill on hover, a photo follows the cursor -->
+  <section class="shoots space-s lit-2">
+    <div class="wrap">
+      <div class="shoots__head">
+        <span class="kicker" data-r>What we shoot</span>
+        <h2 class="h2" data-split>Six ways to be <em>remembered.</em></h2>
+      </div>
+      <ul class="shoots__list" data-shoots>
+        {shootsP.map((x, i) => (
+          <li>
+            <a href={`/portfolio/#${x.id}`} class="sh-row" data-shoot={x.id} data-cursor="View">
+              <span class="sh-row__n">0{i + 1}</span>
+              <span class="sh-row__name">{x.name}</span>
+              <span class="sh-row__line muted">{x.line}</span>
+              <span class="sh-row__thumb"><Img photo={x.p} fit="cover" alt="" sizes="80px" /></span>
+              <Arrow class="sh-row__arrow" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="sh-float" aria-hidden="true" data-shoot-float>
+      {shootsP.map((x) => <div class="sh-float__i" data-shoot-img={x.id}><Img photo={x.p} fit="cover" alt="" sizes="300px" /></div>)}
+    </div>
+  </section>
+
+  <!-- STUDIO: the photo pulls back as you scroll -->
   <section class="stud night space">
     <div class="wrap stud__in">
       <div class="stud__text">
@@ -106,25 +133,58 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
         <p class="lede" data-r>Since {site.studio.opened}, Ybrain has its own lamp-lit studio for maternity, baby and portrait shoots — a calm, warm space where nobody is in a hurry.</p>
         <a href="/studio/" class="btn" data-r data-mag>Visit the studio</a>
       </div>
-      <div class="stud__img frame" data-ri data-cursor="Visit"><a href="/studio/" aria-label="Visit the studio"><Img slot="studio-01" fit="cover" sizes="(min-width: 1024px) 50vw, 92vw" /></a></div>
+      <div class="stud__img frame" data-ri data-cursor="Visit" data-zoomout><a href="/studio/" aria-label="Visit the studio"><Img slot="studio-01" fit="cover" sizes="(min-width: 1024px) 50vw, 92vw" /></a></div>
     </div>
   </section>
 
-  <!-- STORY -->
-  <section class="feat space lit-2">
-    <div class="wrap feat__in">
-      <a href={`/stories/${feature.slug}/`} class="feat__img" data-cursor="Read"><div class="frame" data-ri><Img slot={feature.cover} fit="cover" sizes="(min-width: 1024px) 52vw, 92vw" /></div></a>
-      <div class="feat__text">
-        <span class="kicker" data-r>A story · {feature.kind}</span>
-        <h2 class="h2" data-split>{feature.title}</h2>
-        <p class="lede" data-r>{feature.intro} {feature.text}</p>
-        <div class="feat__links" data-r>
-          <a href={`/stories/${feature.slug}/`} class="link">Read the story <Arrow /></a>
-          <a href="/stories/" class="link">All stories <Arrow /></a>
+  <!-- STORIES: a film strip that slides sideways while pinned -->
+  <section class="strip lit" data-strip>
+    <div class="strip__pin" data-strip-pin>
+      <div class="wrap strip__head">
+        <span class="kicker" data-r>Stories</span>
+        <h2 class="h2" data-split>Whole days, <em>kept whole.</em></h2>
+        <a href="/stories/" class="link" data-r>All stories <Arrow /></a>
+      </div>
+      <div class="strip__vp" data-strip-vp>
+        <div class="strip__track" data-strip-track>
+          {stories.map((st, i) => (
+            <a href={`/stories/${st.slug}/`} class="strip__card" data-cursor="Read">
+              <div class="frame strip__img"><Img slot={st.cover} fit="cover" sizes="(min-width: 1024px) 30vw, 78vw" /></div>
+              <div class="cap"><span>No. 0{i + 1} — {st.title}</span><span>{st.kind}</span></div>
+            </a>
+          ))}
         </div>
+      </div>
+      <div class="wrap"><div class="strip__bar"><i data-strip-bar></i></div></div>
+    </div>
+  </section>
+
+  <!-- PRICING TEASER -->
+  <section class="ptz space">
+    <div class="wrap">
+      <div class="ptz__head">
+        <span class="kicker" data-r>Pricing</span>
+        <h2 class="h2" data-split>Sessions, <em>simply</em> priced.</h2>
+      </div>
+      <div class="ptz__grid">
+        {packages.map((pk, i) => (
+          <a href="/pricing/" class:list={['pcard', { 'pcard--f': pk.featured }]} data-r data-tilt>
+            <span class="pcard__note">{pk.note}</span>
+            <span class="pcard__name">{pk.name}</span>
+            <span class="pcard__from">from <b>{pk.from}</b></span>
+            <span class="link pcard__l">See what's included <Arrow /></span>
+          </a>
+        ))}
       </div>
     </div>
   </section>
+
+  <!-- ROLLING PHOTO STRIP -->
+  <div class="roll" aria-hidden="true" data-roll>
+    <div class="roll__track" data-roll-track>
+      {[0, 1].map(() => <div class="roll__g">{rollP.map((p) => <div class="roll__i"><Img photo={p} fit="cover" alt="" sizes="260px" /></div>)}</div>)}
+    </div>
+  </div>
 
   {testimonials.length > 0 && (
     <section class="words space-s">
@@ -152,11 +212,11 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
     .hp:nth-child(n + 2) { display: block; }
   }
   .hero__shade { position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(180deg, rgba(29, 22, 34, 0.5) 0%, rgba(29, 22, 34, 0) 24%, rgba(29, 22, 34, 0.15) 45%, rgba(29, 22, 34, 0.86) 100%), linear-gradient(90deg, rgba(29, 22, 34, 0.45) 0%, rgba(29, 22, 34, 0) 60%); }
+    background: linear-gradient(180deg, rgba(36, 24, 24, 0.5) 0%, rgba(36, 24, 24, 0) 24%, rgba(36, 24, 24, 0.15) 45%, rgba(36, 24, 24, 0.86) 100%), linear-gradient(90deg, rgba(36, 24, 24, 0.45) 0%, rgba(36, 24, 24, 0) 60%); }
   .hero__ui { position: absolute; left: 0; right: 0; bottom: clamp(90px, 15vh, 150px); display: grid; gap: 26px; justify-items: start; z-index: 2; }
   .hero__k { color: rgba(246, 238, 243, 0.85); }
   .hero__title { margin: 0; font-family: var(--serif); font-weight: 300; font-size: clamp(3.3rem, 10vw, 10.5rem); line-height: 0.95; letter-spacing: -0.035em; text-shadow: 0 10px 50px rgba(20, 10, 25, 0.35); }
-  .hero__title em { font-style: italic; background: linear-gradient(105deg, #ffc8ad, #f7a8c3 55%, #cdb9ff); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 0.06em; }
+  .hero__title em { font-style: italic; color: #f7c2b0; }
   .hl { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.08em; }
   .hl > span { display: inline-block; }
   .hero__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 30px; }
@@ -175,11 +235,11 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
   .card .img { width: 100%; height: 100%; object-fit: cover; }
   .opening__mark { position: absolute; left: var(--gutter); top: 30px; display: grid; gap: 7px; line-height: 1; color: var(--umber); }
   .opening__num { position: absolute; right: var(--gutter); bottom: max(22px, env(safe-area-inset-bottom)); font-family: var(--serif); font-weight: 300; font-size: clamp(4.5rem, 13vw, 11rem); line-height: 0.8; letter-spacing: -0.04em; color: var(--umber); font-variant-numeric: tabular-nums; }
-  .opening__num sup { font-size: 0.28em; vertical-align: top; background: var(--grad-ink); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .opening__num sup { font-size: 0.28em; vertical-align: top; color: var(--rose); }
   :global(.no-intro) .opening { display: none !important; }
 
   .intro__text { margin: 0 auto; max-width: 22ch; text-align: center; font-family: var(--serif); font-weight: 300; font-size: clamp(2rem, 4.2vw, 4rem); line-height: 1.15; letter-spacing: -0.015em; }
-  .w--em { font-style: italic; background: var(--grad-ink); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 0.04em; }
+  .w--em { font-style: italic; color: var(--rose); }
 
   .sel { padding-bottom: clamp(110px, 15vw, 220px); }
   .sel__head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: clamp(40px, 6vw, 80px); }
@@ -194,6 +254,32 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
     .sel__item--3 .frame { aspect-ratio: 4 / 3.6; }
   }
 
+  .shoots__head { display: grid; gap: 24px; margin-bottom: clamp(40px, 6vw, 80px); }
+  .shoots__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .shoots__list li { border-bottom: 1px solid var(--line); overflow: hidden; }
+  .sh-row { position: relative; display: grid; grid-template-columns: 36px 1fr auto; grid-template-areas: 'n name thumb' 'n line thumb'; align-items: center; column-gap: 14px; padding: 20px 0; isolation: isolate; transition: color 0.4s; }
+  .sh-row::before { content: ''; position: absolute; inset: 0 calc(var(--gutter) * -1); z-index: -1; background: var(--grad); transform: scaleY(0); transform-origin: bottom; transition: transform 0.6s var(--ease); }
+  .sh-row__n { grid-area: n; align-self: start; padding-top: 1em; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; color: var(--rose); }
+  .sh-row__name { grid-area: name; font-family: var(--serif); font-weight: 300; font-size: clamp(2.4rem, 7vw, 5.6rem); line-height: 1.02; letter-spacing: -0.02em; transition: transform 0.7s var(--ease); }
+  .sh-row__line { grid-area: line; font-size: 14px; }
+  .sh-row__thumb { grid-area: thumb; display: block; width: 60px; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 4px; }
+  .sh-row__thumb .img { width: 100%; height: 100%; object-fit: cover; }
+  .sh-row__arrow { display: none; }
+  .sh-float { display: none; }
+  @media (min-width: 1024px) {
+    .sh-row { grid-template-columns: 70px minmax(0, 1fr) 360px 40px; grid-template-areas: 'n name line arrow'; padding: 22px 0; }
+    .sh-row__thumb { display: none; }
+    .sh-row__arrow { display: block; grid-area: arrow; width: 26px; justify-self: end; transition: transform 0.6s var(--ease); }
+    .sh-row:hover::before { transform: scaleY(1); }
+    .sh-row:hover .sh-row__name { transform: translateX(16px); font-style: italic; }
+    .sh-row:hover .sh-row__line, .sh-row:hover .sh-row__n { color: var(--umber); }
+    .sh-row:hover .sh-row__arrow { transform: translateX(4px) rotate(-45deg); }
+    .sh-float { display: block; position: fixed; left: 0; top: 0; z-index: 60; width: 250px; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 6px; pointer-events: none; opacity: 0; transform: scale(0.6); box-shadow: 0 30px 60px -24px rgba(60, 30, 30, 0.55); }
+    .sh-float__i { position: absolute; inset: 0; opacity: 0; transition: opacity 0.35s; }
+    .sh-float__i.on { opacity: 1; }
+    .sh-float__i .img { width: 100%; height: 100%; object-fit: cover; }
+  }
+
   .stud { overflow: hidden; }
   .stud__in { display: grid; gap: 56px; align-items: center; }
   .stud__text { display: grid; gap: 28px; justify-items: start; }
@@ -201,11 +287,46 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
   .stud__img a { display: block; height: 100%; }
   @media (min-width: 1024px) { .stud__in { grid-template-columns: 0.8fr 1.2fr; gap: 7vw; } }
 
-  .feat__in { display: grid; gap: 50px; align-items: center; }
-  .feat__img .frame { aspect-ratio: 4 / 3.4; }
-  .feat__text { display: grid; gap: 26px; justify-items: start; }
-  .feat__links { display: flex; flex-wrap: wrap; gap: 30px; }
-  @media (min-width: 1024px) { .feat__in { grid-template-columns: 1.2fr 0.8fr; gap: 7vw; } }
+  .strip { padding-block: clamp(90px, 12vw, 160px); }
+  .strip__head { display: grid; gap: 22px; justify-items: start; margin-bottom: clamp(36px, 5vw, 64px); }
+  .strip__vp { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .strip__vp::-webkit-scrollbar { display: none; }
+  .strip__track { display: flex; gap: 18px; width: max-content; padding-inline: var(--gutter); }
+  .strip__card { flex: none; width: min(78vw, 420px); scroll-snap-align: start; }
+  .strip__img { aspect-ratio: 4 / 5; }
+  .strip__bar { height: 1.5px; background: var(--line); margin-top: 36px; overflow: hidden; }
+  .strip__bar i { display: block; height: 100%; background: var(--rose); transform: scaleX(0); transform-origin: left; }
+  @media (min-width: 1024px) {
+    :global(.js) .strip { padding-block: 0; }
+    :global(.js) .strip__pin { height: 100svh; display: flex; flex-direction: column; justify-content: center; }
+    :global(.js) .strip__vp { overflow: visible; }
+    :global(.js) .strip__head { grid-template-columns: 1fr auto; align-items: end; }
+    :global(.js) .strip__head .kicker { grid-column: 1 / -1; }
+    .strip__card { width: 27vw; }
+    .strip__card:nth-child(even) { margin-top: 8vh; }
+    .strip__track { gap: 3vw; }
+  }
+
+  .ptz__head { display: grid; gap: 24px; margin-bottom: clamp(40px, 6vw, 80px); }
+  .ptz__grid { display: grid; gap: 18px; }
+  .pcard { display: grid; gap: 14px; align-content: start; padding: 34px 30px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px var(--line); transition: box-shadow 0.5s, transform 0.6s var(--ease); transform-style: preserve-3d; }
+  .pcard:hover { box-shadow: 0 0 0 1px rgba(196, 86, 106, 0.4), 0 30px 60px -30px rgba(120, 60, 50, 0.4); }
+  .pcard--f { background: var(--grad); box-shadow: none; }
+  .pcard__note { font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-3); }
+  .pcard--f .pcard__note { color: var(--umber); opacity: 0.7; }
+  .pcard__name { font-family: var(--serif); font-weight: 300; font-size: clamp(1.9rem, 2.6vw, 2.5rem); line-height: 1.1; }
+  .pcard__from { font-size: 14px; color: var(--text-2); }
+  .pcard--f .pcard__from { color: var(--umber); }
+  .pcard__from b { display: block; margin-top: 4px; font-family: var(--serif); font-weight: 400; font-size: clamp(2rem, 3vw, 2.8rem); color: var(--umber); letter-spacing: -0.02em; }
+  .pcard__l { margin-top: 10px; justify-self: start; }
+  @media (min-width: 900px) { .ptz__grid { grid-template-columns: repeat(3, 1fr); gap: 2vw; } }
+
+  .roll { overflow: hidden; padding-bottom: clamp(20px, 3vw, 40px); }
+  .roll__track { display: flex; width: max-content; }
+  .roll__g { display: flex; gap: 14px; padding-right: 14px; }
+  .roll__i { width: clamp(150px, 18vw, 260px); aspect-ratio: 4 / 5; overflow: hidden; border-radius: 6px; flex: none; }
+  .roll__i:nth-child(even) { margin-top: 30px; }
+  .roll__i .img { width: 100%; height: 100%; object-fit: cover; }
 
   .words__in { display: grid; justify-items: center; text-align: center; gap: 26px; }
   .words__q { margin: 0; max-width: 30ch; font-family: var(--serif); font-style: italic; font-weight: 300; font-size: clamp(1.6rem, 3vw, 2.6rem); line-height: 1.3; }
