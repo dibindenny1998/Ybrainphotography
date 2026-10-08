@@ -1,67 +1,114 @@
 /**
  * ─────────────────────────────────────────────────────────────
  *  SITE CONTENT — edit everything the visitor reads, here.
+ *  Anything marked TODO is waiting for real details.
  * ─────────────────────────────────────────────────────────────
  */
 
 export const site = {
   name: 'Ybrain Photography',
-  tagline: 'Photography studio',
   description:
-    'Ybrain Photography — weddings, couples, maternity, newborn, portraits and celebrations, photographed with honesty, warmth and light.',
-  established: '2026',
+    'Ybrain Photography — weddings, couples, maternity, newborn and portrait photography, and a new studio in Kerala. Unhurried, honest and full of light.',
 
-  /** WhatsApp number in international format, digits only (91 = India). ⚠️ REPLACE */
-  whatsapp: '919000000000',
-  phoneDisplay: '+91 90000 00000',
-  email: 'hello@ybrainphotography.com',
-  instagram: 'https://www.instagram.com/',
-  instagramHandle: '@ybrainphotography',
+  phone: '9562914467',
+  phoneDisplay: '+91 95629 14467',
+  /** International format, digits only */
+  whatsapp: '919562914467',
+  email: 'hello@ybrainphotography.com', // TODO: confirm email
+  instagram: 'https://www.instagram.com/', // TODO: real Instagram link
+  instagramHandle: '@ybrainphotography', // TODO: real handle
 
   studio: {
-    line1: 'Ybrain Studio',
-    line2: 'Kerala, India',
-    note: 'Available for travel worldwide',
-    hours: 'Mon – Sat · 10am – 7pm',
+    opened: '3 October 2026',
+    address: ['Ybrain Photography Studio', 'Kerala, India'], // TODO: full street address
+    mapUrl: 'https://maps.google.com/?q=Ybrain+Photography+Studio', // TODO: exact Google Maps link
+    hours: [
+      ['Monday – Saturday', '10:00 – 19:00'],
+      ['Sunday', 'By appointment'],
+    ],
   },
 };
 
-/** Gallery categories — photos come from files named <id>-NN-*.jpg in src/photos/ */
-export const categories = [
-  { id: 'weddings', name: 'Weddings', blurb: 'The whole day, told honestly — rituals, nerves, laughter and all.' },
-  { id: 'couples', name: 'Couples', blurb: 'Pre-weddings and getaways, from city nights to foggy mountain roads.' },
-  { id: 'maternity', name: 'Maternity', blurb: 'Soft, airy sessions for the months of waiting.' },
-  { id: 'newborn', name: 'Newborn', blurb: 'Tiny hands, sleepy faces, slow and safe sessions.' },
-  { id: 'portraits', name: 'Portraits', blurb: 'Editorial portraits with colour, character and light.' },
-  { id: 'celebrations', name: 'Celebrations', blurb: 'Parties, trips and the joy in between.' },
-] as const;
-
-/** Hero slideshow — photo slots, in order */
-export const heroSlides = [
-  { slot: 'portraits-01', caption: 'Marigold', kind: 'Portrait' },
-  { slot: 'couples-02', caption: 'The twirl', kind: 'Couple' },
-  { slot: 'weddings-01', caption: 'Petal shower', kind: 'Wedding' },
-  { slot: 'newborn-02', caption: 'Forehead to forehead', kind: 'Newborn' },
-  { slot: 'couples-07', caption: 'City lights', kind: 'Couple' },
+export const nav = [
+  { href: '/portfolio/', label: 'Portfolio' },
+  { href: '/stories/', label: 'Stories' },
+  { href: '/studio/', label: 'Studio' },
+  { href: '/about/', label: 'About' },
+  { href: '/contact/', label: 'Contact' },
 ];
 
-/** Featured stories — each is a short series of photos */
+/** Gallery categories — photos come from files named <id>-NN-*.jpg in src/photos/ */
+export const categories = [
+  { id: 'weddings', name: 'Weddings' },
+  { id: 'couples', name: 'Couples' },
+  { id: 'maternity', name: 'Maternity' },
+  { id: 'newborn', name: 'Newborn' },
+  { id: 'portraits', name: 'Portraits' },
+  { id: 'celebrations', name: 'Celebrations' },
+] as const;
+
+/** Home page: the large hero photographs (they slowly cross-fade) */
+export const heroPhotos = ['portraits-02', 'couples-02', 'newborn-02', 'weddings-05'];
+
+/** Home page: three hand-picked frames */
+export const selected = [
+  { slot: 'couples-03', title: 'The dance', kind: 'Couples' },
+  { slot: 'maternity-01', title: 'Awaited', kind: 'Maternity' },
+  { slot: 'couples-07', title: 'City lights', kind: 'Couples' },
+];
+
+/** Stories — each gets its own page at /stories/<slug>/ */
 export const stories = [
-  { title: 'Awaited', kind: 'Maternity session', place: 'Ybrain Studio', slots: ['maternity-01', 'maternity-05', 'maternity-07'],
-    text: 'A white room, soft fabric and a lot of waiting. A quiet session made for the months before hello.' },
-  { title: 'Mani & Lakshmi', kind: 'Wedding', place: 'Lakeside', slots: ['weddings-04', 'weddings-02', 'weddings-03'],
-    text: 'Fresh flowers on the sleeves, mist on the water, and two people who could not stop laughing.' },
-  { title: 'After dark', kind: 'Couple travel shoot', place: 'Sapa, Vietnam', slots: ['couples-05', 'couples-07', 'couples-06'],
-    text: 'Fog, headlights and a mountain town at night — a getaway shoot that felt like a film still.' },
-  { title: 'First days', kind: 'Newborn session', place: 'At home', slots: ['newborn-02', 'newborn-07', 'newborn-03'],
-    text: 'Tiny fingers, deep sleep, and the softest light we could find. Slow, safe and unhurried.' },
-  { title: 'The twirl', kind: 'Couple portraits', place: 'Studio', slots: ['couples-02', 'couples-04', 'couples-03'],
-    text: 'A slice of window light on the floor, a lehenga that would not stay still.' },
+  {
+    slug: 'awaited', title: 'Awaited', kind: 'Maternity', place: 'Ybrain Studio',
+    cover: 'maternity-01', photos: ['maternity-04', 'maternity-02', 'maternity-05', 'maternity-03', 'maternity-07', 'maternity-06'],
+    intro: 'A white room, soft fabric and a lot of waiting.',
+    text: 'We kept everything simple for this session: one window, a veil of tulle and a few flowers. The rest was hers — the stillness, the quiet smiles, the way she kept looking up as if she could already hear a small voice.',
+  },
+  {
+    slug: 'mani-and-lakshmi', title: 'Mani & Lakshmi', kind: 'Wedding', place: 'Lakeside',
+    cover: 'weddings-02', photos: ['weddings-04', 'weddings-03', 'weddings-01'],
+    intro: 'Flowers on the sleeves, mist on the water.',
+    text: 'An early start by the lake, a light fog that refused to lift, and two people who could not stop laughing at each other. We mostly just stayed out of the way.',
+  },
+  {
+    slug: 'after-dark', title: 'After dark', kind: 'Couple travel', place: 'Sapa, Vietnam',
+    cover: 'couples-05', photos: ['couples-06', 'couples-07', 'celebrations-01', 'celebrations-02', 'celebrations-04'],
+    intro: 'Fog, headlights and a mountain town at night.',
+    text: 'A getaway shoot that turned into a film still. Cold air, warm street lights, a crowded dance floor — and a couple who were happiest when they forgot the camera was there.',
+  },
+  {
+    slug: 'first-days', title: 'First days', kind: 'Newborn', place: 'At home',
+    cover: 'newborn-02', photos: ['newborn-01', 'newborn-07', 'newborn-03', 'newborn-06', 'newborn-05', 'newborn-08'],
+    intro: 'Ten tiny fingers and the softest light we could find.',
+    text: 'Newborn sessions are slow on purpose. We work around feeds and naps, keep the room warm and quiet, and let the little details — a grip, a yawn, a crease of a foot — tell the story.',
+  },
+  {
+    slug: 'the-twirl', title: 'The twirl', kind: 'Couple portraits', place: 'Studio',
+    cover: 'couples-02', photos: ['couples-04', 'couples-03', 'couples-01'],
+    intro: 'A slice of window light and a lehenga that would not stay still.',
+    text: 'A single shaft of afternoon light on a concrete floor was all we needed. She spun, he laughed, and the light did the rest.',
+  },
+];
+
+/** The studio */
+export const studioSessions = [
+  { name: 'Maternity', text: 'Soft, airy sessions with gowns, fabric and window light.' },
+  { name: 'Newborn & baby', text: 'A warm, quiet room made for the smallest guests.' },
+  { name: 'Portraits', text: 'Individual, family and editorial portraits.' },
+  { name: 'And more', text: 'Pre-wedding, couple and celebration shoots — just ask.' },
 ];
 
 export const process = [
-  { n: '01', title: 'Say hello', text: 'Send a WhatsApp with your date and a few words about you. We reply within a day.' },
-  { n: '02', title: 'Plan together', text: 'A call or a studio visit to talk about you, your people and the feeling you want to keep.' },
-  { n: '03', title: 'The shoot', text: 'We guide gently and stay out of the way, so the photos look like you on your best day.' },
-  { n: '04', title: 'Your gallery', text: 'A first preview within a week, the full edited gallery and albums after.' },
+  { n: '01', title: 'Say hello', text: 'Send us a message with your date and a few words about you. We reply within a day.' },
+  { n: '02', title: 'Plan together', text: 'A call or a visit to the studio to talk about your people, places and the feeling you want to keep.' },
+  { n: '03', title: 'The shoot', text: 'We guide gently and stay out of the way, so you look like yourselves on your best day.' },
+  { n: '04', title: 'Your photographs', text: 'A first preview within a week, then the full edited gallery and albums.' },
 ];
+
+/**
+ * Client words. TODO: add real quotes (e.g. from Google reviews).
+ * The section stays hidden on the site until this list has entries.
+ * Example: { quote: 'They made us feel completely at ease…', name: 'Anjali & Rahul', kind: 'Wedding' }
+ */
+export const testimonials: { quote: string; name: string; kind: string }[] = [];

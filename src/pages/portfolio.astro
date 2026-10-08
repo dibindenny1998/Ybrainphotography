@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import Lightbox from '../components/Lightbox.astro';
+import Cta from '../components/Cta.astro';
+import { categories } from '../data/site';
+import { category } from '../lib/photos';
+const groups = await Promise.all(categories.map(async (c) => ({ ...c, photos: await category(c.id) })));
+// interleave categories so "All" reads as a curated edit
+const items: { cat: string; catName: string; p: (typeof groups)[number]['photos'][number] }[] = [];
+const max = Math.max(...groups.map((g) => g.photos.length));
+for (let i = 0; i < max; i++) for (const g of groups) if (g.photos[i]) items.push({ cat: g.id, catName: g.name, p: g.photos[i] });
+---
+<Base title="Portfolio" description="Selected photographs by Ybrain Photography — weddings, couples, maternity, newborn, portraits and celebrations.">
+  <section class="phead lit">
+    <div class="wrap">
+      <span class="kicker" data-r>Portfolio</span>
+      <h1 class="h1" data-r style="--d:.1s">Selected <em>work.</em></h1>
+      <p class="lede" data-r style="--d:.2s">A few favourite frames from recent sessions. Tap any photograph to see it larger.</p>
+    </div>
+  </section>
+
+  <section class="pf">
+    <div class="wrap">
+      <div class="pf__filters" role="group" aria-label="Filter by category" data-r>
+        <button data-filter="all" aria-pressed="true">All</button>
+        {groups.map((g) => <button data-filter={g.id} aria-pressed="false">{g.name}</button>)}
+      </div>
+      <div class="pf__grid">
+        {items.map(({ cat, catName, p }, i) => (
+          <a href={p.src} class="pf__item" data-item data-cat={cat} data-r style={`--d:${(i % 3) * 0.08}s`} data-lb-item data-caption={`${p.caption} — ${catName}`}>
+            <div class="frame"><Img photo={p} sizes="(min-width: 1100px) 30vw, (min-width: 700px) 45vw, 92vw" /></div>
+            <div class="cap"><span>{p.caption}</span><span>{catName}</span></div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Cta />
+  <Lightbox />
+</Base>
+
+<style>
+  .pf { padding-bottom: clamp(110px, 14vw, 200px); }
+  .pf__filters { display: flex; flex-wrap: wrap; gap: 10px 30px; padding-block: 26px; margin-bottom: clamp(40px, 6vw, 80px); border-block: 1px solid var(--line); }
+  .pf__filters button { font-size: 11px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-3); padding: 4px 0; transition: color 0.4s; }
+  .pf__filters button:hover, .pf__filters button[aria-pressed='true'] { color: var(--umber); }
+  .pf__filters button[aria-pressed='true'] { box-shadow: inset 0 -1px 0 var(--bronze); }
+  .pf__grid { columns: 1; column-gap: clamp(28px, 4vw, 64px); }
+  .pf__item { display: block; break-inside: avoid; margin-bottom: clamp(48px, 6vw, 90px); }
+  .pf__item[hidden] { display: none; }
+  .pf__item .frame { background: var(--linen); }
+  @media (min-width: 700px) { .pf__grid { columns: 2; } }
+  @media (min-width: 1100px) { .pf__grid { columns: 3; } }
+</style>

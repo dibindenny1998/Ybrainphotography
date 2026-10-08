@@ -1,0 +1,75 @@
+---
+import Base from '../../layouts/Base.astro';
+import Img from '../../components/Img.astro';
+import Arrow from '../../components/icons/Arrow.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import Cta from '../../components/Cta.astro';
+import { stories } from '../../data/site';
+import { photo } from '../../lib/photos';
+
+export function getStaticPaths() {
+  return stories.map((s, i) => ({ params: { slug: s.slug }, props: { story: s, next: stories[(i + 1) % stories.length], n: i + 1 } }));
+}
+const { story, next, n } = Astro.props;
+const pics = await Promise.all(story.photos.map((s) => photo(s)));
+---
+<Base title={story.title} description={`${story.title} — ${story.kind} story by Ybrain Photography. ${story.intro}`}>
+  <section class="sh lit">
+    <div class="wrap sh__in">
+      <span class="kicker" data-r>Story No. 0{n} · {story.kind}</span>
+      <h1 class="h1" data-r style="--d:.1s">{story.title}</h1>
+      <p class="sh__place" data-r style="--d:.2s">{story.place}</p>
+    </div>
+  </section>
+  <div class="wrap"><div class="sh__cover frame" data-ri><Img slot={story.cover} fit="cover" eager sizes="100vw" /></div></div>
+
+  <section class="space-s">
+    <div class="wrap st__text">
+      <p class="st__intro" data-r>{story.intro}</p>
+      <p class="lede" data-r style="--d:.1s">{story.text}</p>
+    </div>
+  </section>
+
+  <section class="st__photos">
+    <div class="wrap st__grid">
+      {pics.map((p, i) => (
+        <a href={p.src} class:list={['st__ph', `st__ph--${p.orientation}`]} data-lb-item data-caption={p.caption}>
+          <div class="frame" data-ri style={`--d:${(i % 2) * 0.1}s`}><Img photo={p} sizes="(min-width: 900px) 45vw, 92vw" /></div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="nx space-s">
+    <div class="wrap nx__in">
+      <a href="/stories/" class="link">All stories <Arrow /></a>
+      <a href={`/stories/${next.slug}/`} class="nx__next">
+        <span class="kicker">Next story</span>
+        <span class="h2">{next.title}</span>
+      </a>
+    </div>
+  </section>
+  <Cta />
+  <Lightbox />
+</Base>
+
+<style>
+  .sh { padding-top: clamp(150px, 20vw, 240px); padding-bottom: clamp(50px, 6vw, 80px); }
+  .sh__in { display: grid; justify-items: center; text-align: center; gap: 24px; }
+  .sh__place { margin: 0; font-family: var(--serif); font-style: italic; font-size: 1.2rem; color: var(--text-2); }
+  .sh__cover { aspect-ratio: 16 / 10; max-height: 86svh; width: 100%; }
+  .st__text { display: grid; gap: 26px; justify-items: center; text-align: center; }
+  .st__text .lede { max-width: 54ch; }
+  .st__intro { margin: 0; max-width: 22ch; font-family: var(--serif); font-weight: 300; font-size: clamp(1.8rem, 3.4vw, 3rem); line-height: 1.2; }
+  .st__grid { display: grid; gap: clamp(28px, 4vw, 56px); padding-bottom: clamp(80px, 10vw, 140px); }
+  .st__ph { display: block; }
+  @media (min-width: 900px) {
+    .st__grid { grid-template-columns: 1fr 1fr; align-items: start; }
+    .st__ph:nth-child(even) { margin-top: 12vw; }
+    .st__ph--landscape { grid-column: 1 / -1; margin-top: 0 !important; }
+  }
+  .nx { border-top: 1px solid var(--line); }
+  .nx__in { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 30px; }
+  .nx__next { display: grid; gap: 14px; text-align: right; transition: color 0.4s; }
+  .nx__next:hover { color: var(--bronze); }
+</style>

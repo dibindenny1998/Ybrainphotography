@@ -1,9 +1,14 @@
 ---
 import '../styles/global.css';
-import { site } from '../data/site';
-interface Props { title?: string; description?: string }
-const { title = `${site.name} — ${site.tagline}`, description = site.description } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+import { site, nav } from '../data/site';
+import WhatsApp from '../components/icons/WhatsApp.astro';
+
+interface Props { title?: string; description?: string; tone?: 'light' | 'dark' }
+const { title, description = site.description, tone = 'light' } = Astro.props;
+const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — Weddings, maternity, newborn & portraits`;
+const path = Astro.url.pathname;
+const canonical = new URL(path, Astro.site);
+const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hello Ybrain, I would like to know more about a photo session.')}`;
 const ld = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
@@ -12,35 +17,125 @@ const ld = {
   url: Astro.site?.toString(),
   image: new URL('/og-image.png', Astro.site).toString(),
   telephone: site.phoneDisplay,
-  email: site.email,
   address: { '@type': 'PostalAddress', addressRegion: 'Kerala', addressCountry: 'IN' },
-  sameAs: [site.instagram],
 };
+const year = new Date().getFullYear();
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" data-tone={tone}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>{title}</title>
+    <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#FFF6F1" />
+    <meta name="theme-color" content={tone === 'dark' ? '#171310' : '#F8F4EE'} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL('/og-image.png', Astro.site)} />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
-    <script is:inline>
-      document.documentElement.classList.add('js');
-      try { if (sessionStorage.getItem('ybrain-seen')) document.documentElement.classList.add('is-return'); } catch (e) {}
-    </script>
+    <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
-    <slot />
+    <header class="hdr" data-hdr>
+      <div class="hdr__in wrap">
+        <a href="/" class="mark" aria-label="Ybrain Photography — home">
+          <span class="mark__name">YBRAIN</span><span class="mark__sub">Photography</span>
+        </a>
+        <nav class="hdr__nav" aria-label="Main">
+          {nav.map((n) => <a href={n.href} class:list={['hdr__link', { 'is-on': path.startsWith(n.href) }]} aria-current={path.startsWith(n.href) ? 'page' : undefined}>{n.label}</a>)}
+        </nav>
+        <button class="hdr__menu" aria-expanded="false" aria-controls="menu" data-menu-btn><span>Menu</span></button>
+      </div>
+    </header>
+
+    <div class="menu" id="menu" data-menu hidden>
+      <nav class="menu__nav wrap" aria-label="Mobile">
+        <a href="/" class="menu__link">Home</a>
+        {nav.map((n) => <a href={n.href} class="menu__link">{n.label}</a>)}
+      </nav>
+      <div class="menu__foot wrap">
+        <a href={`tel:+91${site.phone}`}>{site.phoneDisplay}</a>
+        <a href={wa} target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+
+    <main><slot /></main>
+
+    <footer class="ftr">
+      <div class="wrap">
+        <div class="ftr__top">
+          <div class="ftr__brand">
+            <span class="mark__name">YBRAIN</span><span class="mark__sub">Photography</span>
+            <p class="muted">Weddings, couples, maternity, newborn and portraits. A new studio in Kerala, open since {site.studio.opened}.</p>
+          </div>
+          <div class="ftr__col">
+            <span class="kicker">Visit</span>
+            <p>{site.studio.address.map((l) => <>{l}<br /></>)}<a href={site.studio.mapUrl} target="_blank" rel="noopener" class="ftr__a">Directions</a></p>
+          </div>
+          <div class="ftr__col">
+            <span class="kicker">Talk</span>
+            <p><a href={`tel:+91${site.phone}`} class="ftr__a">{site.phoneDisplay}</a><br /><a href={wa} target="_blank" rel="noopener" class="ftr__a">WhatsApp</a><br /><a href={site.instagram} target="_blank" rel="noopener" class="ftr__a">Instagram</a></p>
+          </div>
+          <div class="ftr__col">
+            <span class="kicker">Explore</span>
+            <p>{nav.map((n) => <><a href={n.href} class="ftr__a">{n.label}</a><br /></>)}</p>
+          </div>
+        </div>
+        <div class="ftr__bot">
+          <span>© {year} {site.name}</span>
+          <span>Your story, our lens.</span>
+        </div>
+      </div>
+    </footer>
+
+    <a href={wa} class="wa" target="_blank" rel="noopener" aria-label="Message us on WhatsApp"><WhatsApp /></a>
+
+    <script>import '../scripts/main';</script>
+
+    <style is:global>
+      .hdr { position: fixed; z-index: 50; top: 0; left: 0; right: 0; transition: transform 0.7s var(--ease), background-color 0.6s, color 0.6s; }
+      .hdr__in { display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 88px; }
+      .hdr.is-scrolled { background: rgba(248, 244, 238, 0.9); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+      .hdr.is-scrolled .hdr__in { height: 70px; }
+      .hdr__in { transition: height 0.6s var(--ease); }
+      .hdr.is-hidden { transform: translateY(-100%); }
+      [data-tone='dark'] .hdr:not(.is-scrolled) { color: var(--night-text); }
+      .mark { display: grid; line-height: 1; gap: 7px; }
+      .mark__name { font-family: var(--serif); font-size: 19px; font-weight: 400; letter-spacing: 0.46em; margin-right: -0.46em; }
+      .mark__sub { font-size: 8.5px; font-weight: 500; letter-spacing: 0.52em; text-transform: uppercase; opacity: 0.7; }
+      .hdr__nav { display: none; gap: 38px; }
+      .hdr__link { position: relative; font-size: 11px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; padding: 6px 0; }
+      .hdr__link::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform 0.6s var(--ease); }
+      .hdr__link:hover::after, .hdr__link.is-on::after { transform: scaleX(1); transform-origin: left; }
+      .hdr__menu { font-size: 11px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase; padding: 12px 0 12px 12px; }
+      @media (min-width: 1024px) { .hdr__nav { display: flex; } .hdr__menu { display: none; } }
+
+      .menu { position: fixed; inset: 0; z-index: 45; background: var(--light); background-color: var(--paper); display: flex; flex-direction: column; justify-content: space-between; padding: 120px 0 max(36px, env(safe-area-inset-bottom)); }
+      .menu[hidden] { display: none; }
+      .menu__nav { display: grid; gap: 4px; }
+      .menu__link { font-family: var(--serif); font-weight: 300; font-size: clamp(2.4rem, 11vw, 3.4rem); line-height: 1.2; }
+      .menu__foot { display: flex; gap: 28px; font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; }
+      .menu-open .hdr { color: var(--umber) !important; background: transparent !important; }
+
+      .ftr { border-top: 1px solid var(--line); padding-top: clamp(70px, 9vw, 120px); background: var(--paper); color: var(--umber); }
+      .ftr__top { display: grid; gap: 44px; }
+      .ftr__brand { display: grid; gap: 8px; max-width: 34ch; align-content: start; }
+      .ftr__brand p { margin: 18px 0 0; font-size: 14px; }
+      .ftr__col p { margin: 14px 0 0; font-size: 14px; line-height: 1.95; }
+      .ftr__a { transition: color 0.4s; }
+      .ftr__a:hover { color: var(--bronze); }
+      .ftr__bot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: clamp(60px, 8vw, 110px); padding-block: 28px max(28px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line); font-size: 12px; color: var(--text-3); }
+      @media (min-width: 768px) { .ftr__top { grid-template-columns: 1.6fr 1fr 1fr 1fr; } }
+
+      .wa { position: fixed; z-index: 40; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom)); width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--umber); color: var(--paper); box-shadow: 0 14px 30px -14px rgba(43, 36, 32, 0.6); transition: background-color 0.4s, transform 0.5s var(--ease); }
+      .wa:hover { background: var(--bronze); transform: translateY(-3px); }
+      .wa svg { width: 22px; height: 22px; }
+    </style>
   </body>
 </html>

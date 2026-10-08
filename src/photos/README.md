@@ -11,9 +11,11 @@ e.g. `weddings-06-temple-morning.jpg`. The words become the caption ("Temple mor
 **Replace:** save a new photo with the same `category-number` start.
 
 Some photos are also used in fixed spots. Change those in `src/data/site.ts`:
-- `heroSlides`: the big slideshow at the top
-- `stories`: the photos in each featured story
-- a few section images use slots directly, e.g. `portraits-02` in About
+- `heroPhotos`: the home page hero (slow cross-fade)
+- `selected`: the three frames on the home page
+- `stories`: cover + photos for each story page
+- `studio-01-night.jpg`: the studio building (home + Studio page). Replace it with an
+  original photo of the studio — the current one is cropped from the poster.
 
 Tips: export JPGs about 2000–2500px on the long edge, without Instagram overlays.
 The build makes fast WebP versions for every screen size automatically.

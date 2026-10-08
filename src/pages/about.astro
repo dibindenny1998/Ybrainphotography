@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import Cta from '../components/Cta.astro';
+import { process } from '../data/site';
+---
+<Base title="About" description="About Ybrain Photography — how we work, and what to expect from a session.">
+  <section class="phead lit">
+    <div class="wrap ab">
+      <div class="ab__text">
+        <span class="kicker" data-r>About</span>
+        <h1 class="h1" data-r style="--d:.1s">Quiet eyes, <em>warm</em> light.</h1>
+        <p class="lede" data-r style="--d:.2s">Ybrain is a small photography studio in Kerala. We photograph weddings, couples, maternity, newborns and portraits — and we care far more about how a photograph feels than how it is posed.</p>
+        <p class="lede" data-r style="--d:.25s">Most of our work is simple: good light, a little guidance, and enough patience to wait for the real moment. The result is photographs that still look like you in twenty years.</p>
+      </div>
+      <div class="ab__img frame" data-ri><Img slot="portraits-03" fit="cover" eager sizes="(min-width: 1024px) 36vw, 92vw" /></div>
+    </div>
+  </section>
+
+  <section class="space">
+    <div class="wrap pr">
+      <div>
+        <span class="kicker" data-r>How it works</span>
+        <h2 class="h2" data-r style="--d:.1s">From hello to <em>heirloom.</em></h2>
+      </div>
+      <ol class="pr__list">
+        {process.map((p, i) => (
+          <li class="pr__item" data-r style={`--d:${i * 0.08}s`}>
+            <span class="pr__n">{p.n}</span>
+            <h3 class="h3">{p.title}</h3>
+            <p class="muted">{p.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="ab2">
+    <div class="wrap ab2__in">
+      <div class="frame" data-ri><Img slot="couples-04" fit="cover" sizes="(min-width: 900px) 55vw, 92vw" /></div>
+    </div>
+  </section>
+  <Cta />
+</Base>
+
+<style>
+  .ab { display: grid; gap: 60px; align-items: end; }
+  .ab__text { display: grid; gap: 28px; justify-items: start; }
+  .ab__img { aspect-ratio: 4 / 5; }
+  @media (min-width: 1024px) { .ab { grid-template-columns: 1.1fr 0.9fr; gap: 8vw; } .ab__img { max-width: 520px; justify-self: end; width: 100%; } }
+  .pr { display: grid; gap: 60px; }
+  .pr__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 54px 5vw; }
+  .pr__item { display: grid; gap: 12px; padding-top: 26px; border-top: 1px solid var(--line); }
+  .pr__item p { margin: 0; }
+  .pr__n { font-size: 11px; letter-spacing: 0.24em; color: var(--text-3); }
+  @media (min-width: 900px) { .pr__list { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1200px) { .pr { grid-template-columns: 0.7fr 1.3fr; gap: 7vw; } }
+  .ab2 .frame { aspect-ratio: 16 / 9; }
+</style>

@@ -1,0 +1,87 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import Arrow from '../components/icons/Arrow.astro';
+import WhatsApp from '../components/icons/WhatsApp.astro';
+import { site, studioSessions } from '../data/site';
+const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hello Ybrain, I would like to book a slot at the studio.')}`;
+---
+<Base title="The Studio" tone="dark" description={`The new Ybrain Photography studio in Kerala, open since ${site.studio.opened}. Maternity, baby and portrait sessions in a calm, warm space.`}>
+  <section class="sth night">
+    <div class="wrap sth__in">
+      <div class="sth__text">
+        <span class="kicker" data-r>The studio · Open since {site.studio.opened}</span>
+        <h1 class="h1" data-r style="--d:.1s">A home for <em>slow</em> sessions.</h1>
+        <p class="lede" data-r style="--d:.2s">Our own lamp-lit studio — warm, quiet and made for the sessions that need time: the months of waiting, the first days, and portraits that feel like you.</p>
+        <div class="sth__acts" data-r style="--d:.3s">
+          <a href={wa} target="_blank" rel="noopener" class="btn btn--light"><WhatsApp /> Book your slot</a>
+          <a href={site.studio.mapUrl} target="_blank" rel="noopener" class="link">Get directions <Arrow /></a>
+        </div>
+      </div>
+    </div>
+    <div class="wrap"><div class="sth__img frame" data-ri><Img slot="studio-01" fit="cover" eager sizes="100vw" /></div></div>
+  </section>
+
+  <section class="space">
+    <div class="wrap ses">
+      <div class="ses__head">
+        <span class="kicker" data-r>At the studio</span>
+        <h2 class="h2" data-r style="--d:.1s">What we <em>shoot</em> here.</h2>
+      </div>
+      <ol class="ses__list">
+        {studioSessions.map((s, i) => (
+          <li class="ses__item" data-r style={`--d:${i * 0.08}s`}>
+            <span class="ses__n">0{i + 1}</span>
+            <h3 class="h3">{s.name}</h3>
+            <p class="muted">{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="duo">
+    <div class="wrap duo__in">
+      <div class="frame duo__a" data-ri><Img slot="maternity-01" fit="cover" sizes="(min-width: 900px) 40vw, 92vw" /></div>
+      <div class="frame duo__b" data-ri style="--d:.12s"><Img slot="newborn-07" fit="cover" sizes="(min-width: 900px) 30vw, 92vw" /></div>
+    </div>
+  </section>
+
+  <section class="space">
+    <div class="wrap vis">
+      <div>
+        <span class="kicker" data-r>Visit</span>
+        <h2 class="h2" data-r style="--d:.1s">Come and <em>see</em> the space.</h2>
+      </div>
+      <dl class="vis__info" data-r style="--d:.15s">
+        <div><dt class="kicker">Address</dt><dd>{site.studio.address.map((l) => <>{l}<br /></>)}<a href={site.studio.mapUrl} target="_blank" rel="noopener" class="link">Directions <Arrow /></a></dd></div>
+        <div><dt class="kicker">Hours</dt><dd>{site.studio.hours.map(([d, h]) => <>{d}<span class="muted"> · {h}</span><br /></>)}</dd></div>
+        <div><dt class="kicker">Book</dt><dd><a href={`tel:+91${site.phone}`}>{site.phoneDisplay}</a><br /><a href={wa} target="_blank" rel="noopener">WhatsApp us</a></dd></div>
+      </dl>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .sth { padding-top: clamp(150px, 20vw, 230px); padding-bottom: clamp(80px, 10vw, 140px); }
+  .sth__in { margin-bottom: clamp(60px, 8vw, 110px); }
+  .sth__text { display: grid; gap: 30px; justify-items: start; max-width: 760px; }
+  .sth__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 22px 34px; }
+  .sth__img { aspect-ratio: 16 / 10; }
+  .ses { display: grid; gap: 60px; }
+  .ses__head { display: grid; gap: 24px; }
+  .ses__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
+  .ses__item { display: grid; grid-template-columns: 50px 1fr; column-gap: 20px; padding: 32px 0; border-bottom: 1px solid var(--line); }
+  .ses__n { grid-row: span 2; font-size: 11px; letter-spacing: 0.2em; color: var(--text-3); padding-top: 10px; }
+  .ses__item p { margin: 8px 0 0; }
+  @media (min-width: 1024px) { .ses { grid-template-columns: 0.8fr 1.2fr; gap: 7vw; } .ses__item { grid-template-columns: 70px 1fr 1fr; align-items: baseline; } .ses__n { grid-row: auto; } .ses__item p { margin: 0; } }
+  .duo__in { display: grid; gap: 30px; }
+  .duo__a { aspect-ratio: 4 / 5; }
+  .duo__b { aspect-ratio: 4 / 5; }
+  @media (min-width: 900px) { .duo__in { grid-template-columns: 1.2fr 0.8fr; gap: 5vw; align-items: end; } .duo__b { margin-bottom: 10vw; } }
+  .vis { display: grid; gap: 50px; }
+  .vis__info { margin: 0; display: grid; gap: 34px; }
+  .vis__info dd { margin: 12px 0 0; font-size: 15px; line-height: 1.9; }
+  .vis__info .link { margin-top: 12px; }
+  @media (min-width: 1024px) { .vis { grid-template-columns: 0.8fr 1.2fr; gap: 7vw; } .vis__info { grid-template-columns: repeat(3, 1fr); } }
+</style>

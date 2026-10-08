@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import Img from '../../components/Img.astro';
+import Arrow from '../../components/icons/Arrow.astro';
+import Cta from '../../components/Cta.astro';
+import { stories } from '../../data/site';
+---
+<Base title="Stories" description="Full stories from Ybrain Photography sessions — maternity, weddings, couples and newborns.">
+  <section class="phead lit">
+    <div class="wrap">
+      <span class="kicker" data-r>Stories</span>
+      <h1 class="h1" data-r style="--d:.1s">Whole days, <em>kept whole.</em></h1>
+      <p class="lede" data-r style="--d:.2s">A single photograph is a moment. A story is the morning, the nerves, the laughter and the quiet after.</p>
+    </div>
+  </section>
+
+  <section class="sl">
+    <div class="wrap">
+      {stories.map((s, i) => (
+        <a href={`/stories/${s.slug}/`} class:list={['sl__row', { 'sl__row--r': i % 2 }]}>
+          <div class="sl__img frame" data-ri><Img slot={s.cover} fit="cover" sizes="(min-width: 1024px) 50vw, 92vw" /></div>
+          <div class="sl__text">
+            <span class="kicker" data-r>No. 0{i + 1} · {s.kind} · {s.place}</span>
+            <h2 class="h2" data-r style="--d:.08s">{s.title}</h2>
+            <p class="lede" data-r style="--d:.16s">{s.intro}</p>
+            <span class="link" data-r style="--d:.24s">Read the story <Arrow /></span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+  <Cta />
+</Base>
+
+<style>
+  .sl { padding-bottom: clamp(60px, 8vw, 120px); }
+  .sl__row { display: grid; gap: 34px; margin-bottom: clamp(100px, 14vw, 200px); align-items: center; }
+  .sl__img { aspect-ratio: 4 / 3.3; }
+  .sl__text { display: grid; gap: 22px; justify-items: start; }
+  @media (min-width: 1024px) {
+    .sl__row { grid-template-columns: 1.25fr 0.75fr; gap: 7vw; }
+    .sl__row--r { grid-template-columns: 0.75fr 1.25fr; }
+    .sl__row--r .sl__img { order: 2; }
+  }
+</style>
