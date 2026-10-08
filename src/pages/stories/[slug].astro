@@ -15,6 +15,7 @@ const pics = await Promise.all(story.photos.map((s) => photo(s)));
 ---
 <Base title={story.title} description={`${story.title} — ${story.kind} story by Ybrain Photography. ${story.intro}`}>
   <section class="sh lit">
+    <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="wrap sh__in">
       <span class="kicker" data-r>Story No. 0{n} · {story.kind}</span>
       <h1 class="h1" data-r style="--d:.1s">{story.title}</h1>

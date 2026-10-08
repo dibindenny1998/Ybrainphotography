@@ -6,6 +6,7 @@ const { title } = Astro.props;
 const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hello Ybrain, I would like to book a session.')}`;
 ---
 <section class="cta space lit">
+    <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="wrap cta__in">
     <span class="kicker" data-r>Bookings open</span>
     <h2 class="h2" data-r style="--d:.1s">{title ? <Fragment set:html={title} /> : <>Let's make something <em>to keep.</em></>}</h2>

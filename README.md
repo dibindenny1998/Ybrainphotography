@@ -38,7 +38,9 @@ npm run build      # finished site in /dist
 
 ## Design notes
 
-"Window light on paper": warm paper, linen and sand tones, umber text and a single bronze
-accent, so the photographs carry all the colour. Newsreader (serif) + Manrope (sans).
-Motion is deliberately quiet — soft fades and image reveals, smooth scrolling on desktop,
-native scrolling on phones, and smooth cross-page transitions in supporting browsers.
+Soft pastel light — cream base with slowly drifting peach, blush and lavender gradients,
+plum-ink text and a peach → rose → lavender accent. Newsreader (serif) + Manrope (sans).
+Motion (GSAP): a first-visit preloader that flies into the home hero, headline line reveals,
+a wipe slideshow with progress bar, image wipe-reveals and parallax on scroll, a gradient
+category ticker, magnetic buttons, cursor labels and smooth page transitions.
+Smooth scrolling on desktop; phones keep native scrolling. Reduced-motion is respected.

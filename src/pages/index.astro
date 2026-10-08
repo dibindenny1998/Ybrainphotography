@@ -3,40 +3,59 @@ import Base from '../layouts/Base.astro';
 import Img from '../components/Img.astro';
 import Arrow from '../components/icons/Arrow.astro';
 import Cta from '../components/Cta.astro';
-import { site, heroPhotos, selected, stories, testimonials } from '../data/site';
+import { site, heroPhotos, selected, stories, testimonials, categories } from '../data/site';
 import { photo } from '../lib/photos';
 const slides = await Promise.all(heroPhotos.map((s) => photo(s)));
 const feature = stories[1];
+const statement = 'We photograph people, not poses — the *glance* nobody planned, the *laugh* in the middle of a ritual, and the *light* that lasts only a minute.';
+const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.includes('*') }));
 ---
-<Base>
+<Base intro>
   <!-- HERO -->
   <section class="hero lit">
+    <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="wrap hero__in">
       <div class="hero__text">
-        <span class="kicker" data-r>Photography · Kerala</span>
-        <h1 class="h1" data-r style="--d:.1s">Photographs that feel like <em>you.</em></h1>
-        <p class="lede" data-r style="--d:.2s">Weddings, couples, maternity, newborn and portraits. Unhurried, honest, and full of light.</p>
-        <a href="/portfolio/" class="link" data-r style="--d:.3s">View portfolio <Arrow /></a>
+        <span class="kicker" data-hero-fade>Photography · Kerala · Studio now open</span>
+        <h1 class="h1 hero__title" data-hero-title>
+          <span class="hl"><span>Photographs</span></span>
+          <span class="hl"><span>that feel</span></span>
+          <span class="hl"><span>like <em>you.</em></span></span>
+        </h1>
+        <p class="lede" data-hero-fade>Weddings, couples, maternity, newborn and portraits. Unhurried, honest, and full of light.</p>
+        <div class="hero__acts" data-hero-fade>
+          <a href="/portfolio/" class="btn" data-mag>View portfolio</a>
+          <a href="/studio/" class="link">Visit the studio <Arrow /></a>
+        </div>
       </div>
-      <figure class="hero__fig" data-r style="--d:.15s">
-        <div class="hero__frame frame">
+      <figure class="hero__fig" data-cursor="View" data-hero-fig>
+        <a href="/portfolio/" class="hero__frame frame" data-hero-frame aria-label="Open the portfolio">
           {slides.map((p, i) => (
             <div class:list={['hero__slide', { 'is-on': i === 0 }]} data-slide data-cap={p.caption}>
-              <Img photo={p} fit="cover" eager={i === 0} sizes="(min-width: 1024px) 34vw, 88vw" />
+              <Img photo={p} fit="cover" eager={i === 0} sizes="(min-width: 1024px) 36vw, 90vw" />
             </div>
           ))}
-        </div>
-        <figcaption class="cap"><span data-slide-cap>{slides[0].caption}</span><span>Selected work</span></figcaption>
+        </a>
+        <figcaption class="hero__cap" data-hero-fade>
+          <span class="hero__n"><span data-slide-n>01</span> / 0{slides.length}</span>
+          <span class="hero__c" data-slide-cap>{slides[0].caption}</span>
+        </figcaption>
+        <div class="hero__bar" data-hero-fade><i data-slide-bar></i></div>
       </figure>
     </div>
   </section>
 
-  <!-- INTRO -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      {[0, 1].map(() => <div class="ticker__g">{categories.map((c) => <span class="ticker__i">{c.name}<b>✦</b></span>)}<span class="ticker__i">The studio<b>✦</b></span></div>)}
+    </div>
+  </div>
+
+  <!-- STATEMENT -->
   <section class="intro space">
     <div class="wrap">
-      <p class="intro__text" data-r>
-        We photograph people, not poses — the glance nobody planned, the laugh in the middle of a ritual,
-        and the light that lasts only a minute.
+      <p class="intro__text" data-words>
+        {words.map((w) => <><span class:list={['w', { 'w--em': w.em }]}>{w.t}</span>{' '}</>)}
       </p>
     </div>
   </section>
@@ -50,8 +69,8 @@ const feature = stories[1];
       </div>
       <div class="sel__grid">
         {selected.map((s, i) => (
-          <a href="/portfolio/" class:list={['sel__item', `sel__item--${i + 1}`]}>
-            <div class="frame" data-ri style={`--d:${i * 0.12}s`}><Img slot={s.slot} fit="cover" sizes="(min-width: 1024px) 34vw, 90vw" /></div>
+          <a href="/portfolio/" class:list={['sel__item', `sel__item--${i + 1}`]} data-cursor="View" data-speed={['0.94', '1.08', '0.98'][i]}>
+            <div class="frame" data-ri><Img slot={s.slot} fit="cover" sizes="(min-width: 1024px) 34vw, 90vw" /></div>
             <div class="cap" data-r><span>No. 0{i + 1} — {s.title}</span><span>{s.kind}</span></div>
           </a>
         ))}
@@ -64,23 +83,23 @@ const feature = stories[1];
     <div class="wrap stud__in">
       <div class="stud__text">
         <span class="kicker" data-r>The studio · Now open</span>
-        <h2 class="h2" data-r style="--d:.1s">A home for <em>slow</em> sessions.</h2>
-        <p class="lede" data-r style="--d:.2s">Since {site.studio.opened}, Ybrain has its own lamp-lit studio for maternity, baby and portrait shoots — a calm, warm space where nobody is in a hurry.</p>
-        <a href="/studio/" class="link" data-r style="--d:.3s">Visit the studio <Arrow /></a>
+        <h2 class="h2" data-split>A home for <em>slow</em> sessions.</h2>
+        <p class="lede" data-r>Since {site.studio.opened}, Ybrain has its own lamp-lit studio for maternity, baby and portrait shoots — a calm, warm space where nobody is in a hurry.</p>
+        <a href="/studio/" class="btn" data-r data-mag>Visit the studio</a>
       </div>
-      <div class="stud__img frame" data-ri><Img slot="studio-01" fit="cover" sizes="(min-width: 1024px) 50vw, 92vw" /></div>
+      <div class="stud__img frame" data-ri data-cursor="Visit"><a href="/studio/" aria-label="Visit the studio"><Img slot="studio-01" fit="cover" sizes="(min-width: 1024px) 50vw, 92vw" /></a></div>
     </div>
   </section>
 
   <!-- STORY -->
-  <section class="feat space">
+  <section class="feat space lit-2">
     <div class="wrap feat__in">
-      <a href={`/stories/${feature.slug}/`} class="feat__img"><div class="frame" data-ri><Img slot={feature.cover} fit="cover" sizes="(min-width: 1024px) 52vw, 92vw" /></div></a>
+      <a href={`/stories/${feature.slug}/`} class="feat__img" data-cursor="Read"><div class="frame" data-ri><Img slot={feature.cover} fit="cover" sizes="(min-width: 1024px) 52vw, 92vw" /></div></a>
       <div class="feat__text">
         <span class="kicker" data-r>A story · {feature.kind}</span>
-        <h2 class="h2" data-r style="--d:.1s">{feature.title}</h2>
-        <p class="lede" data-r style="--d:.2s">{feature.intro} {feature.text}</p>
-        <div class="feat__links" data-r style="--d:.3s">
+        <h2 class="h2" data-split>{feature.title}</h2>
+        <p class="lede" data-r>{feature.intro} {feature.text}</p>
+        <div class="feat__links" data-r>
           <a href={`/stories/${feature.slug}/`} class="link">Read the story <Arrow /></a>
           <a href="/stories/" class="link">All stories <Arrow /></a>
         </div>
@@ -102,23 +121,33 @@ const feature = stories[1];
 </Base>
 
 <style>
-  .hero { padding-top: clamp(130px, 16vw, 190px); padding-bottom: clamp(70px, 9vw, 120px); }
-  .hero__in { display: grid; gap: 64px; align-items: center; }
+  .hero { padding-top: clamp(120px, 15vw, 170px); padding-bottom: clamp(60px, 7vw, 100px); overflow: hidden; }
+  .hero__in { display: grid; gap: 54px; align-items: center; }
   .hero__text { display: grid; gap: 30px; justify-items: start; }
-  .hero__text .h1 { max-width: 11ch; }
+  .hero__title { font-size: clamp(3.4rem, 9vw, 8.6rem); line-height: 0.96; }
+  .hl { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.06em; }
+  .hl > span { display: inline-block; }
+  .hero__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 20px 32px; }
   .hero__fig { margin: 0; }
-  .hero__frame { position: relative; aspect-ratio: 4 / 5; }
-  .hero__slide { position: absolute; inset: 0; opacity: 0; transition: opacity 2.2s ease; }
-  .hero__slide.is-on { opacity: 1; }
+  .hero__frame { display: block; aspect-ratio: 4 / 5; border-radius: 6px; box-shadow: 0 40px 80px -40px rgba(90, 50, 90, 0.45); }
+  .hero__slide { position: absolute; inset: 0; clip-path: inset(100% 0 0 0); }
+  .hero__slide.is-on { clip-path: inset(0 0 0 0); }
+  .hero__cap { display: flex; justify-content: space-between; gap: 16px; padding-top: 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-3); }
+  .hero__n { color: var(--umber); }
+  .hero__c { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 16px; letter-spacing: 0; text-transform: none; color: var(--text-2); }
+  .hero__bar { height: 2px; background: var(--line); margin-top: 10px; overflow: hidden; border-radius: 2px; }
+  .hero__bar i { display: block; height: 100%; background: var(--grad); transform: scaleX(0); transform-origin: left; }
+  @media (max-width: 767px) { .hero__fig { order: -1; } .hero__frame { aspect-ratio: 4 / 4.4; } }
   @media (min-width: 1024px) {
     .hero { min-height: 100svh; display: flex; align-items: center; }
-    .hero__in { grid-template-columns: 1.15fr 0.85fr; gap: 8vw; }
-    .hero__fig { max-width: 520px; justify-self: end; width: 100%; }
+    .hero__in { grid-template-columns: 1.2fr 0.8fr; gap: 7vw; }
+    .hero__fig { max-width: 540px; justify-self: end; width: 100%; }
   }
 
-  .intro__text { margin: 0 auto; max-width: 24ch; text-align: center; font-family: var(--serif); font-weight: 300; font-size: clamp(1.8rem, 3.6vw, 3.4rem); line-height: 1.2; letter-spacing: -0.01em; }
+  .intro__text { margin: 0 auto; max-width: 22ch; text-align: center; font-family: var(--serif); font-weight: 300; font-size: clamp(2rem, 4.2vw, 4rem); line-height: 1.15; letter-spacing: -0.015em; }
+  .w--em { font-style: italic; background: var(--grad-ink); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 0.04em; }
 
-  .sel { padding-bottom: clamp(110px, 16vw, 240px); }
+  .sel { padding-bottom: clamp(110px, 15vw, 220px); }
   .sel__head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: clamp(40px, 6vw, 80px); }
   .sel__grid { display: grid; gap: 70px; }
   .sel__item { display: block; }
@@ -126,14 +155,16 @@ const feature = stories[1];
   @media (min-width: 900px) {
     .sel__grid { grid-template-columns: repeat(12, 1fr); gap: 0 2vw; align-items: start; }
     .sel__item--1 { grid-column: 1 / 6; }
-    .sel__item--2 { grid-column: 7 / 11; margin-top: 22vw; }
+    .sel__item--2 { grid-column: 7 / 11; margin-top: 20vw; }
     .sel__item--3 { grid-column: 3 / 9; margin-top: 8vw; }
     .sel__item--3 .frame { aspect-ratio: 4 / 3.6; }
   }
 
+  .stud { overflow: hidden; }
   .stud__in { display: grid; gap: 56px; align-items: center; }
   .stud__text { display: grid; gap: 28px; justify-items: start; }
   .stud__img { aspect-ratio: 3 / 2; }
+  .stud__img a { display: block; height: 100%; }
   @media (min-width: 1024px) { .stud__in { grid-template-columns: 0.8fr 1.2fr; gap: 7vw; } }
 
   .feat__in { display: grid; gap: 50px; align-items: center; }
