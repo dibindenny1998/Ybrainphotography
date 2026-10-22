@@ -95,7 +95,7 @@ const year = new Date().getFullYear();
           </div>
           <div class="ftr__col">
             <span class="kicker">Visit</span>
-            <p>{site.studio.address.map((l) => <>{l}<br /></>)}<a href={site.studio.mapUrl} target="_blank" rel="noopener" class="ftr__a">Directions</a></p>
+            <p><span data-studio-address>{site.studio.address.map((l) => <>{l}<br /></>)}</span><a href={site.studio.mapUrl} target="_blank" rel="noopener" class="ftr__a" data-studio-map>Directions</a></p>
           </div>
           <div class="ftr__col">
             <span class="kicker">Talk</span>

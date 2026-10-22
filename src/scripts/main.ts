@@ -550,8 +550,127 @@ function form() {
     const name = f.querySelector<HTMLInputElement>('[name="name"]')!;
     if (!name.value.trim()) { err.textContent = 'Please add your name first.'; name.focus(); return; }
     err.textContent = '';
+    // save the enquiry to the admin inbox (fire-and-forget), then open WhatsApp with the message ready
+    try {
+      const fd = new FormData(f);
+      fd.append('page', location.pathname);
+      if (!navigator.sendBeacon?.('/api/enquiry.php', fd)) fetch('/api/enquiry.php', { method: 'POST', body: fd, keepalive: true }).catch(() => {});
+    } catch { /* WhatsApp still opens */ }
     window.open(`https://wa.me/${f.dataset.wa}?text=${encodeURIComponent(text())}`, '_blank', 'noopener');
   });
+}
+
+/* ── content edited in the admin panel (/api/content.php). Sections not edited keep what the page was built with.
+   New elements are cloned from the built ones so they keep the page's scoped styles. */
+type Pack = { name: string; note: string; from: string; includes: string[]; featured?: boolean };
+type Content = { packages?: Pack[]; faqs?: { q: string; a: string }[]; testimonials?: { quote: string; name: string; kind: string }[];
+  studio?: { address: string[]; hours: [string, string][]; mapUrl: string };
+  portfolio?: { id: number; cat: string; src: string; srcset: string; w: number; h: number; caption: string }[] };
+function loadContent(): Promise<Content | null> {
+  if (location.protocol === 'file:') return Promise.resolve(null);
+  const ctl = new AbortController();
+  setTimeout(() => ctl.abort(), 2500);
+  return fetch('/api/content.php', { cache: 'no-store', signal: ctl.signal }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+}
+const txt = (el: Element | null, v: string) => { if (el) el.textContent = v; };
+function fillList(ul: Element | null, items: string[]) {
+  if (!ul) return;
+  const tpl = ul.firstElementChild;
+  if (!tpl) return;
+  ul.replaceChildren(...items.map((x) => { const li = tpl.cloneNode(true) as Element; li.textContent = x; return li; }));
+}
+function applyContent(c: Content) {
+  const wa = $('[data-wa-form]')?.dataset.wa || '919562914467';
+  if (c.packages?.length) {
+    // pricing page cards
+    const full = $('[data-packages="full"]');
+    if (full) {
+      const tpl = $('.pk__card', full)!, badge = $('.pk__badge', full);
+      full.replaceChildren(...c.packages.map((pk) => {
+        const el = tpl.cloneNode(true) as HTMLElement;
+        el.classList.toggle('pk__card--f', !!pk.featured);
+        $('.pk__badge', el)?.remove();
+        if (pk.featured && badge) el.prepend(badge.cloneNode(true));
+        txt($('.pk__note', el), pk.note); txt($('.pk__name', el), pk.name); txt($('.pk__from b', el), pk.from);
+        fillList($('.pk__list', el), pk.includes);
+        const a = $<HTMLAnchorElement>('a.btn', el);
+        if (a) { a.href = `https://wa.me/${wa}?text=${encodeURIComponent(`Hello Ybrain, I'd like to know more about the ${pk.name} package.`)}`; a.classList.toggle('btn--line', !pk.featured); }
+        return el;
+      }));
+    }
+    // home page teaser cards
+    const teaser = $('[data-packages="teaser"]');
+    if (teaser) {
+      const tpl = $('.pcard', teaser)!;
+      teaser.replaceChildren(...c.packages.slice(0, 3).map((pk) => {
+        const el = tpl.cloneNode(true) as HTMLElement;
+        el.classList.toggle('pcard--f', !!pk.featured);
+        txt($('.pcard__note', el), pk.note); txt($('.pcard__name', el), pk.name); txt($('.pcard__from b', el), pk.from);
+        fillList($('.pcard__inc', el), pk.includes);
+        return el;
+      }));
+    }
+  }
+  if (c.faqs?.length) {
+    const list = $('[data-faqs]');
+    const tpl = list && $('details.qa', list);
+    if (list && tpl) list.replaceChildren(...c.faqs.map((f, i) => {
+      const el = tpl.cloneNode(true) as HTMLDetailsElement;
+      el.open = i === 0;
+      txt($('summary span', el), f.q); txt($('.qa__a p', el), f.a);
+      return el;
+    }));
+  }
+  if (c.testimonials) {
+    const sec = $('[data-reviews]'), list = $('[data-reviews-list]');
+    const tpl = list && ($('.words__item', list) || $<HTMLTemplateElement>('template', sec!)?.content.firstElementChild);
+    if (sec && list && tpl) {
+      sec.hidden = c.testimonials.length === 0;
+      list.replaceChildren(...c.testimonials.map((t) => {
+        const el = tpl.cloneNode(true) as HTMLElement;
+        txt($('.words__q', el), `“${t.quote}”`);
+        txt($('.cap span', el), t.kind ? `${t.name} · ${t.kind}` : t.name);
+        return el;
+      }));
+    }
+  }
+  if (c.studio) {
+    const s = c.studio;
+    const lines = (arr: string[]) => { const f = document.createDocumentFragment(); arr.forEach((l) => { f.append(l, document.createElement('br')); }); return f; };
+    $$('[data-studio-address]').forEach((el) => el.replaceChildren(lines(s.address)));
+    $$('[data-studio-address-inline]').forEach((el) => (el.textContent = s.address.join(', ')));
+    $$('[data-studio-hours-inline]').forEach((el) => (el.textContent = s.hours.map(([d, t]) => `${d}: ${t}`).join(' · ')));
+    $$('[data-studio-hours]').forEach((el) => {
+      const muted = $('span', el);
+      el.replaceChildren(...s.hours.flatMap(([d, t]) => { const m = (muted?.cloneNode(false) as HTMLElement) || document.createElement('span'); m.className = 'muted'; m.textContent = ` · ${t}`; return [d, m, document.createElement('br')]; }));
+    });
+    if (s.mapUrl) $$<HTMLAnchorElement>('[data-studio-map]').forEach((a) => (a.href = s.mapUrl));
+  }
+  if (c.portfolio?.length) {
+    const grid = $('[data-pf-grid]');
+    const tpl = grid && $('[data-item]', grid);
+    if (grid && tpl) {
+      const names: Record<string, string> = {};
+      $$('[data-filter]').forEach((b) => (names[b.dataset.filter!] = b.firstChild?.textContent?.trim() || ''));
+      grid.replaceChildren(...c.portfolio.map((p) => {
+        const el = tpl.cloneNode(true) as HTMLAnchorElement;
+        const name = names[p.cat] || p.cat;
+        el.href = p.src; el.dataset.cat = p.cat; el.dataset.caption = `${p.caption} — ${name}`;
+        el.removeAttribute('data-dealt'); el.hidden = false;
+        const img = $<HTMLImageElement>('img', el)!;
+        img.removeAttribute('srcset');
+        img.src = p.src; if (p.srcset) img.srcset = p.srcset;
+        img.width = p.w; img.height = p.h; img.alt = `${p.caption} — ${name} by Ybrain Photography`;
+        const caps = $$('.cap span', el); txt(caps[0], p.caption); txt(caps[1], name);
+        return el;
+      }));
+      $$('[data-filter]').forEach((b) => {
+        const id = b.dataset.filter!, sup = $('sup', b);
+        if (sup) sup.textContent = String(id === 'all' ? c.portfolio!.length : c.portfolio!.filter((p) => p.cat === id).length);
+      });
+      const k = $('.pfh .kicker'); if (k) k.textContent = `Portfolio · ${c.portfolio.length} photographs`;
+    }
+  }
 }
 
 /* ── boot */
@@ -559,7 +678,10 @@ async function boot() {
   const hasHero = !!$('[data-hero-title]');
   if (hasHero && !reduce) gsap.set('.hl > span', { yPercent: 115 });
   const intro = heroOpening();
+  const content = loadContent();
   await Promise.race([document.fonts?.ready, new Promise((r) => setTimeout(r, 1200))]);
+  const c = await Promise.race([content, new Promise<null>((r) => setTimeout(() => r(null), 1500))]);
+  if (c) try { applyContent(c); } catch { /* keep the built content */ }
   chrome();
   storyOpening();
   const startPanels = heroPanels();

@@ -16,7 +16,7 @@ const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hello Ybra
         <p class="lede" data-r style="--d:.2s">Our own lamp-lit studio — warm, quiet and made for the sessions that need time: the months of waiting, the first days, and portraits that feel like you.</p>
         <div class="sth__acts" data-r style="--d:.3s">
           <a href={wa} target="_blank" rel="noopener" class="btn btn--light"><WhatsApp /> Book your slot</a>
-          <a href={site.studio.mapUrl} target="_blank" rel="noopener" class="link">Get directions <Arrow /></a>
+          <a href={site.studio.mapUrl} target="_blank" rel="noopener" class="link" data-studio-map>Get directions <Arrow /></a>
         </div>
       </div>
       <div class="sth__img frame" data-ri data-zoomout><Img slot="studio-01" fit="cover" eager sizes="(min-width: 1024px) 46vw, 92vw" /></div>
@@ -55,8 +55,8 @@ const wa = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hello Ybra
         <h2 class="h2" data-r style="--d:.1s">Come and <em>see</em> the space.</h2>
       </div>
       <dl class="vis__info" data-r style="--d:.15s">
-        <div><dt class="kicker">Address</dt><dd>{site.studio.address.map((l) => <>{l}<br /></>)}<a href={site.studio.mapUrl} target="_blank" rel="noopener" class="link">Directions <Arrow /></a></dd></div>
-        <div><dt class="kicker">Hours</dt><dd>{site.studio.hours.map(([d, h]) => <>{d}<span class="muted"> · {h}</span><br /></>)}</dd></div>
+        <div><dt class="kicker">Address</dt><dd><span data-studio-address>{site.studio.address.map((l) => <>{l}<br /></>)}</span><a href={site.studio.mapUrl} target="_blank" rel="noopener" class="link" data-studio-map>Directions <Arrow /></a></dd></div>
+        <div><dt class="kicker">Hours</dt><dd data-studio-hours>{site.studio.hours.map(([d, h]) => <>{d}<span class="muted"> · {h}</span><br /></>)}</dd></div>
         <div><dt class="kicker">Book</dt><dd><a href={`tel:+91${site.phone}`}>{site.phoneDisplay}</a><br /><a href={wa} target="_blank" rel="noopener">WhatsApp us</a></dd></div>
       </dl>
     </div>

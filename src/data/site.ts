@@ -14,7 +14,7 @@ export const site = {
   phoneDisplay: '+91 95629 14467',
   /** International format, digits only */
   whatsapp: '919562914467',
-  email: 'hello@ybrainphotography.com', // TODO: confirm email
+  email: 'hi@ybrainphotography.com',
   instagram: 'https://www.instagram.com/ybrain_photography/',
   instagramHandle: '@ybrain_photography',
 

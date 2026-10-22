@@ -37,14 +37,14 @@ const hours = site.studio.hours.map(([d, t]) => `${d}: ${t}`).join(' · ');
           <span class="way__n">02</span>
           <span class="way__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z" /></svg></span>
           <span class="way__t">Call us</span>
-          <span class="way__d">{site.phoneDisplay}<br />{hours}</span>
+          <span class="way__d">{site.phoneDisplay}<br /><span data-studio-hours-inline>{hours}</span></span>
           <span class="way__go">Call now <Arrow /></span>
         </a>
-        <a href={site.studio.mapUrl} target="_blank" rel="noopener" class="way" data-r data-tilt>
+        <a href={site.studio.mapUrl} target="_blank" rel="noopener" class="way" data-r data-tilt data-studio-map>
           <span class="way__n">03</span>
           <span class="way__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z" /><circle cx="12" cy="9" r="2.5" /></svg></span>
           <span class="way__t">Visit the studio</span>
-          <span class="way__d">{site.studio.address.join(', ')}. Message us first so we’re free to show you around.</span>
+          <span class="way__d"><span data-studio-address-inline>{site.studio.address.join(', ')}</span>. Message us first so we’re free to show you around.</span>
           <span class="way__go">Get directions <Arrow /></span>
         </a>
       </div>
@@ -69,8 +69,13 @@ const hours = site.studio.hours.map(([d, t]) => `${d}: ${t}`).join(' · ');
 
       <form class="fm" data-wa-form data-wa={site.whatsapp} novalidate>
         <fieldset class="fm__q" data-r>
-          <legend><span class="fm__n">1</span> What’s your name?</legend>
-          <input name="name" autocomplete="name" placeholder="Your name" required />
+          <legend><span class="fm__n">1</span> Who are you?</legend>
+          <div class="fm__row">
+            <input name="name" autocomplete="name" placeholder="Your name" aria-label="Your name" required maxlength="80" />
+            <input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Phone / WhatsApp (optional)" aria-label="Phone or WhatsApp number" maxlength="20" />
+          </div>
+          <!-- spam trap: real people never see or fill this -->
+          <input name="website" class="fm__trap" tabindex="-1" autocomplete="off" aria-hidden="true" />
         </fieldset>
         <fieldset class="fm__q" data-r>
           <legend><span class="fm__n">2</span> What would you like to shoot?</legend>
@@ -89,7 +94,7 @@ const hours = site.studio.hours.map(([d, t]) => `${d}: ${t}`).join(' · ');
         </fieldset>
         <fieldset class="fm__q" data-r>
           <legend><span class="fm__n">4</span> Anything else? <i>(optional)</i></legend>
-          <textarea name="message" rows="3" placeholder="A few words about you and what you have in mind"></textarea>
+          <textarea name="message" rows="3" maxlength="1500" placeholder="A few words about you and what you have in mind"></textarea>
         </fieldset>
         <div class="fm__foot" data-r>
           <button class="btn" type="submit"><WhatsApp /> Send on WhatsApp</button>
@@ -138,6 +143,7 @@ const hours = site.studio.hours.map(([d, t]) => `${d}: ${t}`).join(' · ');
   .fm__q legend i { font-family: var(--sans); font-style: normal; font-size: 12px; color: var(--text-3); }
   .fm__n { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-right: 10px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--rose); color: var(--rose); font-family: var(--sans); font-size: 12px; font-weight: 600; vertical-align: 4px; }
   .fm__row { display: grid; gap: 16px; }
+  .fm__trap { position: absolute !important; left: -9999px; width: 1px; height: 1px; opacity: 0; }
   .fm input:not([type='radio']), .fm textarea {
     width: 100%; font: 400 16px/1.4 var(--sans); color: var(--umber); background: #fff; border: 0; box-shadow: inset 0 0 0 1px var(--line);
     padding: 15px 18px; border-radius: 10px; outline: none; -webkit-appearance: none; appearance: none; transition: box-shadow 0.3s;

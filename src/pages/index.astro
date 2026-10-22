@@ -190,7 +190,7 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
         <span class="kicker" data-r>Pricing</span>
         <h2 class="h2" data-split>Sessions, <em>simply</em> priced.</h2>
       </div>
-      <div class="ptz__grid">
+      <div class="ptz__grid" data-packages="teaser">
         {packages.map((pk, i) => (
           <div class:list={['pcard', { 'pcard--f': pk.featured }]} data-r data-tilt>
             <span class="pcard__note">{pk.note}</span>
@@ -212,15 +212,21 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
     </div>
   </div>
 
-  {testimonials.length > 0 && (
-    <section class="words space-s">
-      <div class="wrap words__in">
-        <span class="kicker" data-r>Kind words</span>
-        <blockquote class="words__q" data-r>“{testimonials[0].quote}”</blockquote>
-        <span class="cap" data-r><span>{testimonials[0].name} · {testimonials[0].kind}</span></span>
+  <!-- KIND WORDS: hidden until there are reviews (edited in the admin panel) -->
+  <section class="words space-s" data-reviews hidden={testimonials.length === 0}>
+    <div class="wrap words__in">
+      <span class="kicker">Kind words</span>
+      <div class="words__list" data-reviews-list>
+        {testimonials.map((t) => (
+          <figure class="words__item">
+            <blockquote class="words__q">“{t.quote}”</blockquote>
+            <figcaption class="cap"><span>{t.name}{t.kind ? ` · ${t.kind}` : ''}</span></figcaption>
+          </figure>
+        ))}
       </div>
-    </section>
-  )}
+    </div>
+    <template><figure class="words__item"><blockquote class="words__q"></blockquote><figcaption class="cap"><span></span></figcaption></figure></template>
+  </section>
 
   <Cta />
 </Base>
@@ -390,5 +396,9 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
   .roll__i .img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
   .words__in { display: grid; justify-items: center; text-align: center; gap: 26px; }
+  .words[hidden] { display: none; }
+  .words__list { display: grid; gap: 56px; width: 100%; }
+  .words__item { margin: 0; display: grid; justify-items: center; gap: 18px; }
+  @media (min-width: 1024px) { .words__list:has(> :nth-child(2)) { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4vw; } .words__list:has(> :nth-child(2)) .words__q { font-size: clamp(1.3rem, 1.8vw, 1.8rem); } }
   .words__q { margin: 0; max-width: 30ch; font-family: var(--serif); font-style: italic; font-weight: 300; font-size: clamp(1.6rem, 3vw, 2.6rem); line-height: 1.3; }
 </style>

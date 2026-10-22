@@ -17,7 +17,7 @@ const wa = (name: string) => `https://wa.me/${site.whatsapp}?text=${encodeURICom
   </section>
 
   <section class="pk">
-    <div class="wrap pk__grid">
+    <div class="wrap pk__grid" data-packages="full">
       {packages.map((pk) => (
         <article class:list={['pk__card', { 'pk__card--f': pk.featured }]} data-r data-tilt>
           {pk.featured && <span class="pk__badge">Most loved</span>}
@@ -39,7 +39,7 @@ const wa = (name: string) => `https://wa.me/${site.whatsapp}?text=${encodeURICom
         <h2 class="h2">Good <em>questions.</em></h2>
         <p class="lede" data-r>Can't find yours? <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener" class="faq__u">Ask us on WhatsApp</a>.</p>
       </div>
-      <div class="faq__list">
+      <div class="faq__list" data-faqs>
         {faqs.map((f, i) => (
           <details class="qa" data-r open={i === 0}>
             <summary><span>{f.q}</span><i aria-hidden="true"></i></summary>
