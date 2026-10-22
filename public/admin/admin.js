@@ -10,6 +10,10 @@
 
   // "are you sure?" forms
   $$('form[data-confirm]').forEach((f) => f.addEventListener('submit', (e) => { if (!confirm(f.dataset.confirm)) e.preventDefault(); }));
+  $$('[data-confirm-btn]').forEach((b) => b.addEventListener('click', (e) => { if (!confirm(b.dataset.confirmBtn)) e.preventDefault(); }));
+
+  // don't count the owner's own visits to the website in the Visitors numbers (same browser)
+  try { localStorage.setItem('yb-nohit', '1'); } catch { /* private mode */ }
 
   // toast
   const toast = document.createElement('div'); toast.className = 'saving'; document.body.appendChild(toast);

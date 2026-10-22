@@ -1,6 +1,6 @@
-# Ybrain Photography — Deploy guide (v18: website + backend)
+# Ybrain Photography — Deploy guide (v19: website + backend)
 
-Hand this file and `ybrain-v18-upload-to-hostinger.zip` to the chat/agent that has Hostinger access.
+Hand this file and `ybrain-v19-upload-to-hostinger.zip` to the chat/agent that has Hostinger access.
 It explains what is in the zip, exactly how to deploy it, how to verify it, and how to troubleshoot.
 
 > The one-time admin setup code is not in this copy; the owner has it.
@@ -20,12 +20,30 @@ It explains what is in the zip, exactly how to deploy it, how to verify it, and 
 | Admin panel | `https://ybrainphotography.com/admin/` |
 | Admin login email | `hi@ybrainphotography.com` (single user: Yadhu) |
 | Enquiry alert email | `hi@ybrainphotography.com` |
-| Zip | `ybrain-v18-upload-to-hostinger.zip` (~9.7 MB). Its contents go **directly** into `public_html` (no subfolder). |
-| Source code | GitHub `dibindenny1998/ybrainphotography`, branch `claude/ybrain-photography-portfolio-x9fk9b` |
+| Zip | `ybrain-v19-upload-to-hostinger.zip` (~9.7 MB). Its contents go **directly** into `public_html` (no subfolder). |
+| Source code | GitHub `dibindenny1998/ybrainphotography`, branch `claude/new-session-nzi9dg` (v19; v18 is on `claude/ybrain-photography-portfolio-x9fk9b`) |
 
 ---
 
-## 2. What's in v18
+## 2. What's in v19
+
+**New in v19 (since v18):**
+
+- **Pricing:** shows "On request" until real prices are set in the admin (Prices). A price with a number gets a small "from" above it.
+- **Privacy page** at `/privacy/`, linked from the footer and the contact form.
+- **Visitors:** cookieless visitor counts (`/api/hit.php`) with an admin page (Visitors): visitors per day, sources, top pages, devices, WhatsApp/call/email taps. No IPs are stored, the visitor code changes daily, and Do Not Track / GPC are respected. The owner's own browser is skipped once he has opened the admin.
+- **Contact form:** optional email field, and a "Send without WhatsApp" button that saves the enquiry and shows a thank-you. The client gets a short confirmation email (fixed wording, so it can't be used for spam). The visitor gets a reply straight away; emails are sent after the response.
+- **Email sending:** admin → Account → Email sending takes the `hi@` mailbox password and sends through Hostinger SMTP (`smtp.hostinger.com:465`), with a "Send a test email" button. Without it, PHP `mail()` is used as before.
+- **Backups:** a database snapshot every 7 days in `ybrain-data/backups/` (newest 8 kept), plus a "Download backup" button (Account).
+- **Hardening:**
+  - CSV export neutralises formula cells.
+  - HSTS and Permissions-Policy headers are sent, and `X-Powered-By` is removed.
+  - Email links always use `https://ybrainphotography.com`.
+  - PHP errors are logged to `ybrain-data/php-errors.log`.
+  - IPs are no longer stored with enquiries.
+  - The setup code is checked against a bcrypt hash, which is safe in a public repo.
+  - The 404 page is `noindex` with no canonical link.
+- **Database:** upgrades itself on first request (`PRAGMA user_version` 1 adds `enquiries.email` and `enquiries.via` and a `hits` table). Nothing to do by hand.
 
 **Website (static, built with Astro):** home, portfolio, stories (+5 story pages), studio, pricing & FAQ, about, contact, animated 404, sitemap, share image.
 
@@ -47,7 +65,8 @@ assets/            fonts, CSS, JS, optimised photos (fingerprinted file names)
 data/defaults.json built-in prices/FAQ/reviews/studio (admin starts from these)
 data/photos.json   list of built-in portfolio photos
 api/
-  _lib.php         shared helpers (DB, security, mail) – not directly reachable (.htaccess)
+  _lib.php         shared helpers (DB, security, mail, backups) – not directly reachable (.htaccess)
+  hit.php          POST – anonymous visitor counts
   enquiry.php      POST – contact form saves here
   content.php      GET  – content edited in the admin (JSON)
   media.php        GET  – serves uploaded photos from the private folder
@@ -70,6 +89,8 @@ sitemap.xml, og-image.jpg, favicon.svg, apple-touch-icon.png
   ybrain.sqlite (+ -wal/-shm)   enquiries, settings, photo list, admin user
   media/u/                      uploaded photos (WebP)
   sessions/                     admin login sessions (kept 14 days)
+  backups/                      weekly database snapshots (newest 8)
+  php-errors.log                PHP errors (trimmed at 1 MB)
   .htaccess                     "deny all" safety net
 ```
 
@@ -93,11 +114,11 @@ sitemap.xml, og-image.jpg, favicon.svg, apple-touch-icon.png
 ### Option A — Hostinger API (for an agent)
 1. **Upload the zip** into `public_html`:
    - Get an upload URL with `hosting_files_generate-upload-url` (username `u826343823`, domain `ybrainphotography.com`). It returns `url`, `auth_key` and `rest_auth_key`.
-   - TUS-upload the zip as `ybrain-v18-upload-to-hostinger.zip`: POST with `Upload-Length`, then PATCH with the bytes.
+   - TUS-upload the zip as `ybrain-v19-upload-to-hostinger.zip`: POST with `Upload-Length`, then PATCH with the bytes.
 2. **Deploy it** with `hosting_websites_deploy-static-site-archive`:
    - `username`: `u826343823`
    - `domain`: `ybrainphotography.com`
-   - `archive_path`: `ybrain-v18-upload-to-hostinger.zip`
+   - `archive_path`: `ybrain-v19-upload-to-hostinger.zip`
 
    ⚠️ This **overwrites `public_html`**. That's intended: it replaces the old site, and the private `ybrain-data` folder is outside `public_html`, so it isn't affected.
 3. Make sure the zip itself and any `File/` folder are **not** left in `public_html`. A zip left there can be downloaded by anyone.
@@ -107,7 +128,7 @@ sitemap.xml, og-image.jpg, favicon.svg, apple-touch-icon.png
 1. hPanel → Websites → **ybrainphotography.com** → **File Manager** → `public_html`.
 2. Select everything inside `public_html`, including dot-files like `.htaccess` and the `File` folder, and delete it.
    - **Don't** go up a level, and **don't** touch the `ybrain-data` folder next to `public_html`.
-3. Upload `ybrain-v18-upload-to-hostinger.zip` → right-click → **Extract** → extract into `public_html` itself, not a subfolder.
+3. Upload `ybrain-v19-upload-to-hostinger.zip` → right-click → **Extract** → extract into `public_html` itself, not a subfolder.
 4. Delete the zip.
 5. hPanel → **Cache Manager → Purge All**.
 
@@ -188,10 +209,10 @@ To return to the pre-backend site, redeploy any earlier website zip (v17 or olde
   - Strict CSP and `X-Frame-Options: DENY` on the admin.
   - Uploads are checked with `getimagesize` and re-encoded through GD.
   - All SQL uses prepared statements.
-  - The setup code is stored only as a SHA-256 hash in `api/_lib.php`.
+  - The setup code is stored only as a bcrypt hash in `api/_lib.php`.
 - **Public endpoints:**
   - `POST /api/enquiry.php` (form fields: name, phone, type, date, place, message, page, plus the `website` honeypot field)
   - `GET /api/content.php`
   - `GET /media/u/<file>` → `api/media.php`
-- **Settings in code:** `api/_lib.php` holds `YB_ADMIN_EMAIL` (alert + login email) and `YB_CATEGORIES`. The sender address is in `send_mail()`.
+- **Settings in code:** `api/_lib.php` holds `YB_ADMIN_EMAIL` (alert + login email) and `YB_CATEGORIES`. `YB_SITE_URL` is used in email links. Mail goes through SMTP when a mailbox password is saved in the admin (stored in the `settings` table under `mail`), otherwise through `mail()` from `no-reply@`.
 - **Updating the site later:** rebuild from the repo (`npm ci && npx astro build`), zip the **contents** of `dist/`, and deploy with the steps above. `ybrain-data` is never touched.

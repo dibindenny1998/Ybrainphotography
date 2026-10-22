@@ -3,16 +3,16 @@ import Base from '../layouts/Base.astro';
 import Arrow from '../components/icons/Arrow.astro';
 import WhatsApp from '../components/icons/WhatsApp.astro';
 import Cta from '../components/Cta.astro';
-import { site, packages, faqs } from '../data/site';
+import { site, packages, faqs, priceLead } from '../data/site';
 const wa = (name: string) => `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(`Hello Ybrain, I'd like to know more about the ${name} package.`)}`;
 ---
-<Base title="Pricing & FAQ" description="Starting prices for Ybrain Photography sessions — studio, couple and wedding — and answers to common questions.">
+<Base title="Pricing & FAQ" description="Ybrain Photography sessions — studio, couple and wedding — with personal quotes on request, and answers to common questions.">
   <section class="phead lit">
     <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="wrap">
       <span class="kicker" data-r>Pricing</span>
-      <h1 class="h1">Sessions, <em>simply</em> priced.</h1>
-      <p class="lede" data-r>Every session is planned around you, so these are starting points. Message us with your date and ideas and we'll send an exact quote.</p>
+      <h1 class="h1">Sessions, <em>made</em> for you.</h1>
+      <p class="lede" data-r>Every session is planned around you, so we quote each one personally. Message us with your date and ideas and we'll send a quote, usually the same day.</p>
     </div>
   </section>
 
@@ -23,13 +23,13 @@ const wa = (name: string) => `https://wa.me/${site.whatsapp}?text=${encodeURICom
           {pk.featured && <span class="pk__badge">Most loved</span>}
           <span class="pk__note">{pk.note}</span>
           <h2 class="pk__name">{pk.name}</h2>
-          <p class="pk__from">from <b>{pk.from}</b></p>
+          <p class="pk__from"><span>{priceLead(pk.from)}</span><b>{pk.from}</b></p>
           <ul class="pk__list">{pk.includes.map((x) => <li>{x}</li>)}</ul>
           <a href={wa(pk.name)} target="_blank" rel="noopener" class:list={['btn', { 'btn--line': !pk.featured }]}><WhatsApp /> Ask about this</a>
         </article>
       ))}
     </div>
-    <p class="wrap pk__fine muted" data-r>Prices are indicative and may vary with date, location and travel. Custom packages are always welcome.</p>
+    <p class="wrap pk__fine muted" data-r>Quotes depend on the date, location, coverage and travel. Custom packages are always welcome.</p>
   </section>
 
   <section class="faq space lit-2">

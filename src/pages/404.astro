@@ -6,7 +6,7 @@ import { photo } from '../lib/photos';
 const shots = await Promise.all(['couples-02', 'maternity-04', 'newborn-07', 'weddings-02', 'portraits-01', 'celebrations-02', 'couples-07', 'newborn-03'].map((s) => photo(s)));
 const shotData = JSON.stringify(shots.map((p) => ({ src: p.srcset ? p.srcset.split(',')[1]?.trim().split(' ')[0] ?? p.src : p.src, cap: p.caption })));
 ---
-<Base title="Page not found">
+<Base title="Page not found" noindex>
   <section class="nf" data-nf data-shots={shotData}>
     <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
 

@@ -3,8 +3,8 @@ import '../styles/global.css';
 import { site, nav, founder } from '../data/site';
 import WhatsApp from '../components/icons/WhatsApp.astro';
 
-interface Props { title?: string; description?: string; tone?: 'light' | 'dark'; heroDark?: boolean }
-const { title, description = site.description, tone = 'light', heroDark = false } = Astro.props;
+interface Props { title?: string; description?: string; tone?: 'light' | 'dark'; heroDark?: boolean; noindex?: boolean }
+const { title, description = site.description, tone = 'light', heroDark = false, noindex = false } = Astro.props;
 const fullTitle = title ? `${title} — ${site.name}, Thrissur` : `${site.name} — Wedding, Maternity & Newborn Photographer in Thrissur, Kerala`;
 const path = Astro.url.pathname;
 const canonical = new URL(path, Astro.site);
@@ -40,7 +40,7 @@ const year = new Date().getFullYear();
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <meta name="theme-color" content={tone === 'dark' ? '#241A1B' : '#FFF8F1'} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -108,7 +108,7 @@ const year = new Date().getFullYear();
         </div>
         <span class="ftr__word" aria-hidden="true" data-ftr-word>ybrain</span>
         <div class="ftr__bot">
-          <span>© {year} {site.name}</span>
+          <span>© {year} {site.name} · <a href="/privacy/" class="ftr__a">Privacy</a></span>
           <span>Your story, our lens.</span>
           <a href="https://branddit.in" target="_blank" rel="noopener" class="ftr__credit">Crafted with <span class="ftr__heart" aria-label="love">♥</span> by <b>Branddit</b></a>
         </div>

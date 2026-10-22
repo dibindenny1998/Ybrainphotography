@@ -522,7 +522,31 @@ function lightbox() {
   lb.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); });
 }
 
-/* ── contact form → WhatsApp (with a live preview of the message) */
+/* ── anonymous visitor counts for the admin "Visitors" page (no cookies; see /api/hit.php).
+   Skipped for "Do Not Track" / Global Privacy Control, and in the owner's browser once they've opened the admin. */
+const quiet = (() => {
+  try { if (localStorage.getItem('yb-nohit')) return true; } catch { /* ignore */ }
+  const n = navigator as Navigator & { globalPrivacyControl?: boolean };
+  return location.protocol === 'file:' || n.doNotTrack === '1' || n.globalPrivacyControl === true;
+})();
+function track(k: 'view' | 'whatsapp' | 'call' | 'email') {
+  if (quiet) return;
+  const d = new URLSearchParams({ k, p: location.pathname });
+  if (k === 'view') d.set('r', new URLSearchParams(location.search).get('utm_source') || document.referrer);
+  try { if (!navigator.sendBeacon?.('/api/hit.php', d)) fetch('/api/hit.php', { method: 'POST', body: d, keepalive: true }).catch(() => {}); } catch { /* ignore */ }
+}
+function counts() {
+  track('view');
+  document.addEventListener('click', (e) => {
+    const a = (e.target as Element).closest?.('a');
+    const h = a?.getAttribute('href') || '';
+    if (h.startsWith('https://wa.me/')) track('whatsapp');
+    else if (h.startsWith('tel:')) track('call');
+    else if (h.startsWith('mailto:')) track('email');
+  }, { capture: true });
+}
+
+/* ── contact form → WhatsApp (with a live preview of the message), or saved without WhatsApp */
 function form() {
   const f = $<HTMLFormElement>('[data-wa-form]');
   if (!f) return;
@@ -544,19 +568,53 @@ function form() {
   f.addEventListener('input', upd);
   f.addEventListener('change', upd);
   upd();
-  f.addEventListener('submit', (e) => {
+  let busy = false, clicked = '';
+  // older Safari doesn't tell which button submitted the form, so remember the last one tapped
+  f.querySelectorAll<HTMLButtonElement>('button[type="submit"]').forEach((b) => b.addEventListener('click', () => (clicked = b.value)));
+  f.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (busy) return;
     const err = $('[data-form-err]', f)!;
-    const name = f.querySelector<HTMLInputElement>('[name="name"]')!;
+    const field = (n: string) => f.querySelector<HTMLInputElement>(`[name="${n}"]`)!;
+    const name = field('name'), phone = field('phone'), email = field('email');
+    const viaForm = ((e as SubmitEvent).submitter?.getAttribute('value') ?? clicked) === 'form';
+    clicked = '';
     if (!name.value.trim()) { err.textContent = 'Please add your name first.'; name.focus(); return; }
+    if (email.value.trim() && !email.checkValidity()) { err.textContent = 'That email address doesn’t look right.'; email.focus(); return; }
+    if (viaForm && !phone.value.trim() && !email.value.trim()) { err.textContent = 'Please add a phone number or email so we can reply.'; phone.focus(); return; }
     err.textContent = '';
-    // save the enquiry to the admin inbox (fire-and-forget), then open WhatsApp with the message ready
+    const fd = new FormData(f);
+    fd.append('page', location.pathname);
+    fd.append('via', viaForm ? 'form' : 'whatsapp');
+
+    if (!viaForm) {
+      // save the enquiry to the admin inbox (fire-and-forget), then open WhatsApp with the message ready
+      try { if (!navigator.sendBeacon?.('/api/enquiry.php', fd)) fetch('/api/enquiry.php', { method: 'POST', body: fd, keepalive: true }).catch(() => {}); } catch { /* WhatsApp still opens */ }
+      track('whatsapp');
+      window.open(`https://wa.me/${f.dataset.wa}?text=${encodeURIComponent(text())}`, '_blank', 'noopener');
+      return;
+    }
+
+    // no WhatsApp: send it to us and show a thank-you
+    busy = true;
+    f.classList.add('is-busy');
     try {
-      const fd = new FormData(f);
-      fd.append('page', location.pathname);
-      if (!navigator.sendBeacon?.('/api/enquiry.php', fd)) fetch('/api/enquiry.php', { method: 'POST', body: fd, keepalive: true }).catch(() => {});
-    } catch { /* WhatsApp still opens */ }
-    window.open(`https://wa.me/${f.dataset.wa}?text=${encodeURIComponent(text())}`, '_blank', 'noopener');
+      const r = await fetch('/api/enquiry.php', { method: 'POST', body: fd });
+      const j = await r.json().catch(() => ({ ok: false }));
+      if (!j.ok) throw new Error(j.error || 'Something went wrong.');
+      const done = $('[data-form-done]');
+      if (done) {
+        txt($('[data-done-name]', done), name.value.trim().split(' ')[0]);
+        const conf = $('[data-done-mail]', done); if (conf) conf.hidden = !email.value.trim();
+        f.hidden = true; done.hidden = false;
+        done.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+      }
+    } catch (x) {
+      err.textContent = `${(x as Error).message} You can also WhatsApp or call us on ${f.dataset.phone || ''}.`.replace(' on .', '.');
+    } finally {
+      busy = false;
+      f.classList.remove('is-busy');
+    }
   });
 }
 
@@ -573,6 +631,8 @@ function loadContent(): Promise<Content | null> {
   return fetch('/api/content.php', { cache: 'no-store', signal: ctl.signal }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
 }
 const txt = (el: Element | null, v: string) => { if (el) el.textContent = v; };
+/** "from" above a price, nothing above text like "On request" (same rule as priceLead in site.ts) */
+const price = (el: Element | null, from: string) => { if (!el) return; txt($('span', el), /\d/.test(from) ? 'from' : ''); txt($('b', el), from); };
 function fillList(ul: Element | null, items: string[]) {
   if (!ul) return;
   const tpl = ul.firstElementChild;
@@ -591,7 +651,7 @@ function applyContent(c: Content) {
         el.classList.toggle('pk__card--f', !!pk.featured);
         $('.pk__badge', el)?.remove();
         if (pk.featured && badge) el.prepend(badge.cloneNode(true));
-        txt($('.pk__note', el), pk.note); txt($('.pk__name', el), pk.name); txt($('.pk__from b', el), pk.from);
+        txt($('.pk__note', el), pk.note); txt($('.pk__name', el), pk.name); price($('.pk__from', el), pk.from);
         fillList($('.pk__list', el), pk.includes);
         const a = $<HTMLAnchorElement>('a.btn', el);
         if (a) { a.href = `https://wa.me/${wa}?text=${encodeURIComponent(`Hello Ybrain, I'd like to know more about the ${pk.name} package.`)}`; a.classList.toggle('btn--line', !pk.featured); }
@@ -605,7 +665,7 @@ function applyContent(c: Content) {
       teaser.replaceChildren(...c.packages.slice(0, 3).map((pk) => {
         const el = tpl.cloneNode(true) as HTMLElement;
         el.classList.toggle('pcard--f', !!pk.featured);
-        txt($('.pcard__note', el), pk.note); txt($('.pcard__name', el), pk.name); txt($('.pcard__from b', el), pk.from);
+        txt($('.pcard__note', el), pk.note); txt($('.pcard__name', el), pk.name); price($('.pcard__from', el), pk.from);
         fillList($('.pcard__inc', el), pk.includes);
         return el;
       }));
@@ -694,6 +754,7 @@ async function boot() {
   portfolio();
   lightbox();
   form();
+  counts();
   await intro;
   if (hasHero && !reduce) { heroIntro(); gsap.delayedCall(1.2, startPanels); }
   ScrollTrigger.refresh();

@@ -67,12 +67,13 @@ const hours = site.studio.hours.map(([d, t]) => `${d}: ${t}`).join(' · ');
         </div>
       </div>
 
-      <form class="fm" data-wa-form data-wa={site.whatsapp} novalidate>
+      <form class="fm" data-wa-form data-wa={site.whatsapp} data-phone={site.phoneDisplay} novalidate>
         <fieldset class="fm__q" data-r>
           <legend><span class="fm__n">1</span> Who are you?</legend>
+          <input name="name" autocomplete="name" placeholder="Your name" aria-label="Your name" required maxlength="80" />
           <div class="fm__row">
-            <input name="name" autocomplete="name" placeholder="Your name" aria-label="Your name" required maxlength="80" />
             <input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Phone / WhatsApp (optional)" aria-label="Phone or WhatsApp number" maxlength="20" />
+            <input name="email" type="email" autocomplete="email" inputmode="email" placeholder="Email (optional)" aria-label="Email address" maxlength="120" />
           </div>
           <!-- spam trap: real people never see or fill this -->
           <input name="website" class="fm__trap" tabindex="-1" autocomplete="off" aria-hidden="true" />
@@ -97,11 +98,21 @@ const hours = site.studio.hours.map(([d, t]) => `${d}: ${t}`).join(' · ');
           <textarea name="message" rows="3" maxlength="1500" placeholder="A few words about you and what you have in mind"></textarea>
         </fieldset>
         <div class="fm__foot" data-r>
-          <button class="btn" type="submit"><WhatsApp /> Send on WhatsApp</button>
-          <p class="fm__note">Nothing is sent until you press send inside WhatsApp.</p>
+          <div class="fm__btns">
+            <button class="btn" type="submit" value="whatsapp"><WhatsApp /> Send on WhatsApp</button>
+            <button class="btn btn--line" type="submit" value="form">Send without WhatsApp</button>
+          </div>
+          <p class="fm__note">Not on WhatsApp? Add your phone or email and use “Send without WhatsApp” — we’ll reply to you. Either way, your details are saved so we can get back to you (<a href="/privacy/">privacy</a>).</p>
           <p class="fm__err" role="alert" data-form-err></p>
         </div>
       </form>
+      <div class="fm__done" data-form-done hidden tabindex="-1">
+        <span class="fm__tick" aria-hidden="true">✓</span>
+        <h3 class="h3">Thank you, <span data-done-name></span>!</h3>
+        <p>We’ve got your message and will reply soon — usually the same day.</p>
+        <p data-done-mail>A confirmation is on its way to your inbox (check spam if you don’t see it).</p>
+        <p class="fm__note">Can’t wait? <a href={wa} target="_blank" rel="noopener">WhatsApp us</a> or call <a href={`tel:+91${site.phone}`}>{site.phoneDisplay}</a>.</p>
+      </div>
     </div>
   </section>
 </Base>
@@ -159,7 +170,14 @@ const hours = site.studio.hours.map(([d, t]) => `${d}: ${t}`).join(' · ');
   .chip input:checked + span { background: var(--grad); box-shadow: 0 10px 22px -14px rgba(196, 86, 106, 0.8); font-weight: 600; }
   .chip input:focus-visible + span { outline: 1.5px solid var(--rose); outline-offset: 3px; }
   .fm__foot { display: grid; gap: 12px; justify-items: start; }
-  .fm__note { margin: 0; font-size: 13px; color: var(--text-3); }
+  .fm__btns { display: flex; flex-wrap: wrap; gap: 12px; }
+  .fm.is-busy .fm__btns { opacity: 0.6; pointer-events: none; }
+  .fm__note { margin: 0; max-width: 52ch; font-size: 13px; line-height: 1.6; color: var(--text-3); }
+  .fm__note a, .fm__done a { color: var(--umber); border-bottom: 1px solid var(--rose); }
+  .fm__done { display: grid; gap: 14px; align-content: start; padding: 40px 32px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+  .fm[hidden], .fm__done[hidden] { display: none; }
+  .fm__done p { margin: 0; color: var(--text-2); }
+  .fm__tick { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--grad); color: var(--umber); font-size: 22px; }
   .fm__err { margin: 0; color: #a0453f; font-size: 14px; }
   .fm__err:empty { display: none; }
   @media (min-width: 700px) { .fm__row { grid-template-columns: 1fr 1fr; } }

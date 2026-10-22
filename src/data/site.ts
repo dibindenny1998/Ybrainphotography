@@ -128,23 +128,27 @@ export const shoots = [
 ];
 
 /**
- * Starting prices. ⚠️ TODO: replace every "₹XX,XXX" with your real starting price,
- * and adjust what is included. Set `featured: true` on the one to highlight.
+ * Packages. `from` is shown large on the card: a price such as "₹25,000" gets a small "from" above it,
+ * any other text (like "On request") is shown as it is. Set `featured: true` on the one to highlight.
+ * Prices can also be changed any time in the admin panel (Prices).
  */
 export const packages = [
   {
-    name: 'Studio session', from: '₹XX,XXX', note: 'Maternity · baby · portraits',
-    includes: ['1–2 hours at the Ybrain studio', 'Outfit changes & props', 'Gentle posing guidance', 'XX edited photographs'],
+    name: 'Studio session', from: 'On request', note: 'Maternity · baby · portraits',
+    includes: ['1–2 hours at the Ybrain studio', 'Outfit changes & props', 'Gentle posing guidance', 'Hand-edited photographs'],
   },
   {
-    name: 'Couple & pre-wedding', from: '₹XX,XXX', note: 'On location', featured: true,
-    includes: ['Half day on location', 'Planning call & location ideas', 'XX edited photographs', 'Short highlight reel (optional)'],
+    name: 'Couple & pre-wedding', from: 'On request', note: 'On location', featured: true,
+    includes: ['Half day on location', 'Planning call & location ideas', 'Hand-edited photographs', 'Short highlight reel (optional)'],
   },
   {
-    name: 'Wedding day', from: '₹XX,XXX', note: 'Full day coverage',
+    name: 'Wedding day', from: 'On request', note: 'Full day coverage',
     includes: ['Getting ready to send-off', 'Two photographers', 'Online gallery', 'Heirloom album options'],
   },
 ];
+
+/** "from" goes above a price, nothing above text like "On request" */
+export const priceLead = (from: string) => (/\d/.test(from) ? 'from' : '');
 
 /** Frequently asked questions — ⚠️ TODO: check every answer matches how you work */
 export const faqs = [

@@ -7,7 +7,7 @@ const YB_STATUSES = ['new' => 'New', 'replied' => 'Replied', 'booked' => 'Booked
 function csrf_field(): string { return '<input type="hidden" name="csrf" value="' . h($_SESSION['csrf']) . '">'; }
 
 function layout(string $title, string $active, string $body, ?string $flash, bool $bare = false): void {
-  $nav = ['' => 'Home', 'enquiries' => 'Enquiries', 'portfolio' => 'Portfolio', 'prices' => 'Prices', 'faq' => 'FAQ', 'reviews' => 'Reviews', 'studio' => 'Studio', 'account' => 'Account'];
+  $nav = ['' => 'Home', 'enquiries' => 'Enquiries', 'visitors' => 'Visitors', 'portfolio' => 'Portfolio', 'prices' => 'Prices', 'faq' => 'FAQ', 'reviews' => 'Reviews', 'studio' => 'Studio', 'account' => 'Account'];
   $new = 0;
   if (!$bare) $new = (int) db()->query("SELECT COUNT(*) FROM enquiries WHERE status = 'new'")->fetchColumn(); ?>
 <!doctype html>
@@ -20,7 +20,7 @@ function layout(string $title, string $active, string $body, ?string $flash, boo
   <meta name="theme-color" content="#fffaf5">
   <title><?= h($title) ?> · Ybrain admin</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/admin/admin.css?v=1">
+  <link rel="stylesheet" href="/admin/admin.css?v=2">
 </head>
 <body class="<?= $bare ? 'bare' : '' ?>">
 <?php if (!$bare): ?>
@@ -40,7 +40,7 @@ function layout(string $title, string $active, string $body, ?string $flash, boo
     <?php if ($flash): ?><div class="flash" role="status"><?= h($flash) ?></div><?php endif; ?>
     <?= $body ?>
   </main>
-  <script src="/admin/admin.js?v=1" defer></script>
+  <script src="/admin/admin.js?v=2" defer></script>
 </body>
 </html>
 <?php }
@@ -100,6 +100,9 @@ function view_dashboard(?string $flash): void {
   $week = $c("SELECT COUNT(*) FROM enquiries WHERE created >= datetime('now', '-7 days')");
   $booked = $c("SELECT COUNT(*) FROM enquiries WHERE status = 'booked'");
   $total = $c('SELECT COUNT(*) FROM enquiries');
+  $since = (new DateTime('-6 days', new DateTimeZone('Asia/Kolkata')))->format('Y-m-d');
+  $vq = $db->prepare("SELECT COUNT(DISTINCT day || vid) FROM hits WHERE kind = 'view' AND day >= ?"); $vq->execute([$since]);
+  $visitors = (int) $vq->fetchColumn();
   $latest = $db->query('SELECT * FROM enquiries ORDER BY id DESC LIMIT 5')->fetchAll();
   $rows = $latest ? implode('', array_map('enquiry_row', $latest)) : '<p class="empty">No enquiries yet. When someone uses the contact form, it shows up here and you get an email.</p>';
   $body = '<div class="head"><h1>Hello, Yadhu</h1></div>
@@ -107,7 +110,7 @@ function view_dashboard(?string $flash): void {
       <a href="/admin/?p=enquiries&s=new" class="stat stat--hl"><b>' . $new . '</b><span>New enquiries</span></a>
       <div class="stat"><b>' . $week . '</b><span>This week</span></div>
       <div class="stat"><b>' . $booked . '</b><span>Booked</span></div>
-      <div class="stat"><b>' . $total . '</b><span>All time</span></div>
+      <a href="/admin/?p=visitors" class="stat"><b>' . $visitors . '</b><span>Visitors this week</span></a>
     </div>
     <section class="card"><div class="card__head"><h2>Latest enquiries</h2><a href="/admin/?p=enquiries">See all →</a></div>' . $rows . '</section>
     <section class="card"><h2>Edit the website</h2><div class="quick">
@@ -126,7 +129,7 @@ function view_enquiries(?string $flash): void {
   $q = trim((string) ($_GET['q'] ?? ''));
   $where = []; $args = [];
   if (isset(YB_STATUSES[$s])) { $where[] = 'status = ?'; $args[] = $s; }
-  if ($q !== '') { $where[] = '(name LIKE ? OR phone LIKE ? OR place LIKE ? OR message LIKE ?)'; array_push($args, "%$q%", "%$q%", "%$q%", "%$q%"); }
+  if ($q !== '') { $where[] = '(name LIKE ? OR phone LIKE ? OR email LIKE ? OR place LIKE ? OR message LIKE ?)'; array_push($args, "%$q%", "%$q%", "%$q%", "%$q%", "%$q%"); }
   $st = db()->prepare('SELECT * FROM enquiries' . ($where ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY id DESC LIMIT 300');
   $st->execute($args);
   $list = $st->fetchAll();
@@ -134,7 +137,7 @@ function view_enquiries(?string $flash): void {
   $tabs = '<a class="tab ' . ($s === '' ? 'is-on' : '') . '" href="/admin/?p=enquiries">All <sup>' . array_sum($counts) . '</sup></a>';
   foreach (YB_STATUSES as $k => $label) $tabs .= '<a class="tab ' . ($s === $k ? 'is-on' : '') . '" href="/admin/?p=enquiries&s=' . $k . '">' . $label . ' <sup>' . (int) ($counts[$k] ?? 0) . '</sup></a>';
   $body = '<div class="head"><h1>Enquiries</h1><a class="ghost" href="/admin/?p=export">Download CSV</a></div>
-    <form class="search" method="get"><input type="hidden" name="p" value="enquiries"><input type="hidden" name="s" value="' . h($s) . '"><input name="q" value="' . h($q) . '" placeholder="Search name, phone, place…" type="search"><button class="btn btn--sm">Search</button></form>
+    <form class="search" method="get"><input type="hidden" name="p" value="enquiries"><input type="hidden" name="s" value="' . h($s) . '"><input name="q" value="' . h($q) . '" placeholder="Search name, phone, email, place…" type="search"><button class="btn btn--sm">Search</button></form>
     <div class="tabs">' . $tabs . '</div>
     <section class="card">' . ($list ? implode('', array_map('enquiry_row', $list)) : '<p class="empty">Nothing here.</p>') . '</section>';
   layout('Enquiries', 'enquiries', $body, $flash);
@@ -151,13 +154,15 @@ function view_enquiry(int $id, ?string $flash): void {
   foreach (YB_STATUSES as $k => $label) $opts .= '<option value="' . $k . '"' . ($e['status'] === $k ? ' selected' : '') . '>' . $label . '</option>';
   $first = explode(' ', trim($e['name']))[0];
   $waText = rawurlencode("Hi $first, thank you for contacting Ybrain Photography! ");
-  $actions = $e['phone'] ? '<a class="btn" href="https://wa.me/' . h(wa_number($e['phone'])) . '?text=' . $waText . '" target="_blank" rel="noopener">WhatsApp ' . h($first) . '</a><a class="btn btn--line" href="tel:' . h(preg_replace('/[^0-9+]/', '', $e['phone'])) . '">Call</a>'
-    : '<p class="muted small">No phone number given — they were sent to WhatsApp to message you, so check your WhatsApp chats for ' . h($first) . '.</p>';
+  $actions = $e['phone'] ? '<a class="btn" href="https://wa.me/' . h(wa_number($e['phone'])) . '?text=' . $waText . '" target="_blank" rel="noopener">WhatsApp ' . h($first) . '</a><a class="btn btn--line" href="tel:' . h(preg_replace('/[^0-9+]/', '', $e['phone'])) . '">Call</a>' : '';
+  if ($e['email']) $actions .= '<a class="btn btn--line" href="mailto:' . h($e['email']) . '?subject=' . rawurlencode('Your photo session with Ybrain Photography') . '&body=' . rawurlencode("Hi $first,\n\nThank you for contacting Ybrain Photography! ") . '">Email</a>';
+  if ($actions === '') $actions = '<p class="muted small">No phone number or email given — they were sent to WhatsApp to message you, so check your WhatsApp chats for ' . h($first) . '.</p>';
+  $via = ($e['via'] ?? '') === 'form' ? 'Form only — they are waiting for your reply' : 'Form, then WhatsApp';
   $f = fn (string $label, ?string $v) => $v ? '<div><dt>' . $label . '</dt><dd>' . nl2br(h($v)) . '</dd></div>' : '';
   $body = '<p class="back"><a href="/admin/?p=enquiries">← All enquiries</a></p>
     <div class="head"><h1>' . h($e['name']) . '</h1><i class="pill pill--' . h($e['status']) . '">' . h(YB_STATUSES[$e['status']] ?? '') . '</i></div>
     <section class="card"><div class="acts">' . $actions . '</div>
-      <dl class="facts">' . $f('Received', nice_date($e['created'])) . $f('Phone', $e['phone']) . $f('Shoot', $e['type']) . $f('Date', shoot_date($e['date'])) . $f('Place', $e['place']) . $f('Message', $e['message']) . '</dl></section>
+      <dl class="facts">' . $f('Received', nice_date($e['created'])) . $f('Phone', $e['phone']) . $f('Email', $e['email']) . $f('Sent via', $via) . $f('Shoot', $e['type']) . $f('Date', shoot_date($e['date'])) . $f('Place', $e['place']) . $f('Message', $e['message']) . '</dl></section>
     <section class="card"><h2>Follow-up</h2>
       <form method="post" class="stack">' . csrf_field() . '<input type="hidden" name="a" value="enquiry_save"><input type="hidden" name="id" value="' . (int) $e['id'] . '">
         <label>Status<select name="status">' . $opts . '</select></label>
@@ -192,7 +197,7 @@ function view_prices(?string $flash): void {
     '<input type="hidden" name="items[' . $i . '][idx]" value="' . $i . '" data-idx>
      <label>Package name<input name="items[' . $i . '][name]" value="' . h($r['name'] ?? '') . '" required maxlength="60"></label>
      <div class="two"><label>Small label above<input name="items[' . $i . '][note]" value="' . h($r['note'] ?? '') . '" maxlength="60" placeholder="e.g. On location"></label>
-     <label>Starting price<input name="items[' . $i . '][from]" value="' . h($r['from'] ?? '') . '" maxlength="30" placeholder="₹25,000"></label></div>
+     <label>Price (a number shows “from” above it)<input name="items[' . $i . '][from]" value="' . h($r['from'] ?? '') . '" maxlength="30" placeholder="₹25,000 or On request"></label></div>
      <label>What\'s included (one per line)<textarea name="items[' . $i . '][includes]" rows="4">' . h(implode("\n", $r['includes'] ?? [])) . '</textarea></label>
      <label class="check"><input type="radio" name="featured" value="' . $i . '"' . (!empty($r['featured']) ? ' checked' : '') . ' data-idx-radio> Highlight this one (“Most loved”)</label>');
   layout('Prices', 'prices', '<div class="head"><h1>Prices</h1><a class="ghost" href="/pricing/" target="_blank" rel="noopener">View on website ↗</a></div><p class="muted">These show on the Pricing page and the home page. Up to 6 packages.</p>' . $form . editor_footer('packages', $c['edited'], 'prices'), $flash);
@@ -227,8 +232,28 @@ function view_studio(?string $flash): void {
   layout('Studio', 'studio', $body, $flash);
 }
 function view_account(array $me, ?string $flash): void {
-  $body = '<div class="head"><h1>Account</h1></div>
+  $m = mail_config();
+  $on = $m['pass'] !== '';
+  $last = last_backup();
+  $body = '<div class="head"><h1>Account &amp; settings</h1></div>
     <section class="card"><p>Logged in as <b>' . h($me['email']) . '</b></p></section>
+
+    <form method="post" class="card stack">' . csrf_field() . '<input type="hidden" name="a" value="mail_save"><h2>Email sending</h2>
+      <p class="muted">' . ($on
+        ? '<b>On.</b> Enquiry alerts, client confirmations and password resets are sent through the <b>' . h($m['user']) . '</b> mailbox.'
+        : 'Right now emails go out the basic way and may land in spam. Create the <b>' . h(YB_ADMIN_EMAIL) . '</b> mailbox in hPanel → Emails, then type its password here.') . '</p>
+      <label>Mailbox<input name="user" type="email" value="' . h($m['user']) . '" required></label>
+      <label>Mailbox password<input name="pass" type="password" autocomplete="new-password" placeholder="' . ($on ? 'Saved — leave empty to keep it' : 'The password of the mailbox') . '"></label>
+      <details class="small"><summary>Server settings (only change if Hostinger tells you to)</summary>
+        <div class="two"><label>SMTP server<input name="host" value="' . h($m['host']) . '"></label>
+        <label>Port<select name="port"><option' . ($m['port'] === 465 ? ' selected' : '') . '>465</option><option' . ($m['port'] === 587 ? ' selected' : '') . '>587</option></select></label></div></details>
+      <div class="acts"><button class="btn">Save</button>' . ($on ? '<button class="btn btn--line" name="forget" value="1" data-confirm-btn="Remove the saved mailbox password?">Remove password</button>' : '') . '</div></form>
+    ' . ($on ? '<form method="post" class="card">' . csrf_field() . '<input type="hidden" name="a" value="mail_test"><button class="btn btn--line">Send a test email</button></form>' : '') . '
+
+    <section class="card stack"><h2>Backups</h2>
+      <p class="muted">A copy of everything (enquiries, your edits, the photo list) is saved automatically once a week on the server' . ($last ? '. Latest: <b>' . h(date('j M Y', strtotime($last))) . '</b>' : '') . '. For extra safety, download one now and then and keep it on your phone or Google Drive.</p>
+      <p><a class="btn btn--line" href="/admin/?p=backup">Download backup</a></p></section>
+
     <form method="post" class="card stack">' . csrf_field() . '<input type="hidden" name="a" value="password"><h2>Change password</h2>
       <label>Current password<input name="old" type="password" required autocomplete="current-password"></label>
       <label>New password<input name="pass" type="password" required minlength="10" autocomplete="new-password"></label>

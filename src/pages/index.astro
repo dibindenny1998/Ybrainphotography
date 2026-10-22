@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import Img from '../components/Img.astro';
 import Arrow from '../components/icons/Arrow.astro';
 import Cta from '../components/Cta.astro';
-import { site, selected, stories, testimonials, categories, shoots, packages, founder } from '../data/site';
+import { site, selected, stories, testimonials, categories, shoots, packages, founder, priceLead } from '../data/site';
 import { photo } from '../lib/photos';
 const panelSlots = [
   ['portraits-02', 'couples-04', 'weddings-05'],
@@ -188,14 +188,14 @@ const words = statement.split(' ').map((w) => ({ t: w.replace(/\*/g, ''), em: w.
     <div class="wrap">
       <div class="ptz__head">
         <span class="kicker" data-r>Pricing</span>
-        <h2 class="h2" data-split>Sessions, <em>simply</em> priced.</h2>
+        <h2 class="h2" data-split>Sessions, <em>made</em> for you.</h2>
       </div>
       <div class="ptz__grid" data-packages="teaser">
         {packages.map((pk, i) => (
           <div class:list={['pcard', { 'pcard--f': pk.featured }]} data-r data-tilt>
             <span class="pcard__note">{pk.note}</span>
             <span class="pcard__name">{pk.name}</span>
-            <span class="pcard__from">from <b>{pk.from}</b></span>
+            <span class="pcard__from"><span>{priceLead(pk.from)}</span><b>{pk.from}</b></span>
             <ul class="pcard__inc">{pk.includes.map((x) => <li>{x}</li>)}</ul>
           </div>
         ))}

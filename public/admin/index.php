@@ -58,7 +58,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     note_attempt('setup');
     $code = strtoupper(trim((string) ($_POST['code'] ?? '')));
     $pass = (string) ($_POST['pass'] ?? '');
-    if (!hash_equals(YB_SETUP_HASH, hash('sha256', $code))) go('', 'That setup code is not right.');
+    if (!password_verify($code, YB_SETUP_HASH)) go('', 'That setup code is not right.');
     if (mb_strlen($pass) < 10) go('', 'Please use a password of at least 10 characters.');
     if ($pass !== (string) ($_POST['pass2'] ?? '')) go('', 'The two passwords do not match.');
     db()->prepare('INSERT INTO users (email, pass, created) VALUES (?, ?, ?)')->execute([YB_ADMIN_EMAIL, password_hash($pass, PASSWORD_DEFAULT), now()]);
@@ -114,6 +114,27 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
       $_SESSION = [];
       session_destroy();
       go();
+
+    /* email sending (SMTP through the hi@ mailbox) */
+    case 'mail_save':
+      $cur = mail_config();
+      $pass = (string) ($_POST['pass'] ?? '');
+      $port = (int) ($_POST['port'] ?? 465);
+      $host = strtolower(trim((string) ($_POST['host'] ?? '')));
+      save_setting('mail', [
+        'host' => preg_match('~^[a-z0-9.-]{3,80}$~', $host) ? $host : 'smtp.hostinger.com',
+        'port' => in_array($port, [465, 587], true) ? $port : 465,
+        'user' => clean_email((string) ($_POST['user'] ?? '')) ?: YB_ADMIN_EMAIL,
+        'pass' => isset($_POST['forget']) ? '' : ($pass !== '' ? $pass : $cur['pass']),
+      ]);
+      go('p=account', isset($_POST['forget']) ? 'Mailbox password removed. Emails go out the basic way again.' : 'Saved. Now tap “Send a test email” to check it works.');
+    case 'mail_test':
+      $cfg = mail_config();
+      if ($cfg['pass'] === '') go('p=account', 'Save the mailbox password first.');
+      $ok = smtp_send($cfg, YB_ADMIN_EMAIL, 'Test email from your website', "This is a test from the Ybrain admin panel.
+
+If you can read this, enquiry alerts and password-reset emails will be delivered through your mailbox.");
+      go('p=account', $ok ? 'Test email sent to ' . YB_ADMIN_EMAIL . '. Check the inbox.' : 'That didn’t work: ' . rtrim($GLOBALS['yb_mail_error'] ?? 'unknown error', '.') . '. Check the password (it’s the one for the ' . $cfg['user'] . ' mailbox in hPanel → Emails).');
 
     case 'password':
       $q = db()->prepare('SELECT pass FROM users WHERE id = ?'); $q->execute([$me['id']]);
@@ -188,13 +209,29 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
   go($p);
 }
 
-/* ── CSV export */
+if ($me) housekeeping();
+
+/* ── CSV export. Cells that start like a formula get a leading ' so Excel/Sheets show them as text instead of running them. */
 if ($me && $p === 'export') {
   header('Content-Type: text/csv; charset=utf-8');
   header('Content-Disposition: attachment; filename="ybrain-enquiries-' . date('Y-m-d') . '.csv"');
+  $safe = fn ($v) => preg_match('/^[=+\-@\t\r]/', (string) $v) ? "'" . $v : (string) $v;
   $out = fopen('php://output', 'w');
-  fputcsv($out, ['Date', 'Name', 'Phone', 'Shoot', 'Shoot date', 'Place', 'Message', 'Status', 'Notes']);
-  foreach (db()->query('SELECT * FROM enquiries ORDER BY id DESC') as $r) fputcsv($out, [$r['created'], $r['name'], $r['phone'], $r['type'], $r['date'], $r['place'], $r['message'], $r['status'], $r['notes']]);
+  fwrite($out, "\xEF\xBB\xBF"); // so Excel reads Malayalam and other non-English names correctly
+  fputcsv($out, ['Date', 'Name', 'Phone', 'Email', 'Shoot', 'Shoot date', 'Place', 'Message', 'Sent via', 'Status', 'Notes']);
+  foreach (db()->query('SELECT * FROM enquiries ORDER BY id DESC') as $r) fputcsv($out, array_map($safe, [$r['created'], $r['name'], $r['phone'], $r['email'], $r['type'], $r['date'], $r['place'], $r['message'], $r['via'] === 'form' ? 'Form' : 'WhatsApp', $r['status'], $r['notes']]));
+  exit;
+}
+
+/* ── database backup download (everything: enquiries, edits, photo list, settings) */
+if ($me && $p === 'backup') {
+  $tmp = yb_data_dir() . '/backup-download-' . bin2hex(random_bytes(6)) . '.sqlite';
+  try { backup_now($tmp); } catch (Throwable $e) { error_log('backup download: ' . $e->getMessage()); go('p=account', 'Could not make a backup right now. Please try again.'); }
+  header('Content-Type: application/octet-stream');
+  header('Content-Disposition: attachment; filename="ybrain-backup-' . date('Y-m-d') . '.sqlite"');
+  header('Content-Length: ' . filesize($tmp));
+  readfile($tmp);
+  @unlink($tmp);
   exit;
 }
 
@@ -217,5 +254,6 @@ switch ($p) {
   case 'reviews': view_reviews($flash); break;
   case 'studio': view_studio($flash); break;
   case 'account': view_account($me, $flash); break;
+  case 'visitors': require __DIR__ . '/_stats.php'; view_visitors($flash); break;
   default: view_dashboard($flash);
 }

@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+import { site, founder } from '../data/site';
+const updated = '22 October 2026';
+---
+<Base title="Privacy" description="How Ybrain Photography handles the details you share through this website: what we keep, why, for how long, and how to have it removed.">
+  <section class="phead lit">
+    <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="wrap">
+      <span class="kicker" data-r>Privacy</span>
+      <h1 class="h1" data-r style="--d:.1s">Your details, <em>kept</em> simple.</h1>
+      <p class="lede" data-r style="--d:.2s">We only keep what we need to reply to you and plan your session. No ads, no tracking cookies, and nothing is sold or shared for marketing.</p>
+    </div>
+  </section>
+
+  <section class="space-s">
+    <div class="wrap pv">
+      <p class="pv__upd">Last updated {updated}</p>
+
+      <h2>Who we are</h2>
+      <p>{site.name} is a photography studio in {site.studio.city}, Kerala, run by {founder.name}. For anything about your data, write to <a href={`mailto:${site.email}`}>{site.email}</a> or call <a href={`tel:+91${site.phone}`}>{site.phoneDisplay}</a>.</p>
+
+      <h2>What we collect, and why</h2>
+      <ul>
+        <li><b>The contact form.</b> Your name, and if you choose to add them, your phone number, email, the kind of shoot, a date, a place and a message. We save these so we can reply to you and keep track of bookings. If you give an email address, we send you one confirmation email.</li>
+        <li><b>WhatsApp.</b> If you tap “Send on WhatsApp” or any WhatsApp link, the chat happens on WhatsApp, which is run by Meta under its own privacy policy.</li>
+        <li><b>Visitor counts.</b> To see how many people visit and which pages help them, the site records anonymous counts: the page viewed, the website that sent you, whether you use a phone or a computer, and taps on the WhatsApp, call and email links. We don't use cookies for this, don't store your IP address, and the anonymous visitor code changes every day, so visits can't be linked back to you. If your browser sends “Do Not Track” or “Global Privacy Control”, nothing is counted.</li>
+        <li><b>Protecting the site.</b> To stop spam and abuse, your IP address may be kept for up to 24 hours. Like every website, our hosting provider (Hostinger) keeps short technical server logs.</li>
+      </ul>
+
+      <h2>Cookies</h2>
+      <p>The public website sets no cookies. It remembers, for this browser tab only, that you've already seen the opening animation. The only cookie we use is the login cookie for our own admin panel.</p>
+
+      <h2>Who can see it</h2>
+      <p>Only us. Your details are stored with our web host, Hostinger, and reach us by email. We never sell or rent them, or share them for marketing.</p>
+
+      <h2>How long we keep it</h2>
+      <p>Enquiries are kept while we're talking and, if you book, for our records of the booking. You can ask us to delete yours at any time. Anonymous visitor counts are kept for about 13 months.</p>
+
+      <h2>Your choices</h2>
+      <p>Under India's Digital Personal Data Protection Act, 2023 you can ask us what we hold about you, correct it, or have it deleted, and you can withdraw consent at any time. Write to <a href={`mailto:${site.email}`}>{site.email}</a> and we'll reply within a few days. For any complaint, {founder.name} is the person to contact at the same address.</p>
+
+      <h2>Photographs</h2>
+      <p>If you see a photograph of yourself or your child on this website or our Instagram and would like it taken down, tell us and we'll remove it.</p>
+
+      <h2>Changes</h2>
+      <p>If this policy changes, the new version will be posted here with a new date.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .pv { max-width: 760px; font-size: 16px; line-height: 1.75; color: var(--text-2); }
+  .pv__upd { margin: 0 0 10px; font-size: 13px; color: var(--text-3); }
+  .pv h2 { margin: 44px 0 12px; font-family: var(--serif); font-weight: 300; font-size: clamp(1.6rem, 2.4vw, 2.1rem); line-height: 1.2; letter-spacing: -0.02em; color: var(--umber); }
+  .pv p { margin: 0 0 14px; }
+  .pv ul { margin: 0; padding-left: 1.1em; display: grid; gap: 12px; }
+  .pv b { color: var(--umber); font-weight: 600; }
+  .pv a { color: var(--umber); border-bottom: 1px solid var(--rose); }
+  .pv a:hover { color: var(--rose); }
+</style>
